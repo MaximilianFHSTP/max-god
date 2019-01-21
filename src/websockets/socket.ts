@@ -3,8 +3,9 @@ import * as jwt from 'jsonwebtoken';
 import  { Connection } from '../database';
 import {OdController, LocationController, ConfigController} from "../controller";
 import {ExhibitController} from "../controller/exhibitController";
-import {LOCATION_NOT_FOUND, Message} from "../messages";
+import {Message} from "../messages";
 import {INVALID_TOKEN} from "../messages/authenticationTypes";
+import {CoaController} from "../controller/coaController";
 
 export class WebSocket
 {
@@ -14,6 +15,7 @@ export class WebSocket
     private locationController: LocationController;
     private exhibitController: ExhibitController;
     private configController: ConfigController;
+    private coaController: CoaController;
 
     constructor(server: any)
     {
@@ -22,6 +24,7 @@ export class WebSocket
         this.locationController = new LocationController();
         this.exhibitController = new ExhibitController();
         this.configController = new ConfigController();
+        this.coaController = new CoaController();
         this.database = Connection.getInstance();
 
         this.attachListeners();
@@ -76,15 +79,18 @@ export class WebSocket
             {
                 this.odController.registerOD(data).then( (result) =>
                 {
-                    const user = result.data.user;
-                    const locations = result.data.locations;
+                    if(result.data)
+                    {
+                        const user = result.data.user;
+                        const locations = result.data.locations;
 
-                    // Generate token
-                    const token = jwt.sign({user}, process.env.SECRET);
+                        // Generate token
+                        const token = jwt.sign({user}, process.env.SECRET);
 
-                    // Add token to result and to the socket connection
-                    result.data = {token, user, locations};
-                    socket.token = token;
+                        // Add token to result and to the socket connection
+                        result.data = {token, user, locations};
+                        socket.token = token;
+                    }
 
                     socket.emit('registerODResult', result);
                 });
@@ -293,6 +299,46 @@ export class WebSocket
                     socket.token = token;
 
                     socket.emit('makeToRealUserResult', result);
+                });
+            });
+
+            socket.on('getUserCoaParts', (data) =>
+            {
+                this.coaController.getUserCoaParts(data).then(result =>
+                {
+                    socket.emit('getUserCoaPartsResult', result);
+                });
+            });
+
+            socket.on('getCoaParts', () =>
+            {
+                this.coaController.getCoaParts().then(result =>
+                {
+                    socket.emit('getCoaPartsResult', result);
+                });
+            });
+
+            socket.on('getCoaColors', () =>
+            {
+                this.coaController.getCoaColors().then(result =>
+                {
+                    socket.emit('getCoaColorsResult', result);
+                });
+            });
+
+            socket.on('changeUserCoaColors', (data) =>
+            {
+                this.coaController.changeUserCoaColors(data).then(result =>
+                {
+                    socket.emit('changeUserCoaColorsResult', result);
+                });
+            });
+
+            socket.on('unlockCoaPart', (data) =>
+            {
+                this.coaController.unlockCoaPart(data).then(result =>
+                {
+                    socket.emit('unlockCoaPartResult', result);
                 });
             });
         });

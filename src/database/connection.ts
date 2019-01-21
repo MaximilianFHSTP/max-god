@@ -3,10 +3,10 @@ import * as CLS from 'continuation-local-storage';
 import {DataFactory} from "./dataFactory";
 import * as Winston from 'winston';
 import Logger from "../config/logger";
+
 require('dotenv').config();
 
-export class Connection
-{
+export class Connection {
     private static _instance: Connection;
     private readonly _sequelize: any;
     private readonly _namespace: any;
@@ -19,21 +19,24 @@ export class Connection
     private _position: any;
     private _activity: any;
     private _activityLog: any;
-    private _neighbor:any;
+    private _neighbor: any;
     private _settings: any;
     private _contentLanguage: any;
     private _content: any;
+    private _coaPart: any;
+    private _coaType: any;
+    private _coaColor: any;
+    private _userCoaPart: any;
 
     private _currentSettings: any;
 
-    private constructor()
-    {
+    private constructor() {
         this._namespace = CLS.createNamespace('MEETeUX');
         Sequelize.useCLS(this._namespace);
         this._sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
             host: 'localhost',
             dialect: 'mysql',
-            operatorsAliases: { $and: Sequelize.Op.and },
+            operatorsAliases: {$and: Sequelize.Op.and},
             logging: false
         });
 
@@ -43,31 +46,26 @@ export class Connection
         const dataFactory = new DataFactory();
         dataFactory.connection = this;
 
-        this._sequelize.sync({force: true}).then(() =>
-        {
-            dataFactory.createData().catch(err =>
-            {
+        this._sequelize.sync({force: true}).then(() => {
+            dataFactory.createData().catch(err => {
                 console.log("Could not create data!");
             });
-        }).then( this._settings.findByPk(1).then(result => this._currentSettings = result));
+        }).then(this._settings.findByPk(1).then(result => this._currentSettings = result));
 
 
         // this._sequelize.sync().then( this._settings.findById(1).then(result => this._currentSettings = result));
 
     }
 
-    public static getInstance(): Connection
-    {
-        if(Connection._instance === null || Connection._instance === undefined)
-        {
+    public static getInstance(): Connection {
+        if (Connection._instance === null || Connection._instance === undefined) {
             Connection._instance = new Connection();
         }
 
         return Connection._instance;
     }
 
-    private initDatabaseRelations(): void
-    {
+    private initDatabaseRelations(): void {
         //User to Group Relation (1:n)
         this._group.hasMany(this._user, {onDelete: 'cascade'});
         this._user.belongsTo(this._group);
@@ -83,20 +81,37 @@ export class Connection
         this._activityLog.belongsTo(this._activity);
 
         //_location to _location relation (1:n)
-        this._location.hasMany(this._location, {onDelete: 'cascade', foreignKey: {
-            name: 'parentId',
-            allowNull: true
+        this._location.hasMany(this._location, {
+            onDelete: 'cascade', foreignKey: {
+                name: 'parentId',
+                allowNull: true
             }
         });
-        this._location.belongsTo(this._location, {foreignKey: {
-            name: 'parentId',
-            allowNull: true
-         }
+        this._location.belongsTo(this._location, {
+            foreignKey: {
+                name: 'parentId',
+                allowNull: true
+            }
         });
 
         //_user to _location relation (1:n)
         this._location.hasMany(this._user, {foreignKey: 'currentLocation'});
         this._user.belongsTo(this._location, {foreignKey: 'currentLocation'});
+
+        // user to code of arms part (n:m)
+        this._user.belongsToMany(this._coaPart, { through: this._userCoaPart });
+        this._coaPart.belongsToMany(this._user, { through: this._userCoaPart });
+
+        // coaPart to coaType (1:n)
+        this._coaType.hasMany(this._coaPart, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+        this._coaPart.belongsTo(this._coaType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_coaColor to _user relation (1:n)
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
+
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
 
         //_location to _location relation (n:m)
         this._location.belongsToMany(this._location, {
@@ -149,8 +164,7 @@ export class Connection
         this._location.belongsTo(this._position, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
     }
 
-    private initDatabaseTables():void
-    {
+    private initDatabaseTables(): void {
         this._settings = this._sequelize.define('setting', {
             guestNumber: {
                 type: Sequelize.INTEGER
@@ -227,10 +241,10 @@ export class Connection
                 autoIncrement: false
             },
             contentURL: {
-               type: Sequelize.STRING
+                type: Sequelize.STRING
             },
             ipAddress: {
-               type: Sequelize.STRING,
+                type: Sequelize.STRING,
                 allowNull: false
             },
             description: {
@@ -354,12 +368,41 @@ export class Connection
                 defaultValue: Sequelize.NOW
             }
         });
+
+        this._coaPart = this._sequelize.define('coaPart',
+        {
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            image: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
+        this._coaType = this._sequelize.define('coaType',
+        {
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
+        this._coaColor = this._sequelize.define('coaColor',
+            {
+                name: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                }
+            });
+
+        this._userCoaPart = this._sequelize.define('UserCoaPart');
     }
 
-    public getNextGuestNumber(): Number
-    {
+    public getNextGuestNumber(): Number {
         const numb = this._currentSettings.guestNumber;
-        this._currentSettings.guestNumber = numb+1;
+        this._currentSettings.guestNumber = numb + 1;
         this._currentSettings.save();
 
         return numb;
@@ -423,5 +466,21 @@ export class Connection
 
     get settings(): any {
         return this._settings;
+    }
+
+    get coaPart(): any {
+        return this._coaPart;
+    }
+
+    get userCoaPart(): any {
+        return this._userCoaPart;
+    }
+
+    get coaColor(): any {
+        return this._coaColor;
+    }
+
+    get coaType(): any {
+        return this._coaType;
     }
 }

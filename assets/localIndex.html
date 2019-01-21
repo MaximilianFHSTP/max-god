@@ -11,25 +11,62 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
     var token = undefined;
-    var socket = io('https://localhost:3000/');
+    var user = undefined;
+    var parts = undefined;
+    var socket = io('http://localhost:3000/');
 
     socket.on('news', function (data) {
 
-        socket.emit('registerODGuest', {
+        socket.emit('registerOD', {
             identifier: "Schlese",
-            deviceAddress: "hausnummer",
-            deviceOS: "iOS",
-            deviceVersion: "Iphone 6",
-            deviceModel: "Iphone"});
-        //
-
-        socket.on('registerODResult', function (data) {
-            console.log(data);
-            socket.emit('registerLocation', {user: 1, location: 10});
+            email: 'schlese@fhstp.ac.at',
+            password: 'pwd',
+            isGuest: false,
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel',
+            ipAddress: 'not set',
+            language: 1
         });
 
-        socket.on('registerLocationResult', function (data) {
-            console.log(data);
+        socket.on('registerODResult', function (result)
+        {
+            user = result.data.user;
+            socket.emit('getCoaParts');
+            socket.emit('getCoaColors');
+        });
+
+        socket.on('getCoaPartsResult', function (result)
+        {
+            parts = result.data;
+            console.log("------------ Get Coa Parts ------------");
+            console.log(parts);
+
+            socket.emit('unlockCoaPart', {userId: user.id, coaId: parts[0].id});
+        });
+
+        socket.on('unlockCoaPartResult', function (result)
+        {
+            var userParts = result.data;
+            console.log("------------ Unlock Coa Part ------------");
+            console.log(userParts);
+
+            socket.emit('getUserCoaParts', {userId: user.id, coaId: parts[0].id});
+        });
+
+        socket.on('getUserCoaPartsResult', function(result)
+        {
+           var userParts = result.data;
+           console.log("------------ Get User Coa Parts ------------");
+           console.log(userParts);
+        });
+
+        socket.on('getCoaColorsResult', function(result)
+        {
+            var colors = result.data;
+            console.log("------------ Get Coa Colors ------------");
+            console.log(colors);
         });
 
     });
