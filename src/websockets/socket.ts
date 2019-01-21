@@ -318,6 +318,22 @@ export class WebSocket
                 });
             });
 
+            socket.on('getCoaColors', () =>
+            {
+                this.coaController.getCoaColors().then(result =>
+                {
+                    socket.emit('getCoaColorsResult', result);
+                });
+            });
+
+            socket.on('changeUserCoaColors', (data) =>
+            {
+                this.coaController.changeUserCoaColors(data).then(result =>
+                {
+                    socket.emit('changeUserCoaColorsResult', result);
+                });
+            });
+
             socket.on('unlockCoaPart', (data) =>
             {
                 this.coaController.unlockCoaPart(data).then(result =>

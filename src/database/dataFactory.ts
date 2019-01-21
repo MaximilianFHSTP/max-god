@@ -31,6 +31,7 @@ export class DataFactory {
 
         await this.createCoatOfArmsTypes();
         await this.createCoatOfArmsParts();
+        await this.createCoatOfArmsColors();
     }
 
     private initSettings(): void {
@@ -604,6 +605,29 @@ export class DataFactory {
                 this._connection.coaType.create({
                     id: 4,
                     description: 'mantling'
+                }),
+            ]);
+        });
+    }
+
+    private async createCoatOfArmsColors() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.coaColor.create({
+                    id: 1,
+                    name: 'red'
+                }),
+                this._connection.coaColor.create({
+                    id: 2,
+                    name: 'blue'
+                }),
+                this._connection.coaColor.create({
+                    id: 3,
+                    name: 'green'
+                }),
+                this._connection.coaColor.create({
+                    id: 4,
+                    name: 'yellow'
                 }),
             ]);
         });

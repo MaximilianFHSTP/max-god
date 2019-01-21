@@ -34,6 +34,7 @@
         {
             user = result.data.user;
             socket.emit('getCoaParts');
+            socket.emit('getCoaColors');
         });
 
         socket.on('getCoaPartsResult', function (result)
@@ -59,6 +60,13 @@
            var userParts = result.data;
            console.log("------------ Get User Coa Parts ------------");
            console.log(userParts);
+        });
+
+        socket.on('getCoaColorsResult', function(result)
+        {
+            var colors = result.data;
+            console.log("------------ Get Coa Colors ------------");
+            console.log(colors);
         });
 
     });

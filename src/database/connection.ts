@@ -25,6 +25,7 @@ export class Connection {
     private _content: any;
     private _coaPart: any;
     private _coaType: any;
+    private _coaColor: any;
     private _userCoaPart: any;
 
     private _currentSettings: any;
@@ -104,6 +105,13 @@ export class Connection {
         // coaPart to coaType (1:n)
         this._coaType.hasMany(this._coaPart, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._coaPart.belongsTo(this._coaType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_coaColor to _user relation (1:n)
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
+
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
 
         //_location to _location relation (n:m)
         this._location.belongsToMany(this._location, {
@@ -381,6 +389,14 @@ export class Connection {
             }
         });
 
+        this._coaColor = this._sequelize.define('coaColor',
+            {
+                name: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                }
+            });
+
         this._userCoaPart = this._sequelize.define('UserCoaPart');
     }
 
@@ -458,6 +474,10 @@ export class Connection {
 
     get userCoaPart(): any {
         return this._userCoaPart;
+    }
+
+    get coaColor(): any {
+        return this._coaColor;
     }
 
     get coaType(): any {
