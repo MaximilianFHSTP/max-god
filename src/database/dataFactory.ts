@@ -28,6 +28,9 @@ export class DataFactory {
         await this.createContentTypes();
         await this.createContentLanguages();
         // await this.createExhibitContent();
+
+        await this.createCoatOfArmsTypes();
+        await this.createCoatOfArmsParts();
     }
 
     private initSettings(): void {
@@ -464,6 +467,144 @@ export class DataFactory {
                     statusId: 1,
                     showInTimeline: true
                 })
+            ]);
+        });
+    }
+
+    private async createCoatOfArmsParts() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.coaPart.create({
+                    id: 10,
+                    coaTypeId: 1,
+                    name: 'Curved Shield',
+                    image: 'Shield1'
+                }),
+                this._connection.coaPart.create({
+                    id: 11,
+                    coaTypeId: 1,
+                    name: 'Rounded Shield',
+                    image: 'Shield2'
+                }),
+                this._connection.coaPart.create({
+                    id: 12,
+                    coaTypeId: 1,
+                    name: 'Ornamental Shield',
+                    image: 'Shield3'
+                }),
+                this._connection.coaPart.create({
+                    id: 13,
+                    coaTypeId: 1,
+                    name: 'Classic Shield',
+                    image: 'Shield4'
+                }),
+                this._connection.coaPart.create({
+                    id: 20,
+                    coaTypeId: 2,
+                    name: 'Eagle',
+                    image: 'Eagle'
+                }),
+                this._connection.coaPart.create({
+                    id: 21,
+                    coaTypeId: 2,
+                    name: 'Lion',
+                    image: 'Lion'
+                }),
+                this._connection.coaPart.create({
+                    id: 22,
+                    coaTypeId: 2,
+                    name: 'Dragon',
+                    image: 'Dragon'
+                }),
+                this._connection.coaPart.create({
+                    id: 23,
+                    coaTypeId: 2,
+                    name: 'Horse',
+                    image: 'Horse'
+                }),
+                this._connection.coaPart.create({
+                    id: 24,
+                    coaTypeId: 2,
+                    name: 'Gryphon',
+                    image: 'Gryphon'
+                }),
+                this._connection.coaPart.create({
+                    id: 25,
+                    coaTypeId: 2,
+                    name: 'Unicorn',
+                    image: 'Unicorn'
+                }),
+                this._connection.coaPart.create({
+                    id: 30,
+                    coaTypeId: 3,
+                    name: 'Side-facing knight helmet',
+                    image: 'Helmet1'
+                }),
+                this._connection.coaPart.create({
+                    id: 31,
+                    coaTypeId: 3,
+                    name: 'Front-facing helmet',
+                    image: 'Helmet2'
+                }),
+                this._connection.coaPart.create({
+                    id: 32,
+                    coaTypeId: 3,
+                    name: 'Decorated helmet',
+                    image: 'Helmet2+'
+                }),
+                this._connection.coaPart.create({
+                    id: 33,
+                    coaTypeId: 3,
+                    name: 'Crowned helmet',
+                    image: 'Helmet2++'
+                }),
+                this._connection.coaPart.create({
+                    id: 40,
+                    coaTypeId: 4,
+                    name: 'Crossed swords',
+                    image: 'Mantle1'
+                }),
+                this._connection.coaPart.create({
+                    id: 41,
+                    coaTypeId: 4,
+                    name: 'Crossed axes',
+                    image: 'Mantle2'
+                }),
+                this._connection.coaPart.create({
+                    id: 42,
+                    coaTypeId: 4,
+                    name: 'Ornamental mantling',
+                    image: 'Mantle3'
+                }),
+                this._connection.coaPart.create({
+                    id: 43,
+                    coaTypeId: 4,
+                    name: 'Wings',
+                    image: 'Mantle4'
+                })
+            ]);
+        });
+    }
+
+    private async createCoatOfArmsTypes() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.coaType.create({
+                    id: 1,
+                    description: 'shield'
+                }),
+                this._connection.coaType.create({
+                    id: 2,
+                    description: 'symbol'
+                }),
+                this._connection.coaType.create({
+                    id: 3,
+                    description: 'helmet'
+                }),
+                this._connection.coaType.create({
+                    id: 4,
+                    description: 'mantling'
+                }),
             ]);
         });
     }
