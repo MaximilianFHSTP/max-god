@@ -275,7 +275,7 @@ export class DataFactory {
                     showInTimeline: true
                 }),
                 this._connection.location.create({
-                    id: 401,
+                    id: 402,
                     parentId: 40,
                     description: 'Active exhibit',
                     contentURL: 'tableat',
@@ -318,7 +318,7 @@ export class DataFactory {
                     statusId: 2
                 }),
                 this._connection.location.create({
-                    id: 402,
+                    id: 403,
                     parentId: 40,
                     description: 'activeExhibitBehaviorAt',
                     contentURL: 'tableat',
@@ -331,7 +331,7 @@ export class DataFactory {
                     showInTimeline: true
                 }),
                 this._connection.location.create({
-                    id: 4021,
+                    id: 4031,
                     description: 'activeExhibitBehaviorOn',
                     parentId: 301,
                     contentURL: 'tableon',
@@ -436,7 +436,7 @@ export class DataFactory {
                     showInTimeline: true
                 }),
                 this._connection.location.create({
-                    id: 4002,
+                    id: 4004,
                     parentId: 40,
                     description: 'passive exhibit',
                     contentURL: 'passive',
