@@ -203,7 +203,9 @@ export class DataFactory {
                     statusId: 1,
                     parentId: 10,
                     ipAddress: '0.0.0.0',
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1450,
+                    endDate: 1499
                 }),
                 this._connection.location.create({
                     id: 2000,
@@ -212,7 +214,9 @@ export class DataFactory {
                     statusId: 1,
                     parentId: 20,
                     ipAddress: '0.0.0.0',
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1450,
+                    endDate: 1507
                 }),
                 this._connection.location.create({
                     id: 3000,
@@ -221,7 +225,9 @@ export class DataFactory {
                     statusId: 1,
                     parentId: 30,
                     ipAddress: '0.0.0.0',
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1459,
+                    endDate: 1577
                 }),
                 this._connection.location.create({
                     id: 4000,
@@ -230,7 +236,9 @@ export class DataFactory {
                     statusId: 1,
                     parentId: 40,
                     ipAddress: '0.0.0.0',
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1485,
+                    endDate: 1505
                 }),
                 this._connection.location.create({
                     id: 5000,
@@ -239,7 +247,21 @@ export class DataFactory {
                     statusId: 1,
                     parentId: 10,
                     ipAddress: '0.0.0.0',
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1506,
+                    endDate: 1507
+                }),
+                this._connection.location.create({
+                    id: 6000,
+                    description: 'Intro to section',
+                    locationTypeId: 5,
+                    statusId: 1,
+                    parentId: 60,
+                    ipAddress: '0.0.0.0',
+                    showInTimeline: true,
+                    startDate: 1519,
+                    endDate: 1520,
+                    unlockCoa: true
                 })
             ]);
         });
@@ -259,7 +281,9 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 4,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1450,
+                    endDate: 1499
                 }),
                 this._connection.location.create({
                     id: 102,
@@ -272,7 +296,9 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 4,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1450,
+                    endDate: 1499
                 }),
                 this._connection.location.create({
                     id: 402,
@@ -285,7 +311,26 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 4,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1491,
+                    endDate: 1492,
+                    unlockCoa: true
+                }),
+                this._connection.location.create({
+                    id: 501,
+                    parentId: 50,
+                    description: 'Active exhibit',
+                    contentURL: 'tableat',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: 3,
+                    contentTypeId: 1,
+                    statusId: 2,
+                    currentSeat: 0,
+                    maxSeat: 4,
+                    showInTimeline: true,
+                    startDate: 1506,
+                    endDate: 1507,
+                    unlockCoa: true
                 }),
             ]);
         });
@@ -305,7 +350,10 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 15,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1459,
+                    endDate: 1577,
+                    unlockCoa: true
                 }),
                 this._connection.location.create({
                     id: 3011,
@@ -328,12 +376,15 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 15,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1491,
+                    endDate: 1505,
+                    unlockCoa: true
                 }),
                 this._connection.location.create({
                     id: 4031,
                     description: 'activeExhibitBehaviorOn',
-                    parentId: 301,
+                    parentId: 403,
                     contentURL: 'tableon',
                     ipAddress: '0.0.0.0',
                     locationTypeId: 7,
@@ -351,7 +402,10 @@ export class DataFactory {
                     statusId: 2,
                     currentSeat: 0,
                     maxSeat: 15,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1506,
+                    endDate: 1507,
+                    unlockCoa: true
                 }),
                 this._connection.location.create({
                     id: 5021,
@@ -389,7 +443,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1450,
+                    endDate: 1493
                 }),
                 this._connection.location.create({
                     id: 2002,
@@ -400,7 +456,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1468,
+                    endDate: 1470
                 }),
                 this._connection.location.create({
                     id: 2003,
@@ -411,7 +469,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1470,
+                    endDate: 1490
                 }),
                 this._connection.location.create({
                     id: 2004,
@@ -422,7 +482,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1507,
+                    endDate: 1508
                 }),
                 this._connection.location.create({
                     id: 4001,
@@ -433,7 +495,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1485,
+                    endDate: 1486
                 }),
                 this._connection.location.create({
                     id: 4004,
@@ -444,7 +508,9 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1505,
+                    endDate: 1506
                 }),
                 this._connection.location.create({
                     id: 5001,
@@ -455,18 +521,10 @@ export class DataFactory {
                     locationTypeId: 4,
                     contentTypeId: 1,
                     statusId: 1,
-                    showInTimeline: true
-                }),
-                this._connection.location.create({
-                    id: 6001,
-                    parentId: 60,
-                    description: 'passive exhibit',
-                    contentURL: 'passive',
-                    ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
-                    contentTypeId: 1,
-                    statusId: 1,
-                    showInTimeline: true
+                    showInTimeline: true,
+                    startDate: 1506,
+                    endDate: 1507,
+                    unlockCoa: true
                 })
             ]);
         });

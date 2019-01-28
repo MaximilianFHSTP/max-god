@@ -1,6 +1,7 @@
 import * as Express from 'express';
 import * as fs from 'fs';
 import * as https from 'https';
+import * as http from 'http';
 import  { WebSocket } from '../websockets';
 import Logger from './logger';
 require('dotenv').config();
@@ -15,11 +16,19 @@ export default class Server
     constructor()
     {
         this._logger = Logger.getInstance();
-        const cred = this.loadCredentials();
 
         this.app = new Express();
-        this.server = https.createServer(cred, this.app);
-        //this.server = https.createServer(cred, this.app);
+
+        const runAsHttps:number = parseInt(process.env.https);
+        if(runAsHttps)
+        {
+            const cred = this.loadCredentials();
+            this.server = https.createServer(cred, this.app);
+        }
+        else {
+            this.server = http.createServer(this.app);
+        }
+        
         this.socket = new WebSocket(this.server);
 
         this.server.listen(process.env.SERVER_PORT, () => {

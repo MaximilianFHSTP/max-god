@@ -268,6 +268,17 @@ export class Connection {
             showInTimeline: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
+            },
+            unlockCoa: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            startDate: {
+                type: Sequelize.INTEGER
+            },
+            endDate: {
+                type: Sequelize.INTEGER
             }
         });
 
