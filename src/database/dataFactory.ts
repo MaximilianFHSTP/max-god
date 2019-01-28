@@ -673,20 +673,24 @@ export class DataFactory {
             return Promise.all([
                 this._connection.coaColor.create({
                     id: 1,
-                    name: 'red'
+                    name: 'Color1'
                 }),
                 this._connection.coaColor.create({
                     id: 2,
-                    name: 'blue'
+                    name: 'Color2'
                 }),
                 this._connection.coaColor.create({
                     id: 3,
-                    name: 'green'
+                    name: 'Color3'
                 }),
                 this._connection.coaColor.create({
                     id: 4,
-                    name: 'yellow'
+                    name: 'Color4'
                 }),
+                this._connection.coaColor.create({
+                    id: 5,
+                    name: 'Color5'
+                })
             ]);
         });
     }
