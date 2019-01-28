@@ -115,22 +115,22 @@ export class Connection {
 
         //_location to _location relation (n:m)
         this._location.belongsToMany(this._location, {
-            as: 'location1',
+            as: 'previousLocation',
             through: {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'locationOne',
+                name: 'previous',
                 primaryKey: true
             }
         });
         this._location.belongsToMany(this._location, {
-            as: 'location2',
+            as: 'nextLocation',
             through: {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'locationTwo',
+                name: 'next',
                 primaryKey: true
             }
         });
@@ -283,11 +283,11 @@ export class Connection {
         });
 
         this._neighbor = this._sequelize.define('neighbor', {
-            locationOne: {
+            previous: {
                 type: Sequelize.INTEGER,
                 unique: 'compositeIndex'
             },
-            locationTwo: {
+            next: {
                 type: Sequelize.INTEGER,
                 unique: 'compositeIndex'
             }

@@ -25,6 +25,8 @@ export class DataFactory {
         await this.createActiveExhibitLocation();
         await this.createActiveExhibitBehaviorLocation();
 
+        await this.createLocationNeighbors();
+
         await this.createContentTypes();
         await this.createContentLanguages();
         // await this.createExhibitContent();
@@ -242,10 +244,10 @@ export class DataFactory {
                 }),
                 this._connection.location.create({
                     id: 5000,
-                    description: 'Intro to section 7:',
+                    description: 'Intro to section 5:',
                     locationTypeId: 5,
                     statusId: 1,
-                    parentId: 10,
+                    parentId: 50,
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1506,
@@ -525,6 +527,26 @@ export class DataFactory {
                     startDate: 1506,
                     endDate: 1507,
                     unlockCoa: true
+                })
+            ]);
+        });
+    }
+
+    private async createLocationNeighbors()
+    {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.neighbor.create({
+                    previous: 1000,
+                    next: 101
+                }),
+                this._connection.neighbor.create({
+                    previous: 101,
+                    next: 102
+                }),
+                this._connection.neighbor.create({
+                    previous: 102,
+                    next: 2000
                 })
             ]);
         });
