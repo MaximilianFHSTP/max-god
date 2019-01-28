@@ -33,8 +33,9 @@
         socket.on('registerODResult', function (result)
         {
             user = result.data.user;
-            socket.emit('getCoaParts');
-            socket.emit('getCoaColors');
+            // socket.emit('getCoaParts');
+            // socket.emit('getCoaColors');
+            socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
         });
 
         socket.on('getCoaPartsResult', function (result)
@@ -67,6 +68,13 @@
             var colors = result.data;
             console.log("------------ Get Coa Colors ------------");
             console.log(colors);
+        });
+
+        socket.on('registerTimelineUpdateResult', function(result)
+        {
+            console.log("------------ register TimelineUpdate ------------");
+            console.log(result.data);
+            console.log(result.message.message);
         });
 
     });

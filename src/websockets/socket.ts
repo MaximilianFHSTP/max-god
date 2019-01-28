@@ -186,9 +186,9 @@ export class WebSocket
 
             socket.on('registerTimelineUpdate', (data) =>
             {
-                this.locationController.registerTimelineUpdate(data).then( (message) =>
+                this.locationController.registerTimelineUpdate(data).then( (result) =>
                 {
-                    socket.emit('registerTimelineUpdateResult', message);
+                    socket.emit('registerTimelineUpdateResult', result);
                 });
             });
 

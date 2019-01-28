@@ -537,16 +537,16 @@ export class DataFactory {
         return this._connection.sequelize.transaction(t1 => {
             return Promise.all([
                 this._connection.neighbor.create({
-                    previous: 1000,
-                    next: 101
+                    prevLocation: 1000,
+                    nextLocation: 101
                 }),
                 this._connection.neighbor.create({
-                    previous: 101,
-                    next: 102
+                    prevLocation: 101,
+                    nextLocation: 102
                 }),
                 this._connection.neighbor.create({
-                    previous: 102,
-                    next: 2000
+                    prevLocation: 102,
+                    nextLocation: 2000
                 })
             ]);
         });

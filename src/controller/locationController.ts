@@ -107,21 +107,47 @@ export class LocationController
         const userId: string = data.user;
         const locationId: number = data.location;
 
-        return this.database.sequelize.transaction( (t1) => {
-            return this.database.activity.findOrCreate({
-                where: {userId, locationId},
-                defaults: {locked: false}
-            }).spread((activity, wasCreated) => {
-                if(!wasCreated && activity.locked)
+        return this.database.sequelize.transaction( (t1) =>
+        {
+            return this.database.neighbor.findOne({where: {nextLocation: locationId}}).then((neighbor) =>
+            {
+                if(neighbor)
                 {
-                    activity.locked = false;
-                    activity.save();
-                }
-            }).then(() => {
-                return this.database.user.findByPk(userId).then( user => {
-                    return this.getLookupTable(user).then((locations) => {
-                        return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+                    return this.database.location.findByPk(neighbor.prevLocation).then(prevLocation =>
+                    {
+                        return this.database.activity.findOne({where: {locationId: prevLocation.id, userId}})
+                            .then((prevLocationActivity) =>
+                            {
+                                if(prevLocationActivity && !prevLocationActivity.locked)
+                                    return this.unlockTimeline(userId, locationId);
+
+                                else
+                                    return {data: null, message: new Message(LOCATION_NOT_UPDATED, 'Could not register timeline update')};
+                            });
                     });
+                }
+
+                else
+                    return this.unlockTimeline(userId, locationId);
+            });
+        });
+    }
+
+    private unlockTimeline(userId: string, locationId: number)
+    {
+        return this.database.activity.findOrCreate({
+            where: {userId, locationId},
+            defaults: {locked: false}
+        }).spread((activity, wasCreated) => {
+            if(!wasCreated && activity.locked)
+            {
+                activity.locked = false;
+                activity.save();
+            }
+        }).then(() => {
+            return this.database.user.findByPk(userId).then( user => {
+                return this.getLookupTable(user).then((locations) => {
+                    return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
                 });
             });
         });

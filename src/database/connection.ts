@@ -120,7 +120,7 @@ export class Connection {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'previous',
+                name: 'prevLocation',
                 primaryKey: true
             }
         });
@@ -130,7 +130,7 @@ export class Connection {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'next',
+                name: 'nextLocation',
                 primaryKey: true
             }
         });
