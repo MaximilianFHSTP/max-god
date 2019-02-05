@@ -27,6 +27,7 @@ export class Connection {
     private _coaType: any;
     private _coaColor: any;
     private _userCoaPart: any;
+    private _locationEvent: any;
 
     private _currentSettings: any;
 
@@ -138,6 +139,10 @@ export class Connection {
         //_location to _locationType relation (1:n)
         this._locationType.hasMany(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._location.belongsTo(this._locationType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_locationEvent to _location relation (1:n)
+        this._location.hasMany(this._locationEvent, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+        this._locationEvent.belongsTo(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
 
         //_location to _content relation (1:n)
         this._content.belongsTo(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
@@ -305,6 +310,17 @@ export class Connection {
             }
         });
 
+        this._locationEvent = this._sequelize.define('locationEvent', {
+           year: {
+               type: Sequelize.INTEGER,
+               allowNull: false
+           },
+           description: {
+               type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
         this._content = this._sequelize.define('content', {
             content: {
                 type: Sequelize.STRING,
@@ -389,6 +405,9 @@ export class Connection {
             image: {
                 type: Sequelize.STRING,
                 allowNull: false
+            },
+            task: {
+                type: Sequelize.STRING
             }
         });
 
@@ -441,6 +460,10 @@ export class Connection {
 
     get locationType(): any {
         return this._locationType;
+    }
+
+    get locationEvent(): any {
+        return this._locationEvent;
     }
 
     get contentType(): any {

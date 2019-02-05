@@ -583,85 +583,99 @@ export class DataFactory {
                     id: 20,
                     coaTypeId: 2,
                     name: 'Eagle',
-                    image: 'Eagle'
+                    image: 'Emblem2',
+                    task: 'Switch to Sunthaym’s perspective on any exhibit.'
                 }),
                 this._connection.coaPart.create({
                     id: 21,
                     coaTypeId: 2,
                     name: 'Lion',
-                    image: 'Lion'
+                    image: 'Emblem5',
+                    task: 'Have 5 questions right in the Weißkunig game.'
                 }),
                 this._connection.coaPart.create({
                     id: 22,
                     coaTypeId: 2,
                     name: 'Dragon',
-                    image: 'Dragon'
+                    image: 'Emblem1',
+                    task: 'Create the legend of Klosterneuburg in the Legend Game.'
                 }),
                 this._connection.coaPart.create({
                     id: 23,
                     coaTypeId: 2,
                     name: 'Horse',
-                    image: 'Horse'
+                    image: 'Emblem6',
+                    task: 'Participate in the Legend Game.'
                 }),
                 this._connection.coaPart.create({
                     id: 24,
                     coaTypeId: 2,
                     name: 'Gryphon',
-                    image: 'Gryphon'
+                    image: 'Emblem3',
+                    task: 'Attend the audience (unlock all exhibits until throne).'
                 }),
                 this._connection.coaPart.create({
                     id: 25,
                     coaTypeId: 2,
                     name: 'Unicorn',
-                    image: 'Unicorn'
+                    image: 'Emblem4',
+                    task: 'Participate in the GenVis'
                 }),
                 this._connection.coaPart.create({
                     id: 30,
                     coaTypeId: 3,
                     name: 'Side-facing knight helmet',
-                    image: 'Helmet1'
+                    image: 'Helmet1',
+                    task: 'Explore the Sunthaym Panels with AR.'
                 }),
                 this._connection.coaPart.create({
                     id: 31,
                     coaTypeId: 3,
                     name: 'Front-facing helmet',
-                    image: 'Helmet2'
+                    image: 'Helmet2',
+                    task: 'Create any legend in the Legend Game.'
                 }),
                 this._connection.coaPart.create({
                     id: 32,
                     coaTypeId: 3,
                     name: 'Decorated helmet',
-                    image: 'Helmet2+'
+                    image: 'Helmet3',
+                    task: 'Have 10 questions right in the Weißkunig game.'
                 }),
                 this._connection.coaPart.create({
                     id: 33,
                     coaTypeId: 3,
                     name: 'Crowned helmet',
-                    image: 'Helmet2++'
+                    image: 'Helmet4',
+                    task: 'Learn more about Maximilian’s death on the upper floor.'
                 }),
                 this._connection.coaPart.create({
                     id: 40,
                     coaTypeId: 4,
                     name: 'Crossed swords',
-                    image: 'Mantle1'
+                    image: 'Mantle1',
+                    task: 'Explore the shrine with AR.'
                 }),
                 this._connection.coaPart.create({
                     id: 41,
                     coaTypeId: 4,
                     name: 'Crossed axes',
-                    image: 'Mantle2'
+                    image: 'Mantle2',
+                    task: 'Switch to Till’s perspective on any exhibit.'
                 }),
                 this._connection.coaPart.create({
                     id: 42,
                     coaTypeId: 4,
                     name: 'Ornamental mantling',
-                    image: 'Mantle3'
+                    image: 'Mantle3',
+                    task: 'Participating in the Weißkunig game.'
                 }),
                 this._connection.coaPart.create({
                     id: 43,
                     coaTypeId: 4,
                     name: 'Wings',
-                    image: 'Mantle4'
+                    image: 'Mantle4',
+                    task: 'Find one special person in the GenVis.'
                 })
             ]);
         });
