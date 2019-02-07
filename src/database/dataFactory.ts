@@ -54,7 +54,8 @@ export class DataFactory {
                 this._connection.locationType.create({id: 4, description: 'passiveExhibit'}),
                 this._connection.locationType.create({id: 5, description: 'door'}),
                 this._connection.locationType.create({id: 6, description: 'activeExhibitBehaviorAt'}),
-                this._connection.locationType.create({id: 7, description: 'activeExhibitBehaviorOn'})
+                this._connection.locationType.create({id: 7, description: 'activeExhibitBehaviorOn'}),
+                this._connection.locationType.create({id: 8, description: 'interactiveExhibit'})
             ]);
         });
     }
@@ -297,7 +298,7 @@ export class DataFactory {
                     description: 'Active exhibit',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 3,
+                    locationTypeId: 8,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -312,7 +313,7 @@ export class DataFactory {
                     description: 'Active exhibit',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 3,
+                    locationTypeId: 8,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -327,7 +328,7 @@ export class DataFactory {
                     description: 'Active exhibit',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 3,
+                    locationTypeId: 8,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -343,7 +344,7 @@ export class DataFactory {
                     description: 'Active exhibit',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 3,
+                    locationTypeId: 8,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
