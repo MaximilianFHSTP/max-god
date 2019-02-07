@@ -220,7 +220,8 @@ export class DataFactory {
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1450,
-                    endDate: 1499
+                    endDate: 1499,
+                    contentURL: 'passive'
                 }),
                 this._connection.location.create({
                     id: 2000,
@@ -231,7 +232,8 @@ export class DataFactory {
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1450,
-                    endDate: 1507
+                    endDate: 1507,
+                    contentURL: 'passive'
                 }),
                 this._connection.location.create({
                     id: 3000,
@@ -242,7 +244,8 @@ export class DataFactory {
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1459,
-                    endDate: 1577
+                    endDate: 1577,
+                    contentURL: 'passive'
                 }),
                 this._connection.location.create({
                     id: 4000,
@@ -253,7 +256,8 @@ export class DataFactory {
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1485,
-                    endDate: 1505
+                    endDate: 1505,
+                    contentURL: 'passive'
                 }),
                 this._connection.location.create({
                     id: 5000,
@@ -264,7 +268,8 @@ export class DataFactory {
                     ipAddress: '0.0.0.0',
                     showInTimeline: true,
                     startDate: 1506,
-                    endDate: 1507
+                    endDate: 1507,
+                    contentURL: 'passive'
                 }),
                 this._connection.location.create({
                     id: 6000,
@@ -276,7 +281,8 @@ export class DataFactory {
                     showInTimeline: true,
                     startDate: 1519,
                     endDate: 1520,
-                    unlockCoa: true
+                    unlockCoa: true,
+                    contentURL: 'passive'
                 })
             ]);
         });
@@ -289,7 +295,7 @@ export class DataFactory {
                     id: 101,
                     parentId: 10,
                     description: 'Active exhibit',
-                    contentURL: 'tableat',
+                    contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
                     locationTypeId: 3,
                     contentTypeId: 1,
@@ -304,7 +310,7 @@ export class DataFactory {
                     id: 102,
                     parentId: 10,
                     description: 'Active exhibit',
-                    contentURL: 'tableat',
+                    contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
                     locationTypeId: 3,
                     contentTypeId: 1,
@@ -319,7 +325,7 @@ export class DataFactory {
                     id: 402,
                     parentId: 40,
                     description: 'Active exhibit',
-                    contentURL: 'tableat',
+                    contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
                     locationTypeId: 3,
                     contentTypeId: 1,
@@ -335,7 +341,7 @@ export class DataFactory {
                     id: 501,
                     parentId: 50,
                     description: 'Active exhibit',
-                    contentURL: 'tableat',
+                    contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
                     locationTypeId: 3,
                     contentTypeId: 1,
