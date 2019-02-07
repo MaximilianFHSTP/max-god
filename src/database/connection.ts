@@ -27,7 +27,7 @@ export class Connection {
     private _coaType: any;
     private _coaColor: any;
     private _userCoaPart: any;
-    private _locationEvent: any;
+    private _storyTeller: any;
 
     private _currentSettings: any;
 
@@ -140,10 +140,6 @@ export class Connection {
         this._locationType.hasMany(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._location.belongsTo(this._locationType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
 
-        //_locationEvent to _location relation (1:n)
-        this._location.hasMany(this._locationEvent, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
-        this._locationEvent.belongsTo(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
-
         //_location to _content relation (1:n)
         this._content.belongsTo(this._location, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._location.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
@@ -151,6 +147,10 @@ export class Connection {
         //_content to _contentType relation (1:n)
         this._content.belongsTo(this._contentType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._contentType.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_content to _storyTeller relation (1:n)
+        this._content.belongsTo(this._storyTeller, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+        this._storyTeller.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
 
         //_content to _contentLanguage relation (1:n)
         this._content.belongsTo(this._contentLanguage, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
@@ -310,17 +310,6 @@ export class Connection {
             }
         });
 
-        this._locationEvent = this._sequelize.define('locationEvent', {
-           year: {
-               type: Sequelize.INTEGER,
-               allowNull: false
-           },
-           description: {
-               type: Sequelize.STRING,
-                allowNull: false
-            }
-        });
-
         this._content = this._sequelize.define('content', {
             content: {
                 type: Sequelize.STRING,
@@ -329,7 +318,18 @@ export class Connection {
             order: {
                 type: Sequelize.INTEGER,
                 allowNull: false
+            },
+            year: {
+                type: Sequelize.INTEGER
             }
+        });
+
+        this._storyTeller = this._sequelize.define('storyTeller',
+        {
+             name: {
+                 type: Sequelize.STRING,
+                 allowNull: false
+             }
         });
 
         this._contentLanguage = this._sequelize.define('contentLanguage', {
@@ -462,10 +462,6 @@ export class Connection {
         return this._locationType;
     }
 
-    get locationEvent(): any {
-        return this._locationEvent;
-    }
-
     get contentType(): any {
         return this._contentType;
     }
@@ -484,6 +480,10 @@ export class Connection {
 
     get content(): any {
         return this._content;
+    }
+
+    get storyTeller(): any {
+        return this._storyTeller;
     }
 
     get contentLanguage(): any {

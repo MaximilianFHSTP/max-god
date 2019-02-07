@@ -1,6 +1,7 @@
 import {Connection} from "./connection";
 import * as contentTypes from '../config/contentTypes';
 import * as contentLanguages from '../config/contentLanguages';
+import * as storytTellers from '../config/contentStoryTellers';
 
 export class DataFactory {
     private static _instance: DataFactory;
@@ -29,6 +30,7 @@ export class DataFactory {
 
         await this.createContentTypes();
         await this.createContentLanguages();
+        await this.createContentStoryTellers();
         // await this.createExhibitContent();
 
         await this.createCoatOfArmsTypes();
@@ -72,7 +74,8 @@ export class DataFactory {
         return this._connection.sequelize.transaction(t1 => {
             return Promise.all([
                 this._connection.contentType.create({id: contentTypes.TEXT, description: 'text'}),
-                this._connection.contentType.create({id: contentTypes.IMAGE, description: 'image'})
+                this._connection.contentType.create({id: contentTypes.IMAGE, description: 'image'}),
+                this._connection.contentType.create({id: contentTypes.EVENT, description: 'event'})
             ]);
         });
     }
@@ -87,6 +90,16 @@ export class DataFactory {
                     description: 'All Languages',
                     tag: 'ALL'
                 })
+            ]);
+        });
+    }
+
+    private async createContentStoryTellers() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.contentLanguage.create({id: storytTellers.MAXIMILIAN, name: 'Maximilian'}),
+                this._connection.contentLanguage.create({id: storytTellers.SUNTHAYM, name: 'Sunthaym'}),
+                this._connection.contentLanguage.create({id: storytTellers.TILL, name: 'Till'}),
             ]);
         });
     }
