@@ -406,7 +406,10 @@ export class Connection {
                 type: Sequelize.STRING,
                 allowNull: false
             },
-            task: {
+            taskENG: {
+                type: Sequelize.STRING
+            },
+            taskGER: {
                 type: Sequelize.STRING
             }
         });

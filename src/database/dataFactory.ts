@@ -604,98 +604,112 @@ export class DataFactory {
                     coaTypeId: 2,
                     name: 'Eagle',
                     image: 'Emblem2',
-                    task: 'Switch to Sunthaym’s perspective on any exhibit.'
+                    taskENG: 'Switch to Sunthaym’s perspective on any exhibit.',
+                    taskGER: 'Wechsle zu Sunthayms Geschichte in irgendeinem Ausstellungsstück.'
                 }),
                 this._connection.coaPart.create({
                     id: 21,
                     coaTypeId: 2,
                     name: 'Lion',
                     image: 'Emblem5',
-                    task: 'Have 5 questions right in the Weißkunig game.'
+                    taskENG: 'Have 5 questions right in the Weißkunig game.',
+                    taskGER: 'Habe 5 Fragen richtig in dem Weißlunig Quiz.'
                 }),
                 this._connection.coaPart.create({
                     id: 22,
                     coaTypeId: 2,
                     name: 'Dragon',
                     image: 'Emblem1',
-                    task: 'Create the legend of Klosterneuburg in the Legend Game.'
+                    taskENG: 'Create the legend of Klosterneuburg in the Legend Game.',
+                    taskGER: 'Erstellen Sie die Legende von Klosterneuburg in dem Legendenspiel.'
                 }),
                 this._connection.coaPart.create({
                     id: 23,
                     coaTypeId: 2,
                     name: 'Horse',
                     image: 'Emblem6',
-                    task: 'Participate in the Legend Game.'
+                    taskENG: 'Participate in the Legend Game.',
+                    taskGER: 'Nehmen Sie am Legendenspiel teil.'
                 }),
                 this._connection.coaPart.create({
                     id: 24,
                     coaTypeId: 2,
                     name: 'Gryphon',
                     image: 'Emblem3',
-                    task: 'Attend the audience (unlock all exhibits until throne).'
+                    taskENG: 'Attend the audience (unlock all exhibits until throne).',
+                    taskGER: 'Nehmen Sie am Publikum teil (schalten Sie alle Ausstellungsstücke bis zum Thron frei).'
                 }),
                 this._connection.coaPart.create({
                     id: 25,
                     coaTypeId: 2,
                     name: 'Unicorn',
                     image: 'Emblem4',
-                    task: 'Participate in the GenVis'
+                    taskENG: 'Participate in the GenVis',
+                    taskGER: 'Nehmen sie an dem GenVis teil.'
                 }),
                 this._connection.coaPart.create({
                     id: 30,
                     coaTypeId: 3,
                     name: 'Side-facing knight helmet',
                     image: 'Helmet1',
-                    task: 'Explore the Sunthaym Panels with AR.'
+                    taskENG: 'Explore the Sunthaym Panels with AR.',
+                    taskGER: 'Entdecken Sie die Sunthaym-Panels mit AR'
                 }),
                 this._connection.coaPart.create({
                     id: 31,
                     coaTypeId: 3,
                     name: 'Front-facing helmet',
                     image: 'Helmet2',
-                    task: 'Create any legend in the Legend Game.'
+                    taskENG: 'Create any legend in the Legend Game.',
+                    taskGER: 'Erstellen sie eine beliebige Legende im Legendenspiel'
                 }),
                 this._connection.coaPart.create({
                     id: 32,
                     coaTypeId: 3,
                     name: 'Decorated helmet',
                     image: 'Helmet3',
-                    task: 'Have 10 questions right in the Weißkunig game.'
+                    taskENG: 'Have 10 questions right in the Weißkunig game.',
+                    taskGER: 'Beantworten Sie 10 Fragen richtig im Weißkunig Quiz.'
                 }),
                 this._connection.coaPart.create({
                     id: 33,
                     coaTypeId: 3,
                     name: 'Crowned helmet',
                     image: 'Helmet4',
-                    task: 'Learn more about Maximilian’s death on the upper floor.'
+                    taskENG: 'Learn more about Maximilian’s death on the upper floor.',
+                    taskGER: 'Erfahre mehr über Maximilians Tod im oberen Stockwerk'
                 }),
                 this._connection.coaPart.create({
                     id: 40,
                     coaTypeId: 4,
                     name: 'Crossed swords',
                     image: 'Mantle1',
-                    task: 'Explore the shrine with AR.'
+                    taskENG: 'Explore the shrine with AR.',
+                    taskGER: 'Erkunde den Schrein mit AR.'
                 }),
                 this._connection.coaPart.create({
                     id: 41,
                     coaTypeId: 4,
                     name: 'Crossed axes',
                     image: 'Mantle2',
-                    task: 'Switch to Till’s perspective on any exhibit.'
+                    taskENG: 'Switch to Till’s perspective on any exhibit.',
+                    taskGER: 'Schauen Sie sich Tills Geschichte an bei einem beliebigen Ausstellungsstück.'
                 }),
                 this._connection.coaPart.create({
                     id: 42,
                     coaTypeId: 4,
                     name: 'Ornamental mantling',
                     image: 'Mantle3',
-                    task: 'Participating in the Weißkunig game.'
+                    taskENG: 'Participating in the Weißkunig game.',
+                    taskGER: 'Nehmen Sie am Weißkunigspiel teil.'
                 }),
                 this._connection.coaPart.create({
                     id: 43,
                     coaTypeId: 4,
                     name: 'Wings',
                     image: 'Mantle4',
-                    task: 'Find one special person in the GenVis.'
+                    taskENG: 'Find one special person in the GenVis.',
+                    taskGER: 'Finden Sie eine besondere Person im GenVis Spiel.'
                 })
             ]);
         });
