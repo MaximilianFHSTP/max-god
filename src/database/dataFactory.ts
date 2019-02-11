@@ -621,7 +621,7 @@ export class DataFactory {
                     name: 'Gryphon',
                     image: 'Emblem3',
                     taskENG: 'Attend the audience (unlock all exhibits until throne).',
-                    taskGER: 'Nehmen Sie am Publikum teil (schalten Sie alle Ausstellungsstücke bis zum Thron frei).'
+                    taskGER: 'Nehmen Sie an der Audienz teil (Besuchen Sie alle Ausstellungsstücke).'
                 }),
                 this._connection.coaPart.create({
                     id: 25,
