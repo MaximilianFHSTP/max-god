@@ -2,6 +2,7 @@ import {Connection} from "./connection";
 import * as contentTypes from '../config/contentTypes';
 import * as contentLanguages from '../config/contentLanguages';
 import * as storytTellers from '../config/contentStoryTellers';
+import * as locationTypes from '../config/locationTypes';
 
 export class DataFactory {
     private static _instance: DataFactory;
@@ -25,6 +26,7 @@ export class DataFactory {
         await this.createPassiveLocations();
         await this.createActiveExhibitLocation();
         await this.createActiveExhibitBehaviorLocation();
+        await this.createNotfiyLocations();
 
         await this.createLocationNeighbors();
 
@@ -55,7 +57,9 @@ export class DataFactory {
                 this._connection.locationType.create({id: 5, description: 'door'}),
                 this._connection.locationType.create({id: 6, description: 'activeExhibitBehaviorAt'}),
                 this._connection.locationType.create({id: 7, description: 'activeExhibitBehaviorOn'}),
-                this._connection.locationType.create({id: 8, description: 'interactiveExhibit'})
+                this._connection.locationType.create({id: 8, description: 'interactiveExhibit'}),
+                this._connection.locationType.create({id: 9, description: 'notifyActiveExhibitAt'}),
+                this._connection.locationType.create({id: 10, description: 'notifyActiveExhibitOn'})
             ]);
         });
     }
@@ -114,34 +118,6 @@ export class DataFactory {
                     contentTypeId: contentTypes.TEXT,
                     contentLanguageId: contentLanguages.GER,
                     locationId: 100
-                }),
-                this._connection.content.create({
-                    content: 'Welcome to the Quiz!',
-                    order: 1,
-                    contentTypeId: contentTypes.TEXT,
-                    contentLanguageId: contentLanguages.ENG,
-                    locationId: 100
-                }),
-                this._connection.content.create({
-                    content: 'https://www.mememaker.net/api/bucket?path=static/img/memes/full/2018/Apr/4/14/it-works-now-1247.png',
-                    order: 2,
-                    contentTypeId: contentTypes.IMAGE,
-                    contentLanguageId: contentLanguages.ALL,
-                    locationId: 1011
-                }),
-                this._connection.content.create({
-                    content: 'Willkommen beim Passive Exhibit10011!',
-                    order: 1,
-                    contentTypeId: contentTypes.TEXT,
-                    contentLanguageId: contentLanguages.GER,
-                    locationId: 1011
-                }),
-                this._connection.content.create({
-                    content: 'Welcome at the passive exhibit 1011!',
-                    order: 1,
-                    contentTypeId: contentTypes.TEXT,
-                    contentLanguageId: contentLanguages.ENG,
-                    locationId: 1011
                 })
             ]);
         });
@@ -153,14 +129,14 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 1,
                     description: 'Klosterneuburg',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     ipAddress: '0.0.0.0'
                 }),
                 this._connection.location.create({
                     id: 10,
                     description: 'Section (10): introduction',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -168,7 +144,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 20,
                     description: 'Section (20): canonization and conflicts',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -176,7 +152,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 30,
                     description: 'Section (30): maximilian',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -184,7 +160,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 40,
                     description: 'Section (40): Klosterneuburg legend',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -192,7 +168,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 50,
                     description: 'Section (50): translation',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -200,7 +176,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 60,
                     description: 'Section (60): death',
-                    locationTypeId: 1,
+                    locationTypeId: locationTypes.ROOM,
                     statusId: 1,
                     parentId: 1,
                     ipAddress: '0.0.0.0'
@@ -215,7 +191,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 1000,
                     description: 'Intro to section 1:',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 10,
                     ipAddress: '0.0.0.0',
@@ -227,7 +203,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 2000,
                     description: 'Intro to section 2:',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 20,
                     ipAddress: '0.0.0.0',
@@ -239,7 +215,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 3000,
                     description: 'Intro to section 3:',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 30,
                     ipAddress: '0.0.0.0',
@@ -251,7 +227,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 4000,
                     description: 'Intro to section 4:',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 40,
                     ipAddress: '0.0.0.0',
@@ -263,7 +239,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 5000,
                     description: 'Intro to section 5:',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 50,
                     ipAddress: '0.0.0.0',
@@ -275,7 +251,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 6000,
                     description: 'Intro to section',
-                    locationTypeId: 5,
+                    locationTypeId: locationTypes.DOOR,
                     statusId: 1,
                     parentId: 60,
                     ipAddress: '0.0.0.0',
@@ -295,10 +271,10 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 101,
                     parentId: 10,
-                    description: 'Active exhibit',
+                    description: 'Explore transcription of accounting book',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 8,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -310,10 +286,10 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 102,
                     parentId: 10,
-                    description: 'Active exhibit',
+                    description: 'Solve exercise',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 8,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -325,10 +301,10 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 402,
                     parentId: 40,
-                    description: 'Active exhibit',
+                    description: 'Doing something with panel',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 8,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -341,10 +317,10 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 501,
                     parentId: 50,
-                    description: 'Active exhibit',
+                    description: 'Observe the inside of shrine',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 8,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -364,10 +340,10 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 301,
                     parentId: 30,
-                    description: 'activeExhibitBehaviorAt',
+                    description: 'Weyßkunig Quiz atLocation',
                     contentURL: 'tableat',
                     ipAddress: '192.168.178.252',
-                    locationTypeId: 6,
+                    locationTypeId: locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -379,76 +355,84 @@ export class DataFactory {
                 }),
                 this._connection.location.create({
                     id: 3011,
-                    description: 'activeExhibitBehaviorOn',
+                    description: 'Weyßkunig Quiz onLocation',
                     parentId: 301,
                     contentURL: 'tableon',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 7,
+                    locationTypeId: locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON,
                     contentTypeId: 1,
                     statusId: 2
-                }),
+                })
+            ]);
+        });
+    }
+
+    private async createNotfiyLocations()
+    {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
                 this._connection.location.create({
                     id: 403,
                     parentId: 40,
-                    description: 'activeExhibitBehaviorAt',
-                    contentURL: 'tableat',
-                    ipAddress: '192.168.178.252',
-                    locationTypeId: 6,
+                    description: 'Legend game AtLocation',
+                    contentURL: 'tableNotifyAt',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.NOTIFY_EXHIBIT_AT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
-                    maxSeat: 15,
+                    maxSeat: 1,
                     showInTimeline: true,
                     startDate: 1491,
                     endDate: 1505,
                     unlockCoa: true
                 }),
                 this._connection.location.create({
-                    id: 4031,
-                    description: 'activeExhibitBehaviorOn',
-                    parentId: 403,
-                    contentURL: 'tableon',
-                    ipAddress: '0.0.0.0',
-                    locationTypeId: 7,
-                    contentTypeId: 1,
-                    statusId: 2
-                }),
-                this._connection.location.create({
-                    id: 502,
-                    parentId: 50,
-                    description: 'activeExhibitBehaviorAt',
-                    contentURL: 'tableat',
-                    ipAddress: '192.168.178.252',
-                    locationTypeId: 6,
-                    contentTypeId: 1,
-                    statusId: 2,
-                    currentSeat: 0,
-                    maxSeat: 15,
-                    showInTimeline: true,
-                    startDate: 1506,
-                    endDate: 1507,
-                    unlockCoa: true
-                }),
-                this._connection.location.create({
-                    id: 5021,
-                    description: 'activeExhibitBehaviorOn',
-                    parentId: 502,
-                    contentURL: 'tableon',
-                    ipAddress: '0.0.0.0',
-                    locationTypeId: 7,
-                    contentTypeId: 1,
-                    statusId: 2
-                }),
-                this._connection.location.create({
-                    id: 5022,
-                    description: 'activeExhibitBehaviorOn',
-                    parentId: 502,
-                    contentURL: 'tableon',
-                    ipAddress: '0.0.0.0',
-                    locationTypeId: 7,
-                    contentTypeId: 1,
-                    statusId: 2
-                })
+                        id: 4031,
+                        description: 'Legend game AtLocation OnLocation',
+                        parentId: 403,
+                        contentURL: 'tableNotifyAt',
+                        ipAddress: '0.0.0.0',
+                        locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
+                        contentTypeId: 1,
+                        statusId: 2
+                    }),
+                    this._connection.location.create({
+                        id: 502,
+                        parentId: 50,
+                        description: 'Genealogy Vis atLocation',
+                        contentURL: 'tableNotifyAt',
+                        ipAddress: '0.0.0.0',
+                        locationTypeId: locationTypes.NOTIFY_EXHIBIT_AT,
+                        contentTypeId: 1,
+                        statusId: 2,
+                        currentSeat: 0,
+                        maxSeat: 2,
+                        showInTimeline: true,
+                        startDate: 1506,
+                        endDate: 1507,
+                        unlockCoa: true
+                    }),
+                    this._connection.location.create({
+                        id: 5021,
+                        description: 'Genealogy Vis onLocation',
+                        parentId: 502,
+                        contentURL: 'tableNotifyAt',
+                        ipAddress: '0.0.0.0',
+                        locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
+                        contentTypeId: 1,
+                        statusId: 2
+                    }),
+                    this._connection.location.create({
+                        id: 5022,
+                        description: 'Genealogy Vis onLocation',
+                        parentId: 502,
+                        contentURL: 'tableNotifyAt',
+                        ipAddress: '0.0.0.0',
+                        locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
+                        contentTypeId: 1,
+                        statusId: 2
+                    })
             ]);
         });
     }
@@ -462,7 +446,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -475,7 +459,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -488,7 +472,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -501,7 +485,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -514,7 +498,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -527,7 +511,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,
@@ -540,7 +524,7 @@ export class DataFactory {
                     description: 'passive exhibit',
                     contentURL: 'passive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: 4,
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
                     contentTypeId: 1,
                     statusId: 1,
                     showInTimeline: true,

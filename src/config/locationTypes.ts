@@ -5,3 +5,6 @@ export let PASSIVE_EXHIBIT = 4;
 export let DOOR = 5;
 export let ACTIVE_EXHIBIT_BEHAVIOR_AT = 6;
 export let ACTIVE_EXHIBIT_BEHAVIOR_ON = 7;
+export let INTERACTIVE_EXHIBIT = 8;
+export let NOTIFY_EXHIBIT_AT = 9;
+export let NOTIFY_EXHIBIT_ON = 10;
