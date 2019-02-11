@@ -14,13 +14,17 @@ export class ExhibitController
 
     public loginExhibit(ipAddress: String): any
     {
-        // console.log("Logging in exhibit " + ipAddress);
         return this.database.location.findOne({where: {ipAddress: ipAddress}}).then( (exhibit) =>
         {
-            // console.log('Found exhibit: ' + exhibit.id);
-            return this.database.location.update({statusId: statusTypes.FREE}, {where: {[this.database.sequelize.Op.or]: [{id: exhibit.id}, {parentId: exhibit.id}]}}).then(() => {
-                // console.log('Updated exhibit: ' + exhibit.id);
-                return { data: exhibit , message: new Message(SUCCESS_OK, "location data found")};
+            if(!exhibit)
+                throw new Error("Exhibit not found");
+
+            return this.database.location.update({statusId: statusTypes.FREE}, {where: {[this.database.sequelize.Op.or]: [{id: exhibit.id}, {parentId: exhibit.id}]}}).then(() =>
+            {
+                return this.database.location.findAll({where: {parentId: exhibit.id}}).then(childLocations =>
+                {
+                    return { data: {exhibit, childLocations} , message: new Message(SUCCESS_OK, "location data found")};
+                });
             });
         }).catch( () =>
         {

@@ -15,10 +15,12 @@ import * as contentLanguages from "../config/contentLanguages";
 export class LocationController
 {
     private database: Connection;
+    private websocket: any;
 
-    constructor()
+    constructor(websocket)
     {
         this.database = Connection.getInstance();
+        this.websocket = websocket;
     }
 
     private getLookupTable(user): any
@@ -92,8 +94,18 @@ export class LocationController
                             {
                                 parentLocation.currentSeat += 1;
                                 parentLocation.save();
-                                if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                                if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON)
                                     this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+
+                                if(currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                                {
+                                    this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+                                    this.database.user.findByPk(userId).then( user =>
+                                    {
+                                        if(user)
+                                            this.websocket.to(parentLocation.socketId).emit('odJoined', {location: currentLocation, user});
+                                    });
+                                }
 
                                 this.updateActiveLocationStatus(currentLocation.parentId);
                             }

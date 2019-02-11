@@ -21,7 +21,7 @@ export class WebSocket
     {
         this.io = new IO(server);
         this.odController = new OdController();
-        this.locationController = new LocationController();
+        this.locationController = new LocationController(this.io);
         this.exhibitController = new ExhibitController();
         this.configController = new ConfigController();
         this.coaController = new CoaController();

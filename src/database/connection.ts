@@ -284,6 +284,12 @@ export class Connection {
             },
             endDate: {
                 type: Sequelize.INTEGER
+            },
+            socketId: {
+                type: Sequelize.STRING
+            },
+            locationTag: {
+                type: Sequelize.STRING
             }
         });
 

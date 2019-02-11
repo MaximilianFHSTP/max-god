@@ -400,9 +400,9 @@ export class DataFactory {
                     this._connection.location.create({
                         id: 502,
                         parentId: 50,
-                        description: 'Genealogy Vis atLocation',
+                        description: 'Genvis atLocation',
                         contentURL: 'tableNotifyAt',
-                        ipAddress: '0.0.0.0',
+                        ipAddress: '192.168.1.14',
                         locationTypeId: locationTypes.NOTIFY_EXHIBIT_AT,
                         contentTypeId: 1,
                         statusId: 2,
@@ -415,23 +415,25 @@ export class DataFactory {
                     }),
                     this._connection.location.create({
                         id: 5021,
-                        description: 'Genealogy Vis onLocation',
+                        description: 'Genvis onLocation',
                         parentId: 502,
                         contentURL: 'tableNotifyAt',
                         ipAddress: '0.0.0.0',
                         locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
                         contentTypeId: 1,
-                        statusId: 2
+                        statusId: 2,
+                        locationTag: 'left'
                     }),
                     this._connection.location.create({
                         id: 5022,
-                        description: 'Genealogy Vis onLocation',
+                        description: 'Genvis onLocation',
                         parentId: 502,
                         contentURL: 'tableNotifyAt',
                         ipAddress: '0.0.0.0',
                         locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
                         contentTypeId: 1,
-                        statusId: 2
+                        statusId: 2,
+                        locationTag: 'right'
                     })
             ]);
         });
