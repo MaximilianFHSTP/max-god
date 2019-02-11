@@ -202,7 +202,7 @@ export class WebSocket
 
             socket.on('disconnectedFromExhibit', (data) =>
             {
-                console.log('disconnectedFromExhibit');
+                // console.log('disconnectedFromExhibit');
                 this.locationController.disconnectedFromExhibit(data).then( (message) =>
                 {
                     socket.emit('disconnectedFromExhibitResult', message);
@@ -331,6 +331,14 @@ export class WebSocket
                 this.coaController.changeUserCoaColors(data).then(result =>
                 {
                     socket.emit('changeUserCoaColorsResult', result);
+                });
+            });
+
+            socket.on('changeUserCoaPart', (data) =>
+            {
+                this.coaController.changeUserCoaPart(data).then(result =>
+                {
+                    socket.emit('changeUserCoaPartResult', result);
                 });
             });
 

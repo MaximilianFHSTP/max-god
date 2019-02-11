@@ -430,7 +430,13 @@ export class Connection {
                 }
             });
 
-        this._userCoaPart = this._sequelize.define('UserCoaPart');
+        this._userCoaPart = this._sequelize.define('UserCoaPart',
+            {
+                isActive: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
+                }
+            });
     }
 
     public getNextGuestNumber(): Number {

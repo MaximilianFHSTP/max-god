@@ -44,6 +44,45 @@ export class CoaController
         });
     }
 
+    public changeUserCoaPart(data): any
+    {
+        const userId = data.userId;
+        const coaType = data.coaType;
+        const coaId = data.coaId;
+
+        return this.database.user.findByPk(userId).then( (user) =>
+        {
+            if(!user)
+                return {data: null, message: new Message(OD_NOT_FOUND, "Could not find user")};
+
+            return user.getCoaParts().then((userParts) =>
+            {
+                for(let part of userParts)
+                {
+                    if(part.coaTypeId === coaType)
+                    {
+                        if(part.id === coaId)
+                        {
+                            part.UserCoaPart.isActive = true;
+                            part.save();
+                        }
+
+                        else if(part.UserCoaPart.isActive === true)
+                        {
+                            part.UserCoaPart.isActive = false;
+                            part.save();
+                        }
+                    }
+                }
+                return {data: userParts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
+            });
+
+        }).catch( () =>
+        {
+            return { data: null, message: new Message(OD_NOT_UPDATED, "Could not create user coa part")};
+        });
+    }
+
     public unlockCoaPart(data): any
     {
         const coaId = data.coaId;
