@@ -203,11 +203,19 @@ export class LocationController
     {
         for(let u of users)
         {
-            this.database.user.findByPk(u.id).then(user => {
-                this.database.location.findByPk(user.currentLocation).then( location => {
-                    this.disconnectedFromExhibit({parentLocation: location.parentId, location: location.id});
-                    this.registerLocation({user: user.id, location: location.parentId});
-                });
+            this.database.user.findByPk(u.id).then(user =>
+            {
+                if(user)
+                {
+                    this.database.location.findByPk(user.currentLocation).then( location =>
+                    {
+                        if(location)
+                        {
+                            this.disconnectedFromExhibit({parentLocation: location.parentId, location: location.id});
+                            this.registerLocation({user: user.id, location: location.parentId});
+                        }
+                    });
+                }
             });
         }
     }
