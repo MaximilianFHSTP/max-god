@@ -349,6 +349,11 @@ export class WebSocket
                     socket.emit('unlockCoaPartResult', result);
                 });
             });
+
+            socket.on('updateSeat', (data) =>
+            {
+                this.locationController.updateLocationSeat(data);
+            });
         });
     }
 

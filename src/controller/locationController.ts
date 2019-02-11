@@ -84,12 +84,19 @@ export class LocationController
                 this.database.user.update({currentLocation: locationId}, {where: {id: userId}});
 
                 this.database.location.findByPk(locationId).then((currentLocation) => {
-                    if (currentLocation.statusId === statusTypes.FREE && (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON)) {
-                        this.database.location.update({currentSeat: this.database.sequelize.literal('currentSeat +1')}, {where: {id: currentLocation.parentId}}).then(() => {
-                            if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON)
-                                this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+                    if (currentLocation.statusId === statusTypes.FREE &&
+                        (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)) {
+                        this.database.location.findOne({where: {id: currentLocation.parentId}}).then((parentLocation) =>
+                        {
+                            if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
+                            {
+                                parentLocation.currentSeat += 1;
+                                parentLocation.save();
+                                if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                                    this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
 
-                            this.updateActiveLocationStatus(currentLocation.parentId);
+                                this.updateActiveLocationStatus(currentLocation.parentId);
+                            }
                         });
                     }
                 });
@@ -173,6 +180,32 @@ export class LocationController
                 });
             }).catch(() => {
                 return {data: null, message: new Message(LOCATION_NOT_UPDATED, 'Could not update activity')};
+            });
+        });
+    }
+
+    public updateLocationSeat(data: any): any
+    {
+        const locationId: number = data.location;
+
+        return this.database.sequelize.transaction( (t1) =>
+        {
+            this.database.location.findByPk(locationId).then((currentLocation) => {
+                if (currentLocation.statusId === statusTypes.FREE &&
+                    (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)) {
+                    this.database.location.findOne({where: {id: currentLocation.parentId}}).then((parentLocation) =>
+                    {
+                        if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
+                        {
+                            parentLocation.currentSeat += 1;
+                            parentLocation.save();
+                            if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                                this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+
+                            this.updateActiveLocationStatus(currentLocation.parentId);
+                        }
+                    });
+                }
             });
         });
     }
