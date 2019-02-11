@@ -98,9 +98,9 @@ export class DataFactory {
     private async createContentStoryTellers() {
         return this._connection.sequelize.transaction(t1 => {
             return Promise.all([
-                this._connection.contentLanguage.create({id: storytTellers.MAXIMILIAN, name: 'Maximilian'}),
-                this._connection.contentLanguage.create({id: storytTellers.SUNTHAYM, name: 'Sunthaym'}),
-                this._connection.contentLanguage.create({id: storytTellers.TILL, name: 'Till'}),
+                this._connection.storyTeller.create({id: storytTellers.MAXIMILIAN, name: 'Maximilian'}),
+                this._connection.storyTeller.create({id: storytTellers.SUNTHAYM, name: 'Sunthaym'}),
+                this._connection.storyTeller.create({id: storytTellers.TILL, name: 'Till'}),
             ]);
         });
     }
