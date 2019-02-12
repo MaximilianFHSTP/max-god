@@ -248,7 +248,7 @@ export class WebSocket
 
             socket.on('loginExhibit', (ipAddress) =>
             {
-                this.exhibitController.loginExhibit(ipAddress).then( (message) =>
+                this.exhibitController.loginExhibit(ipAddress, socket.id).then( (message) =>
                 {
                     socket.emit('loginExhibitResult', message);
                 });

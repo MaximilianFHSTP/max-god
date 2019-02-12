@@ -12,12 +12,15 @@ export class ExhibitController
         this.database = Connection.getInstance();
     }
 
-    public loginExhibit(ipAddress: String): any
+    public loginExhibit(ipAddress: String, socketId: String): any
     {
         return this.database.location.findOne({where: {ipAddress: ipAddress}}).then( (exhibit) =>
         {
             if(!exhibit)
                 throw new Error("Exhibit not found");
+
+            exhibit.socketId = socketId;
+            exhibit.save();
 
             return this.database.location.update({statusId: statusTypes.FREE}, {where: {[this.database.sequelize.Op.or]: [{id: exhibit.id}, {parentId: exhibit.id}]}}).then(() =>
             {
