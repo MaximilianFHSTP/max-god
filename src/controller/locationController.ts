@@ -272,7 +272,9 @@ export class LocationController
         return this.database.location.findByPk(locationId).then( (location) =>
         {
             // console.log("CheckLocationStatus:\n-typeId: " + location.locationTypeId + "\n-statusId: " + location.statusId);
-            if(location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_ON && location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_AT && location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON && location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT)
+            if(location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_ON && location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_AT &&
+                location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON && location.locationTypeId != locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT &&
+                location.locationTypeId != locationTypes.NOTIFY_EXHIBIT_ON && location.locationTypeId != locationTypes.NOTIFY_EXHIBIT_AT)
                 status = "NOT ACTIVE EXHIBIT";
 
             else if(location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_AT && location.statusId === statusTypes.FREE && location.currentSeat < location.maxSeat)
@@ -282,6 +284,12 @@ export class LocationController
                 status = "FREE";
 
             else if(location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON && location.statusId === statusTypes.FREE)
+                status = "FREE";
+
+            else if(location.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT && location.statusId === statusTypes.FREE && location.currentSeat < location.maxSeat)
+                status = "FREE";
+
+            else if(location.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON && location.statusId === statusTypes.FREE)
                 status = "FREE";
 
             else if(location.statusId === statusTypes.OFFLINE)
