@@ -229,9 +229,23 @@ export class LocationController
 
         return this.database.sequelize.transaction( (t1) =>
         {
-            return this.database.location.update({statusId: statusTypes.FREE}, {where: {id: location}}).then(() => {
-                return this.database.location.update({currentSeat: this.database.sequelize.literal('currentSeat -1')}, {where: {id: parentLocation}}).then(() => {
+            return this.database.location.findOne({where: {id: location}}).then((location) =>
+            {
+                if(!location)
+                    throw new Error("Location not found");
+
+                location.statusId = statusTypes.FREE;
+                location.save();
+                return this.database.location.findOne({where: {id: parentLocation}}).then((parLocation) =>
+                {
+                    if(!parLocation)
+                        throw new Error("Location not found");
+
+                    parLocation.currentSeat -= 1;
+                    parLocation.save();
                     this.updateActiveLocationStatus(parentLocation);
+                    if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
+                        this.websocket.to(parLocation.socketId).emit('odLeft', {location});
                 });
             }).then(() => {
                 return {
