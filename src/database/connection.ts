@@ -38,7 +38,7 @@ export class Connection {
             host: 'localhost',
             dialect: 'mysql',
             operatorsAliases: {$and: Sequelize.Op.and},
-            logging: false
+            logging: true
         });
 
         this.initDatabaseTables();
@@ -149,8 +149,8 @@ export class Connection {
         this._contentType.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
 
         //_content to _storyTeller relation (1:n)
-        this._content.belongsTo(this._storyTeller, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
-        this._storyTeller.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+        this._content.belongsTo(this._storyTeller, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
+        this._storyTeller.hasMany(this._content, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
 
         //_content to _contentLanguage relation (1:n)
         this._content.belongsTo(this._contentLanguage, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
@@ -256,6 +256,12 @@ export class Connection {
                 type: Sequelize.STRING,
                 allowNull: false
             },
+            titleGER: {
+                type: Sequelize.STRING
+            },
+            titleENG: {
+                type: Sequelize.STRING
+            },
             currentSeat: {
                 type: Sequelize.INTEGER,
                 allowNull: true
@@ -318,7 +324,7 @@ export class Connection {
 
         this._content = this._sequelize.define('content', {
             content: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT,
                 allowNull: false
             },
             order: {
