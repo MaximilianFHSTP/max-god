@@ -242,7 +242,12 @@ export class LocationController
                         throw new Error("Location not found");
 
                     parLocation.currentSeat -= 1;
+
+                    if(parLocation.currentSeat < 0)
+                        parLocation.currentSeat = 0;
+                    
                     parLocation.save();
+
                     this.updateActiveLocationStatus(parentLocation);
                     if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
                         this.websocket.to(parLocation.socketId).emit('odLeft', {location});
