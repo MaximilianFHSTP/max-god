@@ -381,6 +381,7 @@ export class WebSocket
             case 'checkEmailExists':
             case 'checkNameOrEmailExists':
             case 'loginExhibit':
+            case 'updateSeat':
                 needed = false;
                 break;
         }
