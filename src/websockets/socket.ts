@@ -155,7 +155,7 @@ export class WebSocket
             {
                 this.odController.registerGuest(data).then( (result) =>
                 {
-                    if(data && data.user)
+                    if(result.data && result.data.user)
                     {
                         const user = result.data.user;
                         const locations = result.data.locations;
@@ -189,7 +189,6 @@ export class WebSocket
 
             socket.on('registerTimelineUpdate', (data) =>
             {
-                console.log('registerTimelineUpdate');
                 this.locationController.registerTimelineUpdate(data).then( (result) =>
                 {
                     socket.emit('registerTimelineUpdateResult', result);
