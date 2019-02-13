@@ -114,29 +114,6 @@ export class CoaController
         });
     }
 
-    public unlockStartCoaParts(userId: number): void
-    {
-        this.database.sequelize.transaction( (t1) =>
-        {
-            this.database.user.findByPk(userId).then((user) =>
-            {
-                if(!user) return;
-                
-                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
-                {
-                    for (let part of parts)
-                    {
-                        if(part.id === 10)
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
-
-                        else
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
-                    }
-                });
-            });
-        });
-    }
-
     public getUserCoaParts(data): any
     {
         const userId = data.userId;

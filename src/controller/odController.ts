@@ -5,15 +5,12 @@ import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
 import * as locationTypes from '../config/locationTypes';
 import * as statusTypes from '../config/statusTypes';
-import {CoaController} from "./coaController";
 
 export class OdController {
     private database: Connection;
-    private coaController: CoaController;
 
     constructor() {
         this.database = Connection.getInstance();
-        this.coaController = new CoaController();
     }
 
     private getLookupTable(user): any {
@@ -73,7 +70,17 @@ export class OdController {
                 contentLanguageId: language
             }).then((user) =>
             {
-                this.coaController.unlockStartCoaParts(user.id);
+                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+                {
+                    for (let part of parts)
+                    {
+                        if(part.id === 10)
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+
+                        else
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                    }
+                });
 
                 return this.getLookupTable(user).then((locations) => {
                     // console.log(user);
@@ -112,7 +119,17 @@ export class OdController {
                 contentLanguageId: language
             }).then((user) => {
 
-                this.coaController.unlockStartCoaParts(user.id);
+                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+                {
+                    for (let part of parts)
+                    {
+                        if(part.id === 10)
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+
+                        else
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                    }
+                });
 
                 return this.getLookupTable(user).then((locations) => {
                     return {
