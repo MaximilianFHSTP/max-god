@@ -64,14 +64,12 @@ export class CoaController
                     {
                         if(part.id === coaId)
                         {
-                            part.UserCoaPart.isActive = true;
-                            part.save();
+                            this.database.userCoaPart.update({isActive: true}, {where: {userId: user.id, coaPartId: part.id}});
                         }
 
                         else if(part.UserCoaPart.isActive === true)
                         {
-                            part.UserCoaPart.isActive = false;
-                            part.save();
+                            this.database.userCoaPart.update({isActive: false}, {where: {userId: user.id, coaPartId: part.id}});
                         }
                     }
                 }
