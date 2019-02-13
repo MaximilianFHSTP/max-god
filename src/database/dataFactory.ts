@@ -1472,7 +1472,8 @@ export class DataFactory {
                     description: 'Klosterneuburg',
                     locationTypeId: locationTypes.ROOM,
                     statusId: 1,
-                    ipAddress: '0.0.0.0'
+                    ipAddress: '0.0.0.0',
+                    isStartPoint: true
                 }),
                 this._connection.location.create({
                     id: 10,

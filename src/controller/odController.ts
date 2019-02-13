@@ -3,6 +3,8 @@ import {Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_UPDATED} from "../m
 import {OD_NOT_CREATED, OD_NOT_FOUND, OD_NOT_UPDATED} from "../messages/odTypes";
 import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
+import * as locationTypes from '../config/locationTypes';
+import * as statusTypes from '../config/statusTypes';
 
 export class OdController {
     private database: Connection;
@@ -282,6 +284,50 @@ export class OdController {
         return Promise.all([nameExists, mailExists]).then(values =>
         {
             return {name: values[0], email: values[1]};
+        });
+    }
+
+    public resetUserLocation(od): void
+    {
+        this.database.user.findByPk(od.id).then( (user) =>
+        {
+           const currUserLoc = user.currentLocation;
+           this.database.location.findByPk(currUserLoc).then((location) => {
+               if (!location) return;
+
+               const locType = location.locationTypeId;
+               const isNotifyOrActiveOn = locType === locationTypes.NOTIFY_EXHIBIT_ON || locType === locationTypes.ACTIVE_EXHIBIT_ON;
+
+               if (isNotifyOrActiveOn && location.statusId === statusTypes.OCCUPIED)
+               {
+                   location.statusId = statusTypes.FREE;
+                   location.save();
+               }
+
+              if(isNotifyOrActiveOn || locType === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON)
+              {
+                  this.database.location.findByPk(location.parentId).then(parentLoc =>
+                  {
+                      if(parentLoc)
+                      {
+                          parentLoc.currentSeat -= 1;
+
+                          if(parentLoc.currentSeat < 0)
+                              parentLoc.currentSeat = 0;
+
+                          parentLoc.save();
+                      }
+                  });
+              }
+
+              this.database.location.findOne({where: {isStartPoint: true}}).then(startLocation =>
+              {
+                 if(startLocation)
+                    user.currentLocation = startLocation.id;
+
+                 user.save();
+              });
+           });
         });
     }
 }

@@ -34,6 +34,24 @@ export class WebSocket
     {
         this.io.on('connection', (socket) =>
         {
+            socket.on('reconnecting', (attemptNumber) => {
+                console.log("Trying to reconnect to " + socket.id + ": " + attemptNumber);
+            });
+
+            socket.on('disconnect', (reason) =>
+            {
+                // if(reason === 'transport close') return;
+
+                const token = socket.token;
+                jwt.verify(token, process.env.SECRET, (err, decoded) =>
+                {
+                    if (err || !decoded.user) return;
+
+                    const user = decoded.user;
+                    this.odController.resetUserLocation(user);
+                });
+            });
+
             socket.use((packet, next) =>
             {
                 const event: String = packet[0];
