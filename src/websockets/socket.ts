@@ -155,15 +155,18 @@ export class WebSocket
             {
                 this.odController.registerGuest(data).then( (result) =>
                 {
-                    const user = result.data.user;
-                    const locations = result.data.locations;
+                    if(data && data.user)
+                    {
+                        const user = result.data.user;
+                        const locations = result.data.locations;
 
-                    // Generate token
-                    const token = jwt.sign({user}, process.env.SECRET);
+                        // Generate token
+                        const token = jwt.sign({user}, process.env.SECRET);
 
-                    // Add token to result and to the socket connection
-                    result.data = {token, user, locations};
-                    socket.token = token;
+                        // Add token to result and to the socket connection
+                        result.data = {token, user, locations};
+                        socket.token = token;
+                    }
 
                     socket.emit('registerODGuestResult', result);
                 });
@@ -186,6 +189,7 @@ export class WebSocket
 
             socket.on('registerTimelineUpdate', (data) =>
             {
+                console.log('registerTimelineUpdate');
                 this.locationController.registerTimelineUpdate(data).then( (result) =>
                 {
                     socket.emit('registerTimelineUpdateResult', result);
