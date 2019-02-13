@@ -192,7 +192,6 @@ export class WebSocket
 
             socket.on('deleteOD', (data) =>
             {
-                console.log('deleteOD');
                 this.odController.deleteOD(data);
             });
 

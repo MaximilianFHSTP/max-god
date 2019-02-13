@@ -5,12 +5,15 @@ import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
 import * as locationTypes from '../config/locationTypes';
 import * as statusTypes from '../config/statusTypes';
+import {CoaController} from "./coaController";
 
 export class OdController {
     private database: Connection;
+    private coaController: CoaController;
 
     constructor() {
         this.database = Connection.getInstance();
+        this.coaController = new CoaController();
     }
 
     private getLookupTable(user): any {
@@ -68,7 +71,10 @@ export class OdController {
                 deviceModel: deviceModel,
                 ipAddress: 'not set',
                 contentLanguageId: language
-            }).then((user) => {
+            }).then((user) =>
+            {
+                this.coaController.unlockStartCoaParts(user.id);
+
                 return this.getLookupTable(user).then((locations) => {
                     // console.log(user);
                     return {
@@ -105,6 +111,9 @@ export class OdController {
                 ipAddress: 'not set',
                 contentLanguageId: language
             }).then((user) => {
+
+                this.coaController.unlockStartCoaParts(user.id);
+
                 return this.getLookupTable(user).then((locations) => {
                     return {
                         data: {user, locations},

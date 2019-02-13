@@ -38,7 +38,7 @@ export class Connection {
             host: 'localhost',
             dialect: 'mysql',
             operatorsAliases: {$and: Sequelize.Op.and},
-            logging: false
+            logging: true
         });
 
         this.initDatabaseTables();
@@ -108,11 +108,11 @@ export class Connection {
         this._coaPart.belongsTo(this._coaType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
 
         //_coaColor to _user relation (1:n)
-        this._coaColor.hasMany(this._user, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
-        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'primaryColor'}, onDelete: 'cascade'});
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'primaryColor', defaultValue: 1}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'primaryColor', defaultValue: 1}, onDelete: 'cascade'});
 
-        this._coaColor.hasMany(this._user, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
-        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'secondaryColor'}, onDelete: 'cascade'});
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'secondaryColor', defaultValue: 1}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'secondaryColor', defaultValue: 1}, onDelete: 'cascade'});
 
         //_location to _location relation (n:m)
         this._location.belongsToMany(this._location, {

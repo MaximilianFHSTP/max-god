@@ -1,5 +1,6 @@
 import { Connection } from '../database';
 import {Message, OD_NOT_FOUND, SUCCESS_OK, COA_NOT_CREATED, COA_NOT_FOUND, OD_NOT_UPDATED} from "../messages";
+import * as contentLanguages from "../config/contentLanguages";
 
 export class CoaController
 {
@@ -74,7 +75,10 @@ export class CoaController
                         }
                     }
                 }
-                return {data: userParts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
+                return user.getCoaParts().then(parts =>
+                {
+                    return {data: parts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
+                });
             });
 
         }).catch( () =>
@@ -109,6 +113,27 @@ export class CoaController
         }).catch( () =>
         {
             return { data: null, message: new Message(COA_NOT_CREATED, "Could not create user coa part")};
+        });
+    }
+
+    public unlockStartCoaParts(userId: number): void
+    {
+        this.database.sequelize.transaction( (t1) =>
+        {
+            this.database.user.findByPk(userId).then((user) =>
+            {
+                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+                {
+                    for (let part of parts)
+                    {
+                        if(part.id === 10)
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+
+                        else
+                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                    }
+                });
+            });
         });
     }
 
