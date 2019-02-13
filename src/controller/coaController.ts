@@ -120,6 +120,8 @@ export class CoaController
         {
             this.database.user.findByPk(userId).then((user) =>
             {
+                if(!user) return;
+                
                 this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
                 {
                     for (let part of parts)

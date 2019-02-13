@@ -38,7 +38,7 @@ export class Connection {
             host: 'localhost',
             dialect: 'mysql',
             operatorsAliases: {$and: Sequelize.Op.and},
-            logging: true
+            logging: false
         });
 
         this.initDatabaseTables();
