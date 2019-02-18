@@ -10,6 +10,10 @@ export class Connection {
     private static _instance: Connection;
     private readonly _sequelize: any;
     private readonly _namespace: any;
+
+    private _logger: Logger;
+
+    // database tables
     private _user: any;
     private _group: any;
     private _location: any;
@@ -28,7 +32,6 @@ export class Connection {
     private _coaColor: any;
     private _userCoaPart: any;
     private _storyTeller: any;
-
     private _currentSettings: any;
 
     private constructor() {
@@ -44,18 +47,22 @@ export class Connection {
         this.initDatabaseTables();
         this.initDatabaseRelations();
 
+        this._logger = Logger.getInstance();
+    }
+
+    public async syncDatabase()
+    {
         const dataFactory = new DataFactory();
         dataFactory.connection = this;
 
-        this._sequelize.sync({force: true}).then(() => {
-            dataFactory.createData().catch(err => {
-                console.log("Could not create data!");
+        this._logger.info('Syncing to database!');
+        await this._sequelize.sync({force: true});
+        this._logger.info('Creating data (this may take a while)!');
+        await dataFactory.createData().catch(err => {
+                this._logger.error(err);
+                this._logger.error("Could not create data!");
             });
-        }).then(this._settings.findByPk(1).then(result => this._currentSettings = result));
-
-
-        // this._sequelize.sync().then( this._settings.findById(1).then(result => this._currentSettings = result));
-
+        await this._settings.findByPk(1).then(result => this._currentSettings = result);
     }
 
     public static getInstance(): Connection {

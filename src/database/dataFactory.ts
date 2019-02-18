@@ -3,10 +3,23 @@ import * as contentTypes from '../config/contentTypes';
 import * as contentLanguages from '../config/contentLanguages';
 import * as storytTellers from '../config/contentStoryTellers';
 import * as locationTypes from '../config/locationTypes';
+import {LocationController, OdController} from "../controller";
+import {CoaController} from "../controller/coaController";
 
 export class DataFactory {
     private static _instance: DataFactory;
     private _connection: Connection;
+
+    private _odController: OdController;
+    private _locationController: LocationController;
+    private _coaController: CoaController;
+
+    constructor()
+    {
+        this._odController = new OdController();
+        this._locationController = new LocationController(null);
+        this._coaController = new CoaController();
+    }
 
     public static getInstance(): DataFactory {
         if (DataFactory._instance === null || DataFactory._instance === undefined) {
@@ -39,12 +52,19 @@ export class DataFactory {
         await this.createCoatOfArmsTypes();
         await this.createCoatOfArmsParts();
         await this.createCoatOfArmsColors();
+
+        // create user for iOS submission (everything is unlocked)
+        await this.createiOSSubmissionUser();
     }
 
     private initSettings(): void {
-        this._connection.settings.create({
-            guestNumber: 1,
-            wifiSSID: 'MEETeUX'
+        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'MEETeUX'}}).spread((user, created) =>
+        {
+            if(!created)
+            {
+                user.guestNumber = 1;
+                user.save();
+            }
         });
     }
 
@@ -2130,6 +2150,78 @@ export class DataFactory {
                     name: 'Color5'
                 })
             ]);
+        });
+    }
+
+    private async createiOSSubmissionUser()
+    {
+        const identifier: string = 'iOSSubUser';
+        const deviceAddress: string = 'some address';
+        const deviceOS: string = 'iOS';
+        const deviceVersion: string = '12.1.4';
+        const deviceModel: string = 'iPhone';
+        const email: string = 'fake@mail.com';
+        const password: string = 'apple';
+        const language: number = 1;
+
+        return this._odController.registerOD({identifier, deviceAddress, deviceOS, deviceVersion, deviceModel, email, password, language}).then( (result) =>
+        {
+            const user = result.data.user;
+
+            if(!user) return;
+
+            // unlock all locations in timeline
+            this._locationController.registerTimelineUpdate({user: user.id, location: 1000}).then( () => {
+                this._locationController.registerTimelineUpdate({user: user.id, location: 101}).then( () => {
+                    this._locationController.registerTimelineUpdate({user: user.id, location: 102}).then( () => {
+                        this._locationController.registerTimelineUpdate({user: user.id, location: 2000});
+                    });
+                });
+            });
+
+            this._locationController.registerTimelineUpdate({user: user.id, location: 2001});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 2002});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 2003});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 2004});
+
+            this._locationController.registerTimelineUpdate({user: user.id, location: 3000});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 301});
+
+            this._locationController.registerTimelineUpdate({user: user.id, location: 4000});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 4001});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 402});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 403});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 4004});
+
+            this._locationController.registerTimelineUpdate({user: user.id, location: 5000});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 501});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 502});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 5001});
+
+            this._locationController.registerTimelineUpdate({user: user.id, location: 6000});
+
+            // unlock all coa parts
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 10});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 11});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 12});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 13});
+
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 20});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 21});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 22});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 23});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 24});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 25});
+
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 30});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 31});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 32});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 33});
+
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 40});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 41});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 42});
+            this._coaController.unlockCoaPart({userId: user.id, coaId: 43});
         });
     }
 

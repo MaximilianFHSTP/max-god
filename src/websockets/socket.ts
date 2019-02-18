@@ -30,6 +30,11 @@ export class WebSocket
         this.attachListeners();
     }
 
+    public async connectDatabase()
+    {
+        await this.database.syncDatabase();
+    }
+
     private attachListeners(): void
     {
         this.io.on('connection', (socket) =>
