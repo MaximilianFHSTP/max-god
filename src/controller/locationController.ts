@@ -226,6 +226,7 @@ export class LocationController
     {
         const parentLocation: number = data.parentLocation;
         const location: number = data.location;
+        const user: number = data.user;
 
         return this.database.sequelize.transaction( (t1) =>
         {
@@ -252,11 +253,16 @@ export class LocationController
                     if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
                         this.websocket.to(parLocation.socketId).emit('odLeft', {location});
                 });
-            }).then(() => {
-                return {
-                    data: {location, parent: parentLocation},
-                    message: new Message(SUCCESS_OK, 'Disconnected successfully from Exhibit')
-                };
+            }).then(() =>
+            {
+                if(user)
+                {
+                    this.database.user.findByPk(user).then((user) =>
+                    {
+                        this.websocket.to(user.socketId).emit('userKickedFromExhibit', {data: {parentId: parentLocation}, message: new Message(SUCCESS_OK, 'You were kicked from the exhibit.')})
+                    });
+                }
+                return {data: {location, parent: parentLocation}, message: new Message(SUCCESS_OK, 'Disconnected successfully from Exhibit')};
             }).catch(() => {
                 return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Could not update location status")};
             });

@@ -12,7 +12,7 @@ module.exports = {
         production: {
             user: 'prod',
             host: 'god.meeteux.fhstp.ac.at',
-            ref: 'origin/master',
+            ref: 'origin/develop',
             repo: "https://github.com/MaximilianFHSTP/max-god.git",
             path: '/srv/production',
             'post-deploy': 'cp ../.env ./ && npm install && npm run tsc && pm2 startOrRestart ecosystem.config.js --env production'

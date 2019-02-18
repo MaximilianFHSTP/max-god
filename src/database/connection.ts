@@ -56,12 +56,19 @@ export class Connection {
         dataFactory.connection = this;
 
         this._logger.info('Syncing to database!');
-        await this._sequelize.sync({force: true});
-        this._logger.info('Creating data (this may take a while)!');
-        await dataFactory.createData().catch(err => {
+
+        if(process.env.GENERATE_DATA === 'true')
+        {
+            await this._sequelize.sync({force: true});
+            this._logger.info('Creating data (this may take a while)!');
+            await dataFactory.createData().catch(err => {
                 this._logger.error(err);
                 this._logger.error("Could not create data!");
             });
+        }
+        else
+            await this._sequelize.sync();
+
         await this._settings.findByPk(1).then(result => this._currentSettings = result);
     }
 
@@ -220,6 +227,9 @@ export class Connection {
             deviceAddress: {
                 type: Sequelize.STRING,
                 allowNull: false
+            },
+            socketId: {
+                type: Sequelize.STRING
             },
             ipAddress: {
                 type: Sequelize.STRING,

@@ -45,7 +45,7 @@ export class OdController {
         });
     }
 
-    public registerOD(data: any): any {
+    public registerOD(data: any, socketId: any): any {
         const identifier: string = data.identifier;
         const deviceAddress: string = data.deviceAddress;
         const deviceOS: string = data.deviceOS;
@@ -67,7 +67,8 @@ export class OdController {
                 deviceVersion: deviceVersion,
                 deviceModel: deviceModel,
                 ipAddress: 'not set',
-                contentLanguageId: language
+                contentLanguageId: language,
+                socketId
             }).then((user) =>
             {
                 this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
@@ -95,7 +96,7 @@ export class OdController {
         });
     }
 
-    public registerGuest(data: any): any {
+    public registerGuest(data: any, socketId: any): any {
         const next = this.database.getNextGuestNumber();
 
         const identifier: string = 'Guest' + next;
@@ -116,7 +117,8 @@ export class OdController {
                 deviceVersion: deviceVersion,
                 deviceModel: deviceModel,
                 ipAddress: 'not set',
-                contentLanguageId: language
+                contentLanguageId: language,
+                socketId
             }).then((user) => {
 
                 this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
@@ -149,10 +151,14 @@ export class OdController {
         });
     }
 
-    public autoLoginUser(identifier: any): any {
+    public autoLoginUser(identifier: any, socketId: any): any {
         return this.database.user.findByPk(identifier).then(user => {
             if (!user)
                 throw new Error('User not found');
+
+            user.socketId = socketId;
+            user.save();
+
             return this.getLookupTable(user).then((locations) => {
                 return {
                     data: {user, locations},
@@ -164,7 +170,7 @@ export class OdController {
         });
     }
 
-    public loginUser(data: any): any {
+    public loginUser(data: any, socketId: any): any {
         const user = data.user;
         const email = data.email;
         const password = data.password;
@@ -172,6 +178,9 @@ export class OdController {
         if (user) {
             return this.database.user.findOne({where: {name: user, password}}).then((user) => {
                 if (user) {
+                    user.socketId = socketId;
+                    user.save();
+
                     return this.getLookupTable(user).then((locations) => {
                         return {
                             data: {user, locations},

@@ -6,6 +6,7 @@ import {ExhibitController} from "../controller/exhibitController";
 import {Message} from "../messages";
 import {INVALID_TOKEN} from "../messages/authenticationTypes";
 import {CoaController} from "../controller/coaController";
+import Logger from "../config/logger";
 
 export class WebSocket
 {
@@ -16,6 +17,7 @@ export class WebSocket
     private exhibitController: ExhibitController;
     private configController: ConfigController;
     private coaController: CoaController;
+    private _logger: Logger;
 
     constructor(server: any)
     {
@@ -26,6 +28,8 @@ export class WebSocket
         this.configController = new ConfigController();
         this.coaController = new CoaController();
         this.database = Connection.getInstance();
+
+        this._logger = Logger.getInstance();
 
         this.attachListeners();
     }
@@ -64,9 +68,14 @@ export class WebSocket
 
                 if(this.checkEventsTokenNeeded(event))
                 {
+                    // this._logger.info('JWT: ' + token);
                     jwt.verify(token, process.env.SECRET, (err, decoded) =>
                     {
-                        if(err) return next(new Error('Invalid token Error'));
+                        if(err)
+                        {
+                            this._logger.error(err);
+                            return next(new Error('Invalid token Error'));
+                        }
 
                         const user = decoded.user;
 
@@ -80,6 +89,7 @@ export class WebSocket
                                 }
                                 else
                                 {
+                                    this._logger.error('Access Restricted Error');
                                     next(new Error('Access Restricted Error'));
                                 }
                             }
@@ -88,7 +98,7 @@ export class WebSocket
                             }
                         }
 
-                        next(new Error('Access Restricted Error'));
+                        next();
                     });
                 }
                 else {
@@ -98,9 +108,14 @@ export class WebSocket
 
             socket.emit('news', { hello: 'world' });
 
+            socket.on('addTokenToSocket', (token) =>
+            {
+                socket.token = token;
+            });
+
             socket.on('registerOD', (data) =>
             {
-                this.odController.registerOD(data).then( (result) =>
+                this.odController.registerOD(data, socket.id).then( (result) =>
                 {
                     if(result.data)
                     {
@@ -132,7 +147,7 @@ export class WebSocket
 
                     if(user)
                     {
-                        this.odController.autoLoginUser(user.id).then( (result) =>
+                        this.odController.autoLoginUser(user.id, socket.id).then( (result) =>
                         {
                             if(result.message.code <= 299)
                             {
@@ -155,7 +170,7 @@ export class WebSocket
 
             socket.on('loginOD', (data) =>
             {
-                this.odController.loginUser(data).then( (result) =>
+                this.odController.loginUser(data, socket.id).then( (result) =>
                 {
                     if(result.data)
                     {
@@ -176,7 +191,7 @@ export class WebSocket
 
             socket.on('registerODGuest', (data) =>
             {
-                this.odController.registerGuest(data).then( (result) =>
+                this.odController.registerGuest(data, socket.id).then( (result) =>
                 {
                     if(result.data && result.data.user)
                     {
@@ -407,6 +422,7 @@ export class WebSocket
             case 'checkNameOrEmailExists':
             case 'loginExhibit':
             case 'updateSeat':
+            case 'addTokenToSocket':
                 needed = false;
                 break;
         }
