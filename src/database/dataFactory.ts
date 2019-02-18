@@ -2164,7 +2164,7 @@ export class DataFactory {
         const password: string = 'apple';
         const language: number = 1;
 
-        return this._odController.registerOD({identifier, deviceAddress, deviceOS, deviceVersion, deviceModel, email, password, language}).then( (result) =>
+        return this._odController.registerOD({identifier, deviceAddress, deviceOS, deviceVersion, deviceModel, email, password, language}, 'not set').then( (result) =>
         {
             const user = result.data.user;
 
