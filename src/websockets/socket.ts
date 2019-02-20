@@ -73,6 +73,7 @@ export class WebSocket
                     {
                         if(err)
                         {
+                            this._logger.error('JWT Error - Event: ' + event);
                             this._logger.error(err);
                             return next(new Error('Invalid token Error'));
                         }
@@ -390,6 +391,14 @@ export class WebSocket
                 });
             });
 
+            socket.on('unlockCoaPartFromExhibit', (data) =>
+            {
+                this.coaController.unlockCoaPart(data).then(result =>
+                {
+                    socket.emit('unlockCoaPartFromExhibitResult', result);
+                });
+            });
+
             socket.on('updateSeat', (data) =>
             {
                 this.locationController.updateLocationSeat(data);
@@ -423,6 +432,7 @@ export class WebSocket
             case 'loginExhibit':
             case 'updateSeat':
             case 'addTokenToSocket':
+            case 'unlockCoaPartFromExhibit':
                 needed = false;
                 break;
         }
