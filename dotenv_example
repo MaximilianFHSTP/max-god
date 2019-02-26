@@ -1,6 +1,7 @@
 NODE_PATH =
 SERVER_PORT =
 CERT_PATH =
+KEY_PATH =
 SECRET =
 https = 0/1
 

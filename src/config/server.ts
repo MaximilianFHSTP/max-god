@@ -46,8 +46,8 @@ export default class Server
 
     private loadCredentials(): any
     {
-        const cert = fs.readFileSync(process.env.CERT_PATH + '/fullchain.pem');
-        const key = fs.readFileSync(process.env.CERT_PATH + '/privkey.pem');
+        const cert = fs.readFileSync(process.env.CERT_PATH);
+        const key = fs.readFileSync(process.env.KEY_PATH);
 
         return {
             key: key,
