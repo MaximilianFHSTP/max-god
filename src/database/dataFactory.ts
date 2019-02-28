@@ -1743,7 +1743,7 @@ export class DataFactory {
                     titleGER: 'Es war einmal…',
                     titleENG: 'Once upon a time..',
                     contentURL: 'tableNotifyAt',
-                    ipAddress: '0.0.0.0',
+                    ipAddress: '192.168.178.1',
                     locationTypeId: locationTypes.NOTIFY_EXHIBIT_AT,
                     contentTypeId: 1,
                     statusId: 2,
@@ -1764,7 +1764,7 @@ export class DataFactory {
                         contentTypeId: 1,
                         statusId: 2
                     }),
-                    this._connection.location.create({
+                this._connection.location.create({
                         id: 502,
                         parentId: 50,
                         description: 'Genvis atLocation',
