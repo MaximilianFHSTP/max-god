@@ -1758,7 +1758,7 @@ export class DataFactory {
                         id: 4031,
                         description: 'Legend game AtLocation OnLocation',
                         parentId: 403,
-                        contentURL: 'tableNotifyAt',
+                        contentURL: 'tableNotifyOn',
                         ipAddress: '0.0.0.0',
                         locationTypeId: locationTypes.NOTIFY_EXHIBIT_ON,
                         contentTypeId: 1,

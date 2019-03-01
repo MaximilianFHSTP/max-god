@@ -14,7 +14,6 @@ export class ExhibitController
 
     public loginExhibit(ipAddress: String, socketId: String): any
     {
-        console.log(ipAddress);
         return this.database.location.findOne({where: {ipAddress: ipAddress}}).then( (exhibit) =>
         {
             console.log(exhibit);
