@@ -190,6 +190,9 @@ export class Connection {
             },
             wifiSSID: {
                 type: Sequelize.STRING
+            },
+            wifiPassword: {
+                type: Sequelize.STRING
             }
         });
 

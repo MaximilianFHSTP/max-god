@@ -11,10 +11,11 @@ export class ConfigController
         this.database = Connection.getInstance();
     }
 
-    public isWifiSSIDMatching(ssid: string): any
+    public isWifiSSIDMatching(): any
     {
         const correctSSID = this.database.currentSettings.wifiSSID;
-        return { data: { check: correctSSID.localeCompare(ssid) === 0 }, message: new Message(SUCCESS_OK, 'SSID was checked!') };
+        const pass = this.database.currentSettings.wifiPassword;
+        return { data: { ssid: correctSSID, password:  pass}, message: new Message(SUCCESS_OK, 'SSID and Password was found!') };
     }
 
 }

@@ -295,10 +295,10 @@ export class WebSocket
                 });
             });
 
-            socket.on('checkWifiSSID', (ssid) =>
+            socket.on('getWifiSSID', () =>
             {
-                const result = this.configController.isWifiSSIDMatching(ssid);
-                socket.emit('checkWifiSSIDResult', result)
+                const result = this.configController.isWifiSSIDMatching();
+                socket.emit('getWifiSSIDResult', result);
             });
 
             socket.on('updateUserLanguage', (data) =>
@@ -433,6 +433,7 @@ export class WebSocket
             case 'updateSeat':
             case 'addTokenToSocket':
             case 'unlockCoaPartFromExhibit':
+            case 'getWifiSSID':
                 needed = false;
                 break;
         }
