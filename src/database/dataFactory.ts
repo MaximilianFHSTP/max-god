@@ -1715,7 +1715,7 @@ export class DataFactory {
                     maxSeat: 15,
                     showInTimeline: true,
                     startDate: 1459,
-                    endDate: 1577,
+                    endDate: 1519,
                     unlockCoa: true
                 }),
                 this._connection.location.create({
@@ -1936,6 +1936,30 @@ export class DataFactory {
                 this._connection.neighbor.create({
                     prevLocation: 102,
                     nextLocation: 2000
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 2000,
+                    nextLocation: 2001
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 402,
+                    nextLocation: 403
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 403,
+                    nextLocation: 4004
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 4004,
+                    nextLocation: 5000
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 5000,
+                    nextLocation: 501
+                }),
+                this._connection.neighbor.create({
+                    prevLocation: 501,
+                    nextLocation: 5001
                 })
             ]);
         });
