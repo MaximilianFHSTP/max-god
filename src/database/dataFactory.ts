@@ -2179,12 +2179,14 @@ export class DataFactory {
             this._locationController.registerTimelineUpdate({user: user.id, location: 1000}).then( () => {
                 this._locationController.registerTimelineUpdate({user: user.id, location: 101}).then( () => {
                     this._locationController.registerTimelineUpdate({user: user.id, location: 102}).then( () => {
-                        this._locationController.registerTimelineUpdate({user: user.id, location: 2000});
+                        this._locationController.registerTimelineUpdate({user: user.id, location: 2000}).then(() => {
+                            this._locationController.registerTimelineUpdate({user: user.id, location: 2001});
+                        });
                     });
                 });
             });
 
-            this._locationController.registerTimelineUpdate({user: user.id, location: 2001});
+
             this._locationController.registerTimelineUpdate({user: user.id, location: 2002});
             this._locationController.registerTimelineUpdate({user: user.id, location: 2003});
             this._locationController.registerTimelineUpdate({user: user.id, location: 2004});
@@ -2194,14 +2196,18 @@ export class DataFactory {
 
             this._locationController.registerTimelineUpdate({user: user.id, location: 4000});
             this._locationController.registerTimelineUpdate({user: user.id, location: 4001});
-            this._locationController.registerTimelineUpdate({user: user.id, location: 402});
-            this._locationController.registerTimelineUpdate({user: user.id, location: 403});
-            this._locationController.registerTimelineUpdate({user: user.id, location: 4004});
-
-            this._locationController.registerTimelineUpdate({user: user.id, location: 5000});
-            this._locationController.registerTimelineUpdate({user: user.id, location: 501});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 402}).then(() => {
+                this._locationController.registerTimelineUpdate({user: user.id, location: 403}).then(() => {
+                    this._locationController.registerTimelineUpdate({user: user.id, location: 4004}).then(() => {
+                        this._locationController.registerTimelineUpdate({user: user.id, location: 5000}).then(() => {
+                            this._locationController.registerTimelineUpdate({user: user.id, location: 501}).then(() => {
+                                this._locationController.registerTimelineUpdate({user: user.id, location: 5001});
+                            });
+                        });
+                    });
+                });
+            });
             this._locationController.registerTimelineUpdate({user: user.id, location: 502});
-            this._locationController.registerTimelineUpdate({user: user.id, location: 5001});
 
             this._locationController.registerTimelineUpdate({user: user.id, location: 6000});
 
