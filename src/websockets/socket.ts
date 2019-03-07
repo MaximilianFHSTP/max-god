@@ -50,15 +50,20 @@ export class WebSocket
             socket.on('disconnect', (reason) =>
             {
                 // if(reason === 'transport close') return;
-
-                const token = socket.token;
-                jwt.verify(token, process.env.SECRET, (err, decoded) =>
+                if(socket.token)
                 {
-                    if (err || !decoded.user) return;
+                    const token = socket.token;
+                    jwt.verify(token, process.env.SECRET, (err, decoded) =>
+                    {
+                        if (err || !decoded.user) return;
 
-                    const user = decoded.user;
-                    this.odController.resetUserLocation(user);
-                });
+                        const user = decoded.user;
+                        this.odController.resetUserLocation(user);
+                    });
+                }
+                else {
+                    this.exhibitController.shutdownExhibit(socket.id);
+                }
             });
 
             socket.use((packet, next) =>

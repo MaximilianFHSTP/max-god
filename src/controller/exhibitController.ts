@@ -16,7 +16,6 @@ export class ExhibitController
     {
         return this.database.location.findOne({where: {ipAddress: ipAddress}}).then( (exhibit) =>
         {
-            console.log(exhibit);
             if(!exhibit)
                 throw new Error("Exhibit not found");
 
@@ -33,6 +32,16 @@ export class ExhibitController
         }).catch( () =>
         {
             return { data: null, message: new Message(LOCATION_NOT_FOUND, "Could not find location")};
+        });
+    }
+
+    public shutdownExhibit(socketId: any): void
+    {
+        this.database.location.findOne({where: {socketId}}).then( (exhibit) =>
+        {
+            if(!exhibit) return;
+
+            this.database.location.update({statusId: statusTypes.OFFLINE}, {where: {[this.database.sequelize.Op.or]: [{id: exhibit.id}, {parentId: exhibit.id}]}})
         });
     }
 }
