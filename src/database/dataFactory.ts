@@ -2288,7 +2288,6 @@ export class DataFactory {
             this._locationController.registerTimelineUpdate({user: user.id, location: 3000});
             this._locationController.registerTimelineUpdate({user: user.id, location: 301});
 
-            this._locationController.registerTimelineUpdate({user: user.id, location: 4000});
             this._locationController.registerTimelineUpdate({user: user.id, location: 4001});
             this._locationController.registerTimelineUpdate({user: user.id, location: 402}).then(() => {
                 this._locationController.registerTimelineUpdate({user: user.id, location: 403}).then(() => {
@@ -2303,7 +2302,7 @@ export class DataFactory {
             });
             this._locationController.registerTimelineUpdate({user: user.id, location: 502});
 
-            this._locationController.registerTimelineUpdate({user: user.id, location: 6000});
+            this._locationController.registerTimelineUpdate({user: user.id, location: 6001});
 
             // unlock all coa parts
             this._coaController.unlockCoaPart({userId: user.id, coaId: 10});

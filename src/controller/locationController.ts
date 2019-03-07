@@ -85,9 +85,13 @@ export class LocationController
 
                 this.database.user.update({currentLocation: locationId}, {where: {id: userId}});
 
-                this.database.location.findByPk(locationId).then((currentLocation) => {
+                this.database.location.findByPk(locationId).then((currentLocation) =>
+                {
                     if (currentLocation.statusId === statusTypes.FREE &&
-                        (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON || currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON || currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)) {
+                        (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON ||
+                            currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON ||
+                            currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON))
+                    {
                         this.database.location.findOne({where: {id: currentLocation.parentId}}).then((parentLocation) =>
                         {
                             if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
@@ -146,8 +150,50 @@ export class LocationController
                     });
                 }
 
+                else if(locationId === 4001 || locationId === 6001)
+                    return this.unlockTimelineAndSection(userId, locationId);
+
                 else
                     return this.unlockTimeline(userId, locationId);
+            });
+        });
+    }
+
+    private unlockTimelineAndSection(userId: string, locationId: number)
+    {
+        return this.database.activity.findOrCreate({
+            where: {userId, locationId},
+            defaults: {locked: false}
+        }).spread((activity, wasCreated) => {
+            if(!wasCreated && activity.locked)
+            {
+                activity.locked = false;
+                activity.save();
+            }
+        }).then( () =>
+        {
+            let sectionId = 0;
+            switch (locationId)
+            {
+                case 4001: sectionId = 4000; break;
+                case 6001: sectionId = 6000; break;
+            }
+
+            return this.database.activity.findOrCreate({
+                where: {userId, locationId: sectionId},
+                defaults: {locked: false}
+            }).spread((sectAct, wasCreated) => {
+                if(!wasCreated && sectAct.locked)
+                {
+                    sectAct.locked = false;
+                    sectAct.save();
+                }
+            }).then(() => {
+                return this.database.user.findByPk(userId).then( user => {
+                    return this.getLookupTable(user).then((locations) => {
+                        return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+                    });
+                });
             });
         });
     }
