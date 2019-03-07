@@ -58,7 +58,7 @@ export class DataFactory {
     }
 
     private initSettings(): void {
-        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'MEETeUX', wifiPassword: 'PasswortOderSo'}}).spread((user, created) =>
+        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'DesKaisersNeuerHeiliger', wifiPassword: 'maximilian'}}).spread((user, created) =>
         {
             if(!created)
             {
@@ -802,7 +802,46 @@ export class DataFactory {
                     contentLanguageId: contentLanguages.GER,
                     locationId: 6000,
                     storyTellerId: storytTellers.MAXIMILIAN
-                })
+                }),
+                this._connection.content.create({
+                    content: 'Untertan, für uns ist es nun an der Zeit zu gehen. Du wirst deiner Pflicht gehorsam nachkommen, gebührend ' +
+                        'um deinen Herrscher zu trauern – so befehlen wir es dir! Boten werden unseren Tod im ganzen Land verkünden und ' +
+                        'auch Lieder wird es geben. Unser Begräbnis soll bescheiden sein: Keinen Prunk wollen wir an unserem toten Körper ' +
+                        'sehen, sondern Asche, Kalk und Erde. Brecht unsere Zähne aus und schert uns das Haar! Unser Tod soll ein ' +
+                        'christliches Exempel sein. Wir haben keine Angst mehr davor, mit dem letzten Glockenton zu verschwinden: ' +
+                        'Für unser Andenken in der Nachwelt haben wir gesorgt!',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.GER,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.MAXIMILIAN
+                }),
+                this._connection.content.create({
+                    content: 'Das Thema Sterben war im Mittelalter geprägt von der christlichen Weltanschauung. Der Lebensstil ' +
+                        'einer Person bestimmte, ob diese nach dem Tod in den Himmel oder in die Hölle kam. Als Vorstufe des Himmels ' +
+                        'hatten die meisten eine gewisse Zeit zur Buße der Sünden im Fegefeuer zu verbringen. Personen tätigten zu ' +
+                        'Lebzeiten Stiftungen an geistliche Institutionen, welche im Gegenzug für deren Seelenheil beteten. Denn Gebete ' +
+                        'und Erinnerung an einen Verstorbenen verkürzten dessen Zeit im Fegefeuer. Als „guter Tod“ galt übrigens ein ' +
+                        'wohl vorbereiteter Tod, „schlecht“ hingegen war ein plötzlicher Tod.',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.GER,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.SUNTHAYM
+                }),
+                this._connection.content.create({
+                    content: 'Ich habe kürzlich eine Geschichte über Maximilian I. gehört: Er soll in seinen letzten Jahren ' +
+                        'stets eine Kiste oder einen Sarg auf seinen Reisen mitgeführt haben. In diesem Sarg sollen sich Bücher ' +
+                        'befunden haben – etwa der „Theuerdank“, der ja im Grunde die Geschichte des Kaisers erzählt. Als der Kaiser ' +
+                        'starb, nahm man die Bücher aus der Kiste heraus und legte den Leichnam hinein. Die Bücher mit der Geschichte ' +
+                        'Maximilians wurden verbreitet. So endete die Geschichte des kaiserlichen Körpers, jene der kaiserlichen Taten ' +
+                        'wurde aber in die Welt hinausgetragen. Skurril, findest du nicht?',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.GER,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.TILL
+                }),
             ]);
         });
     }
@@ -1460,6 +1499,45 @@ export class DataFactory {
                     contentLanguageId: contentLanguages.ENG,
                     locationId: 6000,
                     storyTellerId: storytTellers.MAXIMILIAN
+                }),
+                this._connection.content.create({
+                    content: 'Subject, it is time for us to leave this mortal world. You are going to mourn your emperor – ' +
+                        'this is our command! Messengers are going to spread the word of our death to the world and minstrels ' +
+                        'are going to sing songs about our greatness! Our funeral shall be modest: no splendour should touch our ' +
+                        'dead body, only ashes, lime and dirt. Break our teeth and crop our hair! Our death shall set an example of ' +
+                        'Christianity. We are not anymore afraid to be forgotten with the last chime: we made proper provisions to ' +
+                        'leave our own memory to posterity.',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.ENG,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.MAXIMILIAN
+                }),
+                this._connection.content.create({
+                    content: 'In the Middle Ages, the awareness of dying was characterized by Christian philosophy. How people spent ' +
+                        'their lives determined whether they went to heaven or hell. Before going to heaven, most people had to spend ' +
+                        'some time in purgatory to atone for their sins. During their lifetimes, people gave money or other gifts to ' +
+                        'clerical and monastic institutions. In return, the clergymen prayed for the salvation of these people. Prayers ' +
+                        'and commemoration shortened the time someone had to spend in purgatory. A “good death” had to be well prepared ' +
+                        'whereas a sudden death was regarded as a “bad death”.',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.ENG,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.SUNTHAYM
+                }),
+                this._connection.content.create({
+                    content: 'I’ve recently heard a story about Maximilian: rumor has it that in the last years, he’s always ' +
+                        'travelled with a large wooden box or coffin. They say that this coffin contained books – for example ' +
+                        'the book “Theuerdank”, which tells the story of the emperor’s life. Once he had died, his entourage took ' +
+                        'the books out of the coffin and placed his corpse inside. They distributed the books that tell the emperor’s ' +
+                        'story. So, the life of the emperor’s body had ended, but his deeds came to life in the books and stories ' +
+                        'about him. Peculiar, isn’t it?',
+                    order: 1,
+                    contentTypeId: contentTypes.TEXT,
+                    contentLanguageId: contentLanguages.ENG,
+                    locationId: 6001,
+                    storyTellerId: storytTellers.TILL
                 })
             ]);
         });
@@ -1534,7 +1612,7 @@ export class DataFactory {
                 this._connection.location.create({
                     id: 1000,
                     description: 'Intro to section 1:',
-                    titleGER: "Des Kaiser neuer Heiliger",
+                    titleGER: "Des Kaisers neuer Heiliger",
                     titleENG: "The Emperor's new Saint",
                     locationTypeId: locationTypes.DOOR,
                     statusId: 1,
@@ -1916,6 +1994,22 @@ export class DataFactory {
                     startDate: 1506,
                     endDate: 1507,
                     unlockCoa: true
+                }),
+                this._connection.location.create({
+                    id: 6001,
+                    parentId: 60,
+                    titleGER: 'Tod und Erinnerung',
+                    titleENG: 'Death and legacy',
+                    description: 'passive exhibit',
+                    contentURL: 'passive',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.PASSIVE_EXHIBIT,
+                    contentTypeId: 1,
+                    statusId: 1,
+                    showInTimeline: true,
+                    startDate: 1519,
+                    endDate: 1519,
+                    unlockCoa: false
                 })
             ]);
         });
