@@ -61,6 +61,17 @@ export class LocationController
         });
     }
 
+    public sendLookupTable(data: any): any
+    {
+        const userId: string = data.user;
+
+        return this.database.user.findByPk(userId).then( user => {
+            return this.getLookupTable(user).then((locations) => {
+                return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+            });
+        });
+    }
+
     public registerLocation(data: any): any
     {
         const userId: number = data.user;
@@ -97,7 +108,7 @@ export class LocationController
                             if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
                             {
                                 parentLocation.currentSeat += 1;
-                                parentLocation.save();
+                                parentLocation.save().then(() => {this.updateActiveLocationStatus(currentLocation.parentId);});
                                 if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON)
                                     this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
 
@@ -110,8 +121,6 @@ export class LocationController
                                             this.websocket.to(parentLocation.socketId).emit('odJoined', {location: currentLocation, user});
                                     });
                                 }
-
-                                this.updateActiveLocationStatus(currentLocation.parentId);
                             }
                         });
                     }
@@ -199,7 +208,7 @@ export class LocationController
                 this.registerTimelineUpdate({user: user.id, location: 502});
                 this.registerTimelineUpdate({user: user.id, location: 6001});
 
-                return this.getLookupTable(user);
+                return {data: null, message: new Message(SUCCESS_OK, "Activity updated successfully")};
             });
         });
     }
@@ -338,9 +347,7 @@ export class LocationController
                     if(parLocation.currentSeat < 0)
                         parLocation.currentSeat = 0;
                     
-                    parLocation.save();
-
-                    this.updateActiveLocationStatus(parentLocation);
+                    parLocation.save().then(() => {this.updateActiveLocationStatus(parentLocation);});
                     if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
                         this.websocket.to(parLocation.socketId).emit('odLeft', {location});
                 });
@@ -424,8 +431,11 @@ export class LocationController
     {
         return this.database.location.findByPk(locationId).then( (location) =>
         {
-            if(location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_AT || location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT)
+            if(location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_AT ||
+                location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT ||
+                location.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
             {
+                console.log("Current seat: " + location.currentSeat + " Max seat: " + location.maxSeat);
                 if(location.currentSeat < location.maxSeat && location.statusId === statusTypes.OCCUPIED)
                 {
                     location.statusId = statusTypes.FREE;

@@ -416,6 +416,14 @@ export class WebSocket
             {
                 this.locationController.updateLocationSeat(data);
             });
+
+            socket.on('getLookupTable', (data)  =>
+            {
+                this.locationController.sendLookupTable(data).then(result =>
+                {
+                    socket.emit('getLookupTableResult', result);
+                });
+            });
         });
     }
 
