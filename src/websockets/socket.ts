@@ -238,6 +238,14 @@ export class WebSocket
                 });
             });
 
+            socket.on('unlockAllTimelineLocations', (data) =>
+            {
+                this.locationController.unlockAllTimelineLocations(data).then((result) =>
+                {
+                    socket.emit('unlockAllTimelineLocationsResult', result);
+                });
+            });
+
             socket.on('registerLocationLike', (data) =>
             {
                 this.locationController.updateLocationLike(data).then( (message) =>

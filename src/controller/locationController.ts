@@ -159,6 +159,51 @@ export class LocationController
         });
     }
 
+    public unlockAllTimelineLocations(data: any): any
+    {
+        const userId: string = data.user;
+
+        return this.database.sequelize.transaction( (t1) =>
+        {
+            return this.database.user.findByPk(userId).then( (user) =>
+            {
+                if(!user) return;
+
+                // unlock all locations in timeline
+                this.registerTimelineUpdate({user: user.id, location: 1000}).then( () => {
+                    this.registerTimelineUpdate({user: user.id, location: 101}).then( () => {
+                        this.registerTimelineUpdate({user: user.id, location: 102}).then( () => {
+                            this.registerTimelineUpdate({user: user.id, location: 2000}).then(() => {
+                                this.registerTimelineUpdate({user: user.id, location: 2001});
+                            });
+                        });
+                    });
+                });
+                this.registerTimelineUpdate({user: user.id, location: 2002});
+                this.registerTimelineUpdate({user: user.id, location: 2003});
+                this.registerTimelineUpdate({user: user.id, location: 2004});
+                this.registerTimelineUpdate({user: user.id, location: 3000});
+                this.registerTimelineUpdate({user: user.id, location: 301});
+                this.registerTimelineUpdate({user: user.id, location: 4001});
+                this.registerTimelineUpdate({user: user.id, location: 402}).then(() => {
+                    this.registerTimelineUpdate({user: user.id, location: 403}).then(() => {
+                        this.registerTimelineUpdate({user: user.id, location: 4004}).then(() => {
+                            this.registerTimelineUpdate({user: user.id, location: 5000}).then(() => {
+                                this.registerTimelineUpdate({user: user.id, location: 501}).then(() => {
+                                    this.registerTimelineUpdate({user: user.id, location: 5001});
+                                });
+                            });
+                        });
+                    });
+                });
+                this.registerTimelineUpdate({user: user.id, location: 502});
+                this.registerTimelineUpdate({user: user.id, location: 6001});
+
+                return this.getLookupTable(user);
+            });
+        });
+    }
+
     private unlockTimelineAndSection(userId: string, locationId: number)
     {
         return this.database.activity.findOrCreate({

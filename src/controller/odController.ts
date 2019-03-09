@@ -327,7 +327,7 @@ export class OdController {
         this.database.user.findByPk(od.id).then( (user) =>
         {
             if(!user) return;
-            
+
            const currUserLoc = user.currentLocation;
            this.database.location.findByPk(currUserLoc).then((location) => {
                if (!location) return;
