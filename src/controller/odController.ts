@@ -260,10 +260,6 @@ export class OdController {
             if (!user)
                 throw new Error('User not found');
 
-            const valid = bcrypt.compareSync(password, user.password);
-
-            if(!valid) return {data: null, message: new Message(OD_NOT_UPDATED, "Could not update user data!")};
-
             if(username && username !== '')
                 user.name = username;
 
@@ -271,7 +267,12 @@ export class OdController {
                 user.email = email;
 
             if(newPassword && newPassword !== '')
+            {
+                const valid = bcrypt.compareSync(password, user.password);
+                if(!valid) return {data: null, message: new Message(OD_NOT_UPDATED, "Could not update user data!")};
+
                 user.password = this.hashPassword(newPassword);
+            }
 
             return user.save().then( () =>
             {
