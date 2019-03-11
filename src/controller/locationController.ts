@@ -159,7 +159,7 @@ export class LocationController
                     });
                 }
 
-                else if(locationId === 4001 || locationId === 6001)
+                else if(locationId === 2001 || locationId === 4001 || locationId === 6001)
                     return this.unlockTimelineAndSection(userId, locationId);
 
                 else
@@ -229,6 +229,7 @@ export class LocationController
             let sectionId = 0;
             switch (locationId)
             {
+                case 2001: sectionId = 2000; break;
                 case 4001: sectionId = 4000; break;
                 case 6001: sectionId = 6000; break;
             }
@@ -435,7 +436,6 @@ export class LocationController
                 location.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_AT ||
                 location.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
             {
-                console.log("Current seat: " + location.currentSeat + " Max seat: " + location.maxSeat);
                 if(location.currentSeat < location.maxSeat && location.statusId === statusTypes.OCCUPIED)
                 {
                     location.statusId = statusTypes.FREE;

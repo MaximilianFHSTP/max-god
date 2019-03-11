@@ -2028,14 +2028,6 @@ export class DataFactory {
                     nextLocation: 102
                 }),
                 this._connection.neighbor.create({
-                    prevLocation: 102,
-                    nextLocation: 2000
-                }),
-                this._connection.neighbor.create({
-                    prevLocation: 2000,
-                    nextLocation: 2001
-                }),
-                this._connection.neighbor.create({
                     prevLocation: 402,
                     nextLocation: 403
                 }),

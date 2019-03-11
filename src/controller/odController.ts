@@ -5,29 +5,33 @@ import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
 import * as locationTypes from '../config/locationTypes';
 import * as statusTypes from '../config/statusTypes';
+import * as bcrypt from 'bcrypt';
+import Logger from "../config/logger";
 
 export class OdController {
-    private database: Connection;
+    private _database: Connection;
+    private _logger: Logger;
 
     constructor() {
-        this.database = Connection.getInstance();
+        this._database = Connection.getInstance();
+        this._logger = Logger.getInstance();
     }
 
     private getLookupTable(user): any {
-        return this.database.location.findAll({
+        return this._database.location.findAll({
             include: [
                 {
-                    model: this.database.content,
-                    where: {contentLanguageId: {[this.database.sequelize.Op.or]: [user.contentLanguageId, contentLanguages.ALL]}},
+                    model: this._database.content,
+                    where: {contentLanguageId: {[this._database.sequelize.Op.or]: [user.contentLanguageId, contentLanguages.ALL]}},
                     required: false
                 }
             ],
             order: [
                 ['id', 'ASC'],
-                [this.database.content, 'order', 'ASC']
+                [this._database.content, 'order', 'ASC']
             ]
         }).then((locations) => {
-            return this.database.activity.findAll({where: {userId: user.id}}).then((activities) => {
+            return this._database.activity.findAll({where: {userId: user.id}}).then((activities) => {
                 for (let loc of locations) {
                     // default values must be set if no activity exists yet
                     loc.dataValues.liked = false;
@@ -56,11 +60,13 @@ export class OdController {
         const language: number = data.language;
         //const ipAddress: string = data.ipAddress;
 
-        return this.database.sequelize.transaction((t1) => {
-            return this.database.user.create({
+        const hash = this.hashPassword(pwd);
+
+        return this._database.sequelize.transaction((t1) => {
+            return this._database.user.create({
                 name: identifier,
                 email: email,
-                password: pwd,
+                password: hash,
                 isGuest: false,
                 deviceAddress: deviceAddress,
                 deviceOS: deviceOS,
@@ -71,15 +77,15 @@ export class OdController {
                 socketId
             }).then((user) =>
             {
-                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+                this._database.coaPart.findAll({where: {id: {[this._database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
                 {
                     for (let part of parts)
                     {
                         if(part.id === 10)
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
 
                         else
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id});
                     }
                 });
 
@@ -97,7 +103,7 @@ export class OdController {
     }
 
     public registerGuest(data: any, socketId: any): any {
-        const next = this.database.getNextGuestNumber();
+        const next = this._database.getNextGuestNumber();
 
         const identifier: string = 'Guest' + next;
         const deviceAddress: string = data.deviceAddress;
@@ -109,8 +115,8 @@ export class OdController {
 
         // console.log("id: %s language: %d", identifier, language);
 
-        return this.database.sequelize.transaction((t1) => {
-            return this.database.user.create({
+        return this._database.sequelize.transaction((t1) => {
+            return this._database.user.create({
                 name: identifier,
                 deviceAddress: deviceAddress,
                 deviceOS: deviceOS,
@@ -121,15 +127,15 @@ export class OdController {
                 socketId
             }).then((user) => {
 
-                this.database.coaPart.findAll({where: {id: {[this.database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+                this._database.coaPart.findAll({where: {id: {[this._database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
                 {
                     for (let part of parts)
                     {
                         if(part.id === 10)
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
 
                         else
-                            this.database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id});
                     }
                 });
 
@@ -146,13 +152,13 @@ export class OdController {
     }
 
     public findUser(identifier: any): any {
-        return this.database.user.findByPk(identifier).then(user => {
+        return this._database.user.findByPk(identifier).then(user => {
             return user;
         });
     }
 
     public autoLoginUser(identifier: any, socketId: any): any {
-        return this.database.user.findByPk(identifier).then(user => {
+        return this._database.user.findByPk(identifier).then(user => {
             if (!user)
                 throw new Error('User not found');
 
@@ -175,9 +181,15 @@ export class OdController {
         const email = data.email;
         const password = data.password;
 
-        if (user) {
-            return this.database.user.findOne({where: {name: user, password}}).then((user) => {
-                if (user) {
+        if (user)
+        {
+            return this._database.user.findOne({where: {name: user}}).then((user) =>
+            {
+                if (user)
+                {
+                    const valid = bcrypt.compareSync(password, user.password);
+                    if(!valid) return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
+
                     user.socketId = socketId;
                     user.save();
 
@@ -187,14 +199,15 @@ export class OdController {
                             message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
                         };
                     });
-                } else {
+                }
+                else {
                     return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
                 }
             }).catch(() => {
                 return {data: null, message: new Message(LOGIN_FAILED, "User not found!")}
             });
         } else {
-            return this.database.user.findOne({where: {email, password}}).then((user) => {
+            return this._database.user.findOne({where: {email, password}}).then((user) => {
                 if (user) {
                     return this.getLookupTable(user).then((locations) => {
                         return {
@@ -215,7 +228,7 @@ export class OdController {
     {
         const id = data.user;
         const lang = data.language;
-        return this.database.user.findByPk(id).then(user =>
+        return this._database.user.findByPk(id).then(user =>
         {
             if (!user)
                 throw new Error('User not found');
@@ -242,10 +255,14 @@ export class OdController {
         const password = data.password;
         const newPassword = data.newPassword;
 
-        return this.database.user.findByPk(id).then(user =>
+        return this._database.user.findByPk(id).then(user =>
         {
             if (!user)
                 throw new Error('User not found');
+
+            const valid = bcrypt.compareSync(password, user.password);
+
+            if(!valid) return {data: null, message: new Message(OD_NOT_UPDATED, "Could not update user data!")};
 
             if(username && username !== '')
                 user.name = username;
@@ -253,12 +270,13 @@ export class OdController {
             if(email && email !== '')
                 user.email = email;
 
-            if(password && password === user.password && newPassword && newPassword !== user.password && newPassword !== '')
-                user.password = newPassword;
+            if(newPassword && newPassword !== '')
+                user.password = this.hashPassword(newPassword);
 
-            user.save();
-
-            return {data: {user}, message: new Message(SUCCESS_UPDATED, "Updated user data successfully!")};
+            return user.save().then( () =>
+            {
+                return {data: {user}, message: new Message(SUCCESS_UPDATED, "Updated user data successfully!")};
+            });
         }).catch(() => {
             return {data: null, message: new Message(OD_NOT_UPDATED, "Could not update user data!")}
         });
@@ -271,7 +289,7 @@ export class OdController {
         const email = data.email;
         const password = data.password;
 
-        return this.database.user.findByPk(id).then(user =>
+        return this._database.user.findByPk(id).then(user =>
         {
             if (!user)
                 throw new Error('User not found');
@@ -283,13 +301,13 @@ export class OdController {
                 user.email = email;
 
             if(password && password !== '')
-                user.password = password;
+                user.password = this.hashPassword(password);
 
             user.isGuest = false;
 
-            user.save();
-
-            return {data: {user}, message: new Message(SUCCESS_UPDATED, "Updated user data successfully!")};
+            return user.save().then(() => {
+                return {data: {user}, message: new Message(SUCCESS_UPDATED, "Updated user data successfully!")};
+            });
         }).catch(() => {
             return {data: null, message: new Message(OD_NOT_UPDATED, "Could not update user data!")}
         });
@@ -297,17 +315,17 @@ export class OdController {
 
     public deleteOD(userId: number)
     {
-        this.database.user.destroy({where: {id: userId}});
+        this._database.user.destroy({where: {id: userId}});
     }
 
     public async checkUserNameExists(name: String): Promise<boolean> {
-        return this.database.user.count({where: {name: name}}).then(count => {
+        return this._database.user.count({where: {name: name}}).then(count => {
             return count != 0;
         });
     }
 
     public checkEmailExists(email: String): any {
-        return this.database.user.count({where: {email}}).then(count => {
+        return this._database.user.count({where: {email}}).then(count => {
             return count != 0;
         });
     }
@@ -324,12 +342,12 @@ export class OdController {
 
     public resetUserLocation(od): void
     {
-        this.database.user.findByPk(od.id).then( (user) =>
+        this._database.user.findByPk(od.id).then( (user) =>
         {
             if(!user) return;
 
            const currUserLoc = user.currentLocation;
-           this.database.location.findByPk(currUserLoc).then((location) => {
+           this._database.location.findByPk(currUserLoc).then((location) => {
                if (!location) return;
 
                const locType = location.locationTypeId;
@@ -343,7 +361,7 @@ export class OdController {
 
               if(isNotifyOrActiveOn || locType === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON)
               {
-                  this.database.location.findByPk(location.parentId).then(parentLoc =>
+                  this._database.location.findByPk(location.parentId).then(parentLoc =>
                   {
                       if(parentLoc)
                       {
@@ -357,7 +375,7 @@ export class OdController {
                   });
               }
 
-              this.database.location.findOne({where: {isStartPoint: true}}).then(startLocation =>
+              this._database.location.findOne({where: {isStartPoint: true}}).then(startLocation =>
               {
                  if(startLocation)
                     user.currentLocation = startLocation.id;
@@ -366,5 +384,10 @@ export class OdController {
               });
            });
         });
+    }
+
+    private hashPassword(password: string): string
+    {
+        return bcrypt.hashSync(password, 10);
     }
 }

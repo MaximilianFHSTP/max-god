@@ -1,7 +1,6 @@
 import * as Sequelize from 'sequelize';
 import * as CLS from 'continuation-local-storage';
 import {DataFactory} from "./dataFactory";
-import * as Winston from 'winston';
 import Logger from "../config/logger";
 
 require('dotenv').config();
