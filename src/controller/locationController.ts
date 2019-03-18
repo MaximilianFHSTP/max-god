@@ -159,7 +159,7 @@ export class LocationController
                     });
                 }
 
-                else if(locationId === 2001 || locationId === 4001 || locationId === 6001)
+                else if(this.checkUnlockTimelineAndSection(locationId))
                     return this.unlockTimelineAndSection(userId, locationId);
 
                 else
@@ -213,6 +213,23 @@ export class LocationController
         });
     }
 
+    private checkUnlockTimelineAndSection(locationId: number): boolean
+    {
+        let check = false;
+
+        switch(locationId)
+        {
+            case 2001:
+            case 301:
+            case 4001:
+            case 501:
+            case 6001:
+                check = true;
+        }
+
+        return check;
+    }
+
     private unlockTimelineAndSection(userId: string, locationId: number)
     {
         return this.database.activity.findOrCreate({
@@ -226,13 +243,10 @@ export class LocationController
             }
         }).then( () =>
         {
-            let sectionId = 0;
-            switch (locationId)
-            {
-                case 2001: sectionId = 2000; break;
-                case 4001: sectionId = 4000; break;
-                case 6001: sectionId = 6000; break;
-            }
+            // get first digit of locationId (e.g. 501 => 5
+            let sectionIdString = String(locationId).charAt(0);
+            // multiply with 1000 to get the sectionId (e.g. 5000)
+            const sectionId = Number(sectionIdString)*1000;
 
             return this.database.activity.findOrCreate({
                 where: {userId, locationId: sectionId},

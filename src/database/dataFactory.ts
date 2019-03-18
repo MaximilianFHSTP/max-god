@@ -1790,7 +1790,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
-                    maxSeat: 15,
+                    maxSeat: 999,
                     showInTimeline: true,
                     startDate: 1459,
                     endDate: 1519,
@@ -2037,10 +2037,6 @@ export class DataFactory {
                 }),
                 this._connection.neighbor.create({
                     prevLocation: 4004,
-                    nextLocation: 5000
-                }),
-                this._connection.neighbor.create({
-                    prevLocation: 5000,
                     nextLocation: 501
                 }),
                 this._connection.neighbor.create({
