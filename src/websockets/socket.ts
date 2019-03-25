@@ -78,8 +78,7 @@ export class WebSocket
                     {
                         if(err)
                         {
-                            this._logger.error('JWT Error - Event: ' + event);
-                            this._logger.error(err);
+                            this._logger.error('JWT Error - Event: ' + event + ' Error: ' + err);
                             return next(new Error('Invalid token Error'));
                         }
 
@@ -146,6 +145,7 @@ export class WebSocket
                     if(err || !decoded)
                     {
                         socket.emit('autoLoginODResult', {data: null, message: new Message(INVALID_TOKEN, "Invalid token!")});
+                        this._logger.error('Autologin token error: ' + err);
                         return;
                     }
 
@@ -406,6 +406,7 @@ export class WebSocket
 
             socket.on('unlockCoaPartFromExhibit', (data) =>
             {
+                this._logger.info(JSON.stringify(data));
                 this.coaController.unlockCoaPart(data).then(result =>
                 {
                     socket.emit('unlockCoaPartFromExhibitResult', result);

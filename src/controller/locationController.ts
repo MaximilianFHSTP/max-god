@@ -139,6 +139,10 @@ export class LocationController
         const userId: string = data.user;
         const locationId: number = data.location;
 
+        if(!userId || !locationId)
+            return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not register timeline update. User or location id not provided!")};
+
+
         return this.database.sequelize.transaction( (t1) =>
         {
             return this.database.neighbor.findOne({where: {nextLocation: locationId}}).then((neighbor) =>
@@ -232,6 +236,9 @@ export class LocationController
 
     private unlockTimelineAndSection(userId: string, locationId: number)
     {
+        if(!userId || !locationId)
+            return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
+
         return this.database.activity.findOrCreate({
             where: {userId, locationId},
             defaults: {locked: false}
@@ -269,6 +276,9 @@ export class LocationController
 
     private unlockTimeline(userId: string, locationId: number)
     {
+        if(!userId || !locationId)
+            return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
+
         return this.database.activity.findOrCreate({
             where: {userId, locationId},
             defaults: {locked: false}

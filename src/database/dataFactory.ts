@@ -1279,10 +1279,11 @@ export class DataFactory {
                     year: 1477
                 }),
                 this._connection.content.create({
-                    content: 'The monastery of Klosterneuburg had a new saint to promote and the provost took good care of it. The first to be Jakob ' +
-                        'Paperl elected on the 1st July 1485. He inspired us with his conscientious work of keeping Leopold’s memory alive. Since his ' +
-                        'canonization, the missals note the 15th November as Saint Leopold’s celebration day, paintings, manuscripts and prints were made ' +
-                        'in his honor. Our commited erudite and genealogist Ladislaus Sunthaym produced a family tree. Listen to what he has to say!',
+                    content: 'The monastery of Klosterneuburg had a new saint to promote and the provost took good care of it. The ' +
+                        'first to be Jakob Paperl elected on the 1st July 1485. He inspired us with his conscientious work of keeping ' +
+                        'Leopold’s memory alive. Since his canonisation, the missals note the 15th November as Saint Leopold’s celebration ' +
+                        'day. Paintings, manuscripts and prints were made in his honor. Our committed erudite and genealogist Ladislaus ' +
+                        'Sunthaym produced a family tree. Listen to what he has to say!',
                     order: 1,
                     contentTypeId: contentTypes.TEXT,
                     contentLanguageId: contentLanguages.ENG,
@@ -1290,11 +1291,7 @@ export class DataFactory {
                     storyTellerId: storytTellers.MAXIMILIAN
                 }),
                 this._connection.content.create({
-                    content: 'After Leopold’s canonization, I received the order to conduct a genealogical research on him. To do so I had to travel from one ' +
-                        'monastery to the next to consult and evaluate the available historical records. Scientific credibility is an unshakeable premise but I ' +
-                        'just could not solve all of the puzzles. It was very challenging to find records regarding spouses and daughters and some relatives of ' +
-                        'the margrave have to remain without a name. Of course I dedicated my hard work and findings to someone special. Who that is, I will tell ' +
-                        'you shortly.',
+                    content: 'After Leopold’s canonisation, I received the order to conduct a genealogical research on him. To do so I had to travel from one monastery to the next to consult and evaluate the available historical records. Scientific credibility is an unshakeable premise, but I just could not solve all of the puzzles. It was very challenging to find records regarding spouses and daughters and some relatives of the margrave have to remain without a name. Of course, I dedicated my hard work and findings to someone special. Who that is, I will tell you shortly.',
                     order: 1,
                     contentTypeId: contentTypes.TEXT,
                     contentLanguageId: contentLanguages.ENG,
@@ -1302,12 +1299,7 @@ export class DataFactory {
                     storyTellerId: storytTellers.SUNTHAYM
                 }),
                 this._connection.content.create({
-                    content: 'Good old Sunthaym worked himself to the bone to dust off the Babenberg’s genealogy. ' +
-                        'Way over the top, if you ask me. Nobody is ever going to read that, even more so if it is written ' +
-                        'on parchment and the letters are minuscule. The panels that were made to illustrate the findings of Sunthaym ' +
-                        'were said to be kept behind bars – To read that you had to have eagle eyes. Talking of eagles: did you notice the funny ' +
-                        'animals around the tendrils? They are entertaining! Look there is an elephant, but what is it wearing? By the way: all the ' +
-                        'Sunthaym panels can be seen in the upper parts of the exhibition.',
+                    content: 'Good old Sunthaym worked himself to the bone to dust off the Babenberg’s genealogy. Way over the top, if you ask me. Nobody is ever going to read that, even more so if it is written on parchment and the letters are minuscule. The tablets that were made to illustrate the findings of Sunthaym were said to be kept behind bars – to read that you had to have eagle eyes. Talking of eagles: did you notice the funny animals around the tendrils? They are entertaining! Look there is an elephant, but what is it wearing? By the way: all the “Sunthaym tablets” can be seen in the upper parts of the exhibition.',
                     order: 1,
                     contentTypeId: contentTypes.TEXT,
                     contentLanguageId: contentLanguages.ENG,
@@ -2036,6 +2028,10 @@ export class DataFactory {
                     nextLocation: 4004
                 }),
                 this._connection.neighbor.create({
+                    prevLocation: 403,
+                    nextLocation: 501
+                }),
+                this._connection.neighbor.create({
                     prevLocation: 4004,
                     nextLocation: 501
                 }),
@@ -2080,15 +2076,15 @@ export class DataFactory {
                     name: 'Eagle',
                     image: 'Emblem2',
                     taskENG: 'Switch to Sunthaym’s perspective on any exhibit.',
-                    taskGER: 'Wechsle zu Sunthayms Geschichte in irgendeinem Ausstellungsstück.'
+                    taskGER: 'Wechsle zu Sunthayms Sicht bei einem beliebigen Objekt.'
                 }),
                 this._connection.coaPart.create({
                     id: 21,
                     coaTypeId: 2,
                     name: 'Lion',
                     image: 'Emblem5',
-                    taskENG: 'Have 5 questions right in the Weißkunig game.',
-                    taskGER: 'Habe 5 Fragen richtig in dem Weißlunig Quiz.'
+                    taskENG: 'Have 5 questions right in the Weißkunig Game.',
+                    taskGER: 'Beantworte 5 Fragen im Weißkunig Quiz richtig.'
                 }),
                 this._connection.coaPart.create({
                     id: 22,
@@ -2096,7 +2092,7 @@ export class DataFactory {
                     name: 'Dragon',
                     image: 'Emblem1',
                     taskENG: 'Create the legend of Klosterneuburg in the Legend Game.',
-                    taskGER: 'Erstellen Sie die Legende von Klosterneuburg in dem Legendenspiel.'
+                    taskGER: 'Erstelle die Legende von Klosterneuburg im Legendenspiel.'
                 }),
                 this._connection.coaPart.create({
                     id: 23,
@@ -2104,31 +2100,31 @@ export class DataFactory {
                     name: 'Horse',
                     image: 'Emblem6',
                     taskENG: 'Participate in the Legend Game.',
-                    taskGER: 'Nehmen Sie am Legendenspiel teil.'
+                    taskGER: 'Spiele das Legendenspiel.'
                 }),
                 this._connection.coaPart.create({
                     id: 24,
                     coaTypeId: 2,
                     name: 'Gryphon',
                     image: 'Emblem3',
-                    taskENG: 'Attend the audience (unlock all exhibits until throne).',
-                    taskGER: 'Nehmen Sie an der Audienz teil (Besuchen Sie alle Ausstellungsstücke).'
+                    taskENG: 'Attend the audience. Unlock all exhibits until throne.',
+                    taskGER: 'Nimm an der Audienz teil. Schalte alle Objekte bis zum Thron frei.'
                 }),
                 this._connection.coaPart.create({
                     id: 25,
                     coaTypeId: 2,
                     name: 'Unicorn',
                     image: 'Emblem4',
-                    taskENG: 'Participate in the GenVis',
-                    taskGER: 'Nehmen sie an dem GenVis teil.'
+                    taskENG: 'Participate in the Babenberg Family Tree.',
+                    taskGER: 'Interagiere mit dem Stammbaum der Babenberger.'
                 }),
                 this._connection.coaPart.create({
                     id: 30,
                     coaTypeId: 3,
                     name: 'Side-facing knight helmet',
                     image: 'Helmet1',
-                    taskENG: 'Explore the Sunthaym Panels with AR.',
-                    taskGER: 'Entdecken Sie die Sunthaym-Panels mit AR'
+                    taskENG: 'Explore the Sunthaym Panels with Augemented Reality.',
+                    taskGER: 'Entdecke die Sunthaym-Panels mit Augmented Reality.'
                 }),
                 this._connection.coaPart.create({
                     id: 31,
@@ -2136,15 +2132,15 @@ export class DataFactory {
                     name: 'Front-facing helmet',
                     image: 'Helmet2',
                     taskENG: 'Create any legend in the Legend Game.',
-                    taskGER: 'Erstellen sie eine beliebige Legende im Legendenspiel'
+                    taskGER: 'Erstelle eine beliebige Legende im Legendenspiel.'
                 }),
                 this._connection.coaPart.create({
                     id: 32,
                     coaTypeId: 3,
                     name: 'Decorated helmet',
                     image: 'Helmet3',
-                    taskENG: 'Have 10 questions right in the Weißkunig game.',
-                    taskGER: 'Beantworten Sie 10 Fragen richtig im Weißkunig Quiz.'
+                    taskENG: 'Have 10 questions right in the Weißkunig Game.',
+                    taskGER: 'Beantworte 10 Fragen im Weißkunig Quiz richtig.'
                 }),
                 this._connection.coaPart.create({
                     id: 33,
@@ -2152,15 +2148,15 @@ export class DataFactory {
                     name: 'Crowned helmet',
                     image: 'Helmet4',
                     taskENG: 'Learn more about Maximilian’s death on the upper floor.',
-                    taskGER: 'Erfahre mehr über Maximilians Tod im oberen Stockwerk'
+                    taskGER: 'Erfahre mehr über Maximilians Tod im oberen Stockwerk.'
                 }),
                 this._connection.coaPart.create({
                     id: 40,
                     coaTypeId: 4,
                     name: 'Crossed swords',
                     image: 'Mantle1',
-                    taskENG: 'Explore the shrine with AR.',
-                    taskGER: 'Erkunde den Schrein mit AR.'
+                    taskENG: 'Explore the shrine with Augmented Reality.',
+                    taskGER: 'Erkunde den Schrein mit Augmented Reality.'
                 }),
                 this._connection.coaPart.create({
                     id: 41,
@@ -2168,23 +2164,23 @@ export class DataFactory {
                     name: 'Crossed axes',
                     image: 'Mantle2',
                     taskENG: 'Switch to Till’s perspective on any exhibit.',
-                    taskGER: 'Schauen Sie sich Tills Geschichte an bei einem beliebigen Ausstellungsstück.'
+                    taskGER: 'Wechsle zu Tills Sicht bei einem beliebigen Objekt.'
                 }),
                 this._connection.coaPart.create({
                     id: 42,
                     coaTypeId: 4,
                     name: 'Ornamental mantling',
                     image: 'Mantle3',
-                    taskENG: 'Participating in the Weißkunig game.',
-                    taskGER: 'Nehmen Sie am Weißkunigspiel teil.'
+                    taskENG: 'Participating in the Weißkunig Game.',
+                    taskGER: 'Nimm am Weißkunig Quiz teil.'
                 }),
                 this._connection.coaPart.create({
                     id: 43,
                     coaTypeId: 4,
                     name: 'Wings',
                     image: 'Mantle4',
-                    taskENG: 'Find one special person in the GenVis.',
-                    taskGER: 'Finden Sie eine besondere Person im GenVis Spiel.'
+                    taskENG: 'Find Friedrich II in the Babenberg Family Tree.',
+                    taskGER: 'Finde Friedrich II. im Stammbaum der Babenberger.'
                 })
             ]);
         });

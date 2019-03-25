@@ -248,6 +248,10 @@ export class Connection {
             deviceModel: {
                 type: Sequelize.STRING,
                 allowNull: true
+            },
+            answeredQuestionnaire: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
             }
         });
 
