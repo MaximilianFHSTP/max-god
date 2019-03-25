@@ -98,14 +98,14 @@ export class LocationController
                 if(dismissed)
                     return {data: {location: locationId, dismissed}, message: new Message(SUCCESS_OK, 'Location Registered successfully')};
 
-                this.database.user.findOne(userId).then( (user) =>
+                this.database.user.findByPk(userId).then( (user) =>
                 {
                     if(user.currentLocation === locationId)
                         return {data: null, message: new Message(LOCATION_NOT_UPDATED, 'Users current location is already the registered one')};
 
                     this.database.user.update({currentLocation: locationId}, {where: {id: userId}}).then( () =>
                     {
-                        this.database.location.findOne(locationId).then((currentLocation) =>
+                        this.database.location.findByPk(locationId).then((currentLocation) =>
                         {
                             if (currentLocation.statusId === statusTypes.FREE &&
                                 (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON ||
