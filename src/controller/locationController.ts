@@ -78,6 +78,10 @@ export class LocationController
         const locationId: number = data.location;
         const dismissed: boolean = data.dismissed;
 
+        if(!userId || !locationId)
+            return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could register location. User or location id not provided!")};
+
+
         return this.database.sequelize.transaction( (t1) => {
             return this.database.activity.findOrCreate({
                 where: {userId, locationId},
@@ -254,6 +258,9 @@ export class LocationController
             let sectionIdString = String(locationId).charAt(0);
             // multiply with 1000 to get the sectionId (e.g. 5000)
             const sectionId = Number(sectionIdString)*1000;
+
+            if(!sectionId)
+                return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
 
             return this.database.activity.findOrCreate({
                 where: {userId, locationId: sectionId},
