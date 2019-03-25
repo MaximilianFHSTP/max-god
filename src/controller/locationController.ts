@@ -361,11 +361,13 @@ export class LocationController
         });
     }
 
-    public disconnectedFromExhibit(data: any): any
+    public disconnectedFromExhibit(data: any, ): any
     {
         const parentLocation: number = data.parentLocation;
         const location: number = data.location;
         const user: number = data.user;
+
+        console.log('Userid: ' + user);
 
         return this.database.sequelize.transaction( (t1) =>
         {
