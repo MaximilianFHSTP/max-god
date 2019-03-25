@@ -372,17 +372,17 @@ export class LocationController
             return this.database.location.findOne({where: {id: location}}).then((location) =>
             {
                 if(!location)
-                    throw new Error("Location not found");
+                    return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Location not found")};
 
                 if(location.statusId === statusTypes.FREE)
-                    throw new Error("Location is already free");
+                    return {data: null, message: new Message(SUCCESS_OK, "Location status already free")};
 
                 location.statusId = statusTypes.FREE;
                 location.save();
                 return this.database.location.findOne({where: {id: parentLocation}}).then((parLocation) =>
                 {
                     if(!parLocation)
-                        throw new Error("Location not found");
+                        return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Parent location not found")};
 
                     parLocation.currentSeat -= 1;
 
