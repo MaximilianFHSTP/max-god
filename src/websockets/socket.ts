@@ -256,7 +256,7 @@ export class WebSocket
 
             socket.on('disconnectedFromExhibit', (data) =>
             {
-                // console.log('disconnectedFromExhibit');
+                console.log('disconnectedFromExhibit: ' + socket.id);
                 this.locationController.disconnectedFromExhibit(data).then( (message) =>
                 {
                     socket.emit('disconnectedFromExhibitResult', message);
