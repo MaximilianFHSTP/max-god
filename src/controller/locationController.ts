@@ -98,36 +98,43 @@ export class LocationController
                 if(dismissed)
                     return {data: {location: locationId, dismissed}, message: new Message(SUCCESS_OK, 'Location Registered successfully')};
 
-                this.database.user.update({currentLocation: locationId}, {where: {id: userId}});
-
-                this.database.location.findByPk(locationId).then((currentLocation) =>
+                this.database.user.findOne(userId).then( (user) =>
                 {
-                    if (currentLocation.statusId === statusTypes.FREE &&
-                        (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON ||
-                            currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON ||
-                            currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON))
-                    {
-                        this.database.location.findOne({where: {id: currentLocation.parentId}}).then((parentLocation) =>
-                        {
-                            if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
-                            {
-                                parentLocation.currentSeat += 1;
-                                parentLocation.save().then(() => {this.updateActiveLocationStatus(currentLocation.parentId);});
-                                if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON)
-                                    this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+                    if(user.currentLocation === locationId)
+                        return {data: null, message: new Message(LOCATION_NOT_UPDATED, 'Users current location is already the registered one')};
 
-                                if(currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                    this.database.user.update({currentLocation: locationId}, {where: {id: userId}}).then( () =>
+                    {
+                        this.database.location.findOne(locationId).then((currentLocation) =>
+                        {
+                            if (currentLocation.statusId === statusTypes.FREE &&
+                                (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON ||
+                                    currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON ||
+                                    currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON))
+                            {
+                                this.database.location.findOne({where: {id: currentLocation.parentId}}).then((parentLocation) =>
                                 {
-                                    this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
-                                    this.database.user.findByPk(userId).then( user =>
+                                    if(parentLocation && parentLocation.currentSeat < parentLocation.maxSeat)
                                     {
-                                        if(user)
-                                            this.websocket.to(parentLocation.socketId).emit('odJoined', {location: currentLocation, user});
-                                    });
-                                }
+                                        parentLocation.currentSeat += 1;
+                                        parentLocation.save().then(() => {this.updateActiveLocationStatus(currentLocation.parentId);});
+                                        if (currentLocation.locationTypeId === locationTypes.ACTIVE_EXHIBIT_ON)
+                                            this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+
+                                        if(currentLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_ON)
+                                        {
+                                            this.database.location.update({statusId: statusTypes.OCCUPIED}, {where: {id: currentLocation.id}});
+                                            this.database.user.findByPk(userId).then( user =>
+                                            {
+                                                if(user)
+                                                    this.websocket.to(parentLocation.socketId).emit('odJoined', {location: currentLocation, user});
+                                            });
+                                        }
+                                    }
+                                });
                             }
                         });
-                    }
+                    });
                 });
             }).then(() => {
                 return {
@@ -366,6 +373,9 @@ export class LocationController
             {
                 if(!location)
                     throw new Error("Location not found");
+
+                if(location.statusId === statusTypes.FREE)
+                    throw new Error("Location is already free");
 
                 location.statusId = statusTypes.FREE;
                 location.save();
