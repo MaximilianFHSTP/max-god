@@ -358,23 +358,23 @@ export class OdController {
                {
                    location.statusId = statusTypes.FREE;
                    location.save();
+
+                   if(locType === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON)
+                   {
+                       this._database.location.findByPk(location.parentId).then(parentLoc =>
+                       {
+                           if(parentLoc)
+                           {
+                               parentLoc.currentSeat -= 1;
+
+                               if(parentLoc.currentSeat < 0)
+                                   parentLoc.currentSeat = 0;
+
+                               parentLoc.save();
+                           }
+                       });
+                   }
                }
-
-              if(isNotifyOrActiveOn || locType === locationTypes.ACTIVE_EXHIBIT_BEHAVIOR_ON)
-              {
-                  this._database.location.findByPk(location.parentId).then(parentLoc =>
-                  {
-                      if(parentLoc)
-                      {
-                          parentLoc.currentSeat -= 1;
-
-                          if(parentLoc.currentSeat < 0)
-                              parentLoc.currentSeat = 0;
-
-                          parentLoc.save();
-                      }
-                  });
-              }
 
               this._database.location.findOne({where: {isStartPoint: true}}).then(startLocation =>
               {
