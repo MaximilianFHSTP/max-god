@@ -367,7 +367,8 @@ export class LocationController
         const location: number = data.location;
         const user: number = data.user;
 
-        console.log('Userid: ' + user);
+        if(!location || !parentLocation || !user)
+            return {data: null, message: new Message(LOCATION_NOT_UPDATED, "No data provided")};
 
         return this.database.sequelize.transaction( (t1) =>
         {
