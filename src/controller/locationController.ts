@@ -363,9 +363,9 @@ export class LocationController
 
     public disconnectedFromExhibit(data: any, ): any
     {
-        console.log('------------------------- disconnectedFromExhibit -------------------------');
-        console.log(JSON.stringify(data));
-        console.log('---------------------------------------------------------------------------');
+        //console.log('------------------------- disconnectedFromExhibit -------------------------');
+        //console.log(JSON.stringify(data));
+        //console.log('---------------------------------------------------------------------------');
         const parentLocation: number = data.parentLocation;
         const locationId: number = data.location;
 
@@ -374,17 +374,17 @@ export class LocationController
             return this.database.location.findOne({where: {id: locationId}}).then((location) =>
             {
                 if(!location)
-                    return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Location not found")};
+                    return {data: {location: locationId, parent: parentLocation}, message: new Message(LOCATION_NOT_UPDATED, "Location not found")};
 
                 if(location.statusId === statusTypes.FREE)
-                    return {data: null, message: new Message(SUCCESS_OK, "Location status already free")};
+                    return {data: {location: locationId, parent: parentLocation}, message: new Message(SUCCESS_OK, "Location status already free")};
 
                 location.statusId = statusTypes.FREE;
                 location.save();
                 return this.database.location.findOne({where: {id: parentLocation}}).then((parLocation) =>
                 {
                     if(!parLocation)
-                        return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Parent location not found")};
+                        return {data: {location: locationId, parent: parentLocation}, message: new Message(LOCATION_NOT_UPDATED, "Parent location not found")};
 
                     parLocation.currentSeat -= 1;
 
@@ -397,17 +397,18 @@ export class LocationController
 
                     return {data: {location: locationId, parent: parentLocation}, message: new Message(SUCCESS_OK, 'Disconnected successfully from Exhibit')};
                 });
-            }).catch(() => {
-                return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Could not update location status")};
+            }).catch((err) => {
+                console.log(err);
+                return {data: {location: locationId, parent: parentLocation}, message: new Message(LOCATION_NOT_UPDATED, "Could not update location status")};
             });
         });
     }
 
     public exhibitDisconnectedFromExhibit(data: any, ): any
     {
-        console.log('------------------------- exhibitDisconnectedFromExhibit -------------------------');
-        console.log(JSON.stringify(data));
-        console.log('---------------------------------------------------------------------------');
+        //console.log('------------------------- exhibitDisconnectedFromExhibit -------------------------');
+        //console.log(JSON.stringify(data));
+        //console.log('---------------------------------------------------------------------------');
         const parentLocation: number = data.parentLocation;
         const location: number = data.location;
         const user: string = data.user;

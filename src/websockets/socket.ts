@@ -86,9 +86,6 @@ export class WebSocket
 
                         if(user)
                         {
-                            if(event === 'disconnectedFromExhibit')
-                                console.log("DisconnectedFromExhibit user: " + JSON.stringify(user));
-                            
                             if(user.isGuest)
                             {
                                 if(this.checkGuestAccess(event))
