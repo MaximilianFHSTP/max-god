@@ -256,10 +256,17 @@ export class WebSocket
 
             socket.on('disconnectedFromExhibit', (data) =>
             {
-                console.log('disconnectedFromExhibit: ' + socket.id);
                 this.locationController.disconnectedFromExhibit(data).then( (message) =>
                 {
                     socket.emit('disconnectedFromExhibitResult', message);
+                });
+            });
+
+            socket.on('exhibitDisconnectedFromExhibit', (data) =>
+            {
+                this.locationController.exhibitDisconnectedFromExhibit(data).then( (message) =>
+                {
+                    socket.emit('exhibitDisconnectedFromExhibitResult', message);
                 });
             });
 
@@ -447,7 +454,7 @@ export class WebSocket
             case 'loginOD':
             case 'disconnectUsers':
             case 'registerODGuest':
-            case 'disconnectedFromExhibit':
+            case 'exhibitDisconnectedFromExhibit':
             case 'checkUsernameExists':
             case 'checkEmailExists':
             case 'checkNameOrEmailExists':

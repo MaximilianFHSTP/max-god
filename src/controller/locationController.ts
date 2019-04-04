@@ -363,9 +363,54 @@ export class LocationController
 
     public disconnectedFromExhibit(data: any, ): any
     {
+        console.log('------------------------- disconnectedFromExhibit -------------------------');
+        console.log(JSON.stringify(data));
+        console.log('---------------------------------------------------------------------------');
+        const parentLocation: number = data.parentLocation;
+        const locationId: number = data.location;
+
+        return this.database.sequelize.transaction( (t1) =>
+        {
+            return this.database.location.findOne({where: {id: locationId}}).then((location) =>
+            {
+                if(!location)
+                    return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Location not found")};
+
+                if(location.statusId === statusTypes.FREE)
+                    return {data: null, message: new Message(SUCCESS_OK, "Location status already free")};
+
+                location.statusId = statusTypes.FREE;
+                location.save();
+                return this.database.location.findOne({where: {id: parentLocation}}).then((parLocation) =>
+                {
+                    if(!parLocation)
+                        return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Parent location not found")};
+
+                    parLocation.currentSeat -= 1;
+
+                    if(parLocation.currentSeat < 0)
+                        parLocation.currentSeat = 0;
+
+                    parLocation.save().then(() => {this.updateActiveLocationStatus(parentLocation);});
+                    if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
+                        this.websocket.to(parLocation.socketId).emit('odLeft', {location});
+
+                    return {data: {location: locationId, parent: parentLocation}, message: new Message(SUCCESS_OK, 'Disconnected successfully from Exhibit')};
+                });
+            }).catch(() => {
+                return {data: null, message: new Message(LOCATION_NOT_UPDATED, "Could not update location status")};
+            });
+        });
+    }
+
+    public exhibitDisconnectedFromExhibit(data: any, ): any
+    {
+        console.log('------------------------- exhibitDisconnectedFromExhibit -------------------------');
+        console.log(JSON.stringify(data));
+        console.log('---------------------------------------------------------------------------');
         const parentLocation: number = data.parentLocation;
         const location: number = data.location;
-        const user: number = data.user;
+        const user: string = data.user;
 
         return this.database.sequelize.transaction( (t1) =>
         {
@@ -391,14 +436,12 @@ export class LocationController
 
                     if(parLocation.currentSeat < 0)
                         parLocation.currentSeat = 0;
-                    
+
                     parLocation.save().then(() => {this.updateActiveLocationStatus(parentLocation);});
-                    if(parLocation.locationTypeId === locationTypes.NOTIFY_EXHIBIT_AT)
-                        this.websocket.to(parLocation.socketId).emit('odLeft', {location});
                 });
             }).then(() =>
             {
-                if(user)
+                if(user && user !== 'localUser')
                 {
                     this.database.user.findByPk(user).then((user) =>
                     {
