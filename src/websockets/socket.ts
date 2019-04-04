@@ -84,11 +84,11 @@ export class WebSocket
 
                         const user = decoded.user;
 
+                        if(event === 'disconnectedFromExhibit')
+                            console.log("DisconnectedFromExhibit user: " + JSON.stringify(decoded));
+
                         if(user)
                         {
-                            if(event === 'disconnectedFromExhibit')
-                                console.log("DisconnectedFromExhibit user: " + JSON.stringify(user));
-                            
                             if(user.isGuest)
                             {
                                 if(this.checkGuestAccess(event))
@@ -273,11 +273,6 @@ export class WebSocket
                 });
             });
 
-            socket.on('disconnectUsers', (data) =>
-            {
-                this.locationController.tableDisconnectFromExhibit(data);
-            });
-
             socket.on('checkLocationStatus', (data) =>
             {
                this.locationController.checkLocationStatus(data).then( (message) =>
@@ -455,7 +450,6 @@ export class WebSocket
             case 'registerOD':
             case 'autoLoginOD':
             case 'loginOD':
-            case 'disconnectUsers':
             case 'registerODGuest':
             case 'exhibitDisconnectedFromExhibit':
             case 'checkUsernameExists':
