@@ -455,6 +455,27 @@ export class LocationController
         });
     }
 
+    public tableDisconnectFromExhibit(users: any): void
+    {
+        for(let u of users)
+        {
+            this.database.user.findByPk(u.id).then(user =>
+            {
+                if(user)
+                {
+                    this.database.location.findByPk(user.currentLocation).then( location =>
+                    {
+                        if(location)
+                        {
+                            this.disconnectedFromExhibit({parentLocation: location.parentId, location: location.id});
+                            this.registerLocation({user: user.id, location: location.parentId});
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     public checkLocationStatus(locationId: number): any
     {
         //console.log(locationId);
