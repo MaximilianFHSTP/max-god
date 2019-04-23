@@ -459,6 +459,9 @@ export class LocationController
     public tableDisconnectFromExhibit(data: any): void
     {
         const users = data.users;
+        console.log('------------------------- tableDisconnectFromExhibit -------------------------');
+        console.log(JSON.stringify(data));
+        console.log('---------------------------------------------------------------------------');
         const location = data.location;
 
         for(let u of users)
