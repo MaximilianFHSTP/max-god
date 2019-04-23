@@ -456,20 +456,23 @@ export class LocationController
         });
     }
 
-    public tableDisconnectFromExhibit(users: any): void
+    public tableDisconnectFromExhibit(data: any): void
     {
+        const users = data.users;
+        const location = data.location;
+
         for(let u of users)
         {
             this.database.user.findByPk(u.id).then(user =>
             {
-                if(user)
+                if(user && user.currentLocation === location)
                 {
                     this.database.location.findByPk(user.currentLocation).then( location =>
                     {
                         if(location)
                         {
-                            this.disconnectedFromExhibit({parentLocation: location.parentId, location: location.id});
-                            this.registerLocation({user: user.id, location: location.parentId});
+                            this.exhibitDisconnectedFromExhibit({parentLocation: location.parentId, location: location.id, user: user.id});
+                            // this.registerLocation({user: user.id, location: location.parentId});
                         }
                     });
                 }
