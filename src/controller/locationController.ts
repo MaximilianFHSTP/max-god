@@ -72,7 +72,7 @@ export class LocationController
         });
     }
 
-    public registerLocation(data: any): any
+    public registerLocation(data: any, socketId: any): any
     {
         const userId: number = data.user;
         const locationId: number = data.location;
@@ -103,7 +103,7 @@ export class LocationController
                     if(user.currentLocation === locationId)
                         return {data: null, message: new Message(LOCATION_NOT_UPDATED, 'Users current location is already the registered one')};
 
-                    this.database.user.update({currentLocation: locationId}, {where: {id: userId}}).then( () =>
+                    this.database.user.update({currentLocation: locationId, socketId}, {where: {id: userId}}).then( () =>
                     {
                         this.database.location.findByPk(locationId).then((currentLocation) =>
                         {

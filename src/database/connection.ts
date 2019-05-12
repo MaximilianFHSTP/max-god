@@ -22,6 +22,7 @@ export class Connection {
     private _position: any;
     private _activity: any;
     private _activityLog: any;
+    private _activityLogType: any;
     private _neighbor: any;
     private _settings: any;
     private _contentLanguage: any;
@@ -93,6 +94,10 @@ export class Connection {
         //ActivityLog to Activity Relation (1:n)
         this._activity.hasMany(this._activityLog, {onDelete: 'cascade'});
         this._activityLog.belongsTo(this._activity);
+
+        //ActivityLogType to ActivityLog Relation (1:n)
+        this._activityLogType.hasMany(this._activityLog, {onDelete: 'cascade'});
+        this._activityLog.belongsTo(this._activityLogType);
 
         //_location to _location relation (1:n)
         this._location.hasMany(this._location, {
@@ -191,6 +196,9 @@ export class Connection {
                 type: Sequelize.STRING
             },
             wifiPassword: {
+                type: Sequelize.STRING
+            },
+            appVersion: {
                 type: Sequelize.STRING
             }
         });
@@ -431,6 +439,18 @@ export class Connection {
             }
         });
 
+        this._activityLogType = this._sequelize.define('activityLogType', {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: false
+            },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
         this._coaPart = this._sequelize.define('coaPart',
         {
             name: {
@@ -488,6 +508,10 @@ export class Connection {
 
     get activityLog(): any {
         return this._activityLog;
+    }
+
+    get activityLogType(): any {
+        return this._activityLogType;
     }
 
     get user(): any {

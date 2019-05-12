@@ -157,6 +157,11 @@ export class OdController {
         });
     }
 
+    public updateUserQuestionnaireAnswered(userId: any): void
+    {
+         this._database.user.update({answeredQuestionnaire: true}, {where: {id: userId}});
+    }
+
     public autoLoginUser(identifier: any, socketId: any): any {
         return this._database.user.findByPk(identifier).then(user => {
             if (!user)

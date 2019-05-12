@@ -221,10 +221,14 @@ export class WebSocket
                 this.odController.deleteOD(data);
             });
 
+            socket.on('questionnaireAnswered', (data) => {
+                this.odController.updateUserQuestionnaireAnswered(data);
+            });
+
             socket.on('registerLocation', (data) =>
             {
                 // console.log("register location: " + data.location + ", " + data.user);
-                this.locationController.registerLocation(data).then( (message) =>
+                this.locationController.registerLocation(data, socket.id).then( (message) =>
                 {
                     socket.emit('registerLocationResult', message);
                 });

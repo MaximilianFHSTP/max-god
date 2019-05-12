@@ -80,7 +80,8 @@ export class DataFactory {
                 this._connection.locationType.create({id: 7, description: 'activeExhibitBehaviorOn'}),
                 this._connection.locationType.create({id: 8, description: 'interactiveExhibit'}),
                 this._connection.locationType.create({id: 9, description: 'notifyActiveExhibitAt'}),
-                this._connection.locationType.create({id: 10, description: 'notifyActiveExhibitOn'})
+                this._connection.locationType.create({id: 10, description: 'notifyActiveExhibitOn'}),
+                this._connection.locationType.create({id: 11, description: 'questionnaire'})
             ]);
         });
     }
@@ -1685,6 +1686,19 @@ export class DataFactory {
                     endDate: 1520,
                     unlockCoa: true,
                     contentURL: 'passive'
+                }),
+                this._connection.location.create({
+                    id: 7000,
+                    description: 'Questionnaire at the end',
+                    titleGER: 'Fragebogen',
+                    titleENG: 'Questionnaire',
+                    locationTypeId: locationTypes.QUESTIONNAIRE,
+                    statusId: 1,
+                    parentId: 1,
+                    ipAddress: '0.0.0.0',
+                    showInTimeline: false,
+                    unlockCoa: false,
+                    contentURL: 'questionnaire'
                 })
             ]);
         });
