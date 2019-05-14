@@ -18,7 +18,7 @@
     socket.on('news', function (data) {
 
         socket.emit('registerOD', {
-            identifier: "Schlese",
+            identifier: "Raggnor",
             email: 'schlese@fhstp.ac.at',
             password: 'pwd',
             isGuest: false,
@@ -32,10 +32,33 @@
 
         socket.on('registerODResult', function (result)
         {
+            console.log("------------ Registered user ------------");
+            console.log(result);
             user = result.data.user;
-            socket.emit('getCoaParts');
-            socket.emit('getCoaColors');
-            // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+            // socket.emit('getCoaParts');
+            // socket.emit('getCoaColors');
+            socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+            socket.emit('registerLocation', {user: user.id, location: 3000});
+            socket.emit('questionnaireAnswered', user.id);
+            socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
+
+            socket.removeAllListeners('registerODResult');
+        });
+
+        socket.on('checkAppVersionResult', function(res)
+        {
+            console.log("------------ checkAppVersion ------------");
+            console.log(res);
+
+            socket.removeAllListeners('checkAppVersionResult');
+        });
+
+        socket.on('questionnaireAnsweredResult', function(result)
+        {
+            console.log("------------ questionnaireAnswered ------------");
+            console.log(result);
+
+            socket.removeAllListeners('questionnaireAnsweredResult');
         });
 
         socket.on('getCoaPartsResult', function (result)

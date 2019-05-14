@@ -1,6 +1,6 @@
 import { Connection } from '../database';
 import {Message, SUCCESS_OK} from "../messages";
-import * as statusTypes from '../config/statusTypes';
+import * as authTypes from '../messages/authenticationTypes';
 
 export class ConfigController
 {
@@ -18,4 +18,20 @@ export class ConfigController
         return { data: { ssid: correctSSID, password:  pass}, message: new Message(SUCCESS_OK, 'SSID and Password was found!') };
     }
 
+    public checkVersion(data): any
+    {
+        const userId = data.user;
+        const version = data.version;
+        const currentVersion = this.database.currentSettings.appVersion;
+
+        return this.database.user.update({answeredQuestionnaire: true}, {where: {id: userId}}).then(() =>
+        {
+            if(version === currentVersion)
+                return { data: {versionIsCorrect: true}, message: new Message(SUCCESS_OK, 'Version is correct')};
+
+            else
+                return { data: {versionIsCorrect: false}, message: new Message(authTypes.INCORRECT_VERSION, 'Version is incorrect')};
+
+        });
+    }
 }

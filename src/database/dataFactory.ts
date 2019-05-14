@@ -53,12 +53,14 @@ export class DataFactory {
         await this.createCoatOfArmsParts();
         await this.createCoatOfArmsColors();
 
+        await this.createActivityLogTypes();
+
         // create user for iOS submission (everything is unlocked)
         await this.createiOSSubmissionUser();
     }
 
     private initSettings(): void {
-        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'DesKaisersNeuerHeiliger', wifiPassword: 'maximilian'}}).spread((user, created) =>
+        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'DesKaisersNeuerHeiliger', wifiPassword: 'maximilian', appVersion: '1.0.0'}}).spread((user, created) =>
         {
             if(!created)
             {
@@ -93,6 +95,17 @@ export class DataFactory {
                 this._connection.status.create({id: 2, description: 'offline'}),
                 this._connection.status.create({id: 3, description: 'free'}),
                 this._connection.status.create({id: 4, description: 'occupied'})
+            ]);
+        });
+    }
+
+    private async createActivityLogTypes() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.activityLogType.create({id: 1, description: 'registerLocation'}),
+                this._connection.activityLogType.create({id: 2, description: 'unlockTimelineLocation'}),
+                this._connection.activityLogType.create({id: 3, description: 'receivedTimelineLocation'}),
+                this._connection.activityLogType.create({id: 4, description: 'registerLocationDismissed'})
             ]);
         });
     }

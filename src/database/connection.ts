@@ -260,6 +260,10 @@ export class Connection {
             answeredQuestionnaire: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
+            },
+            appVersion: {
+                type: Sequelize.STRING,
+                defaultValue: '1.0.0'
             }
         });
 

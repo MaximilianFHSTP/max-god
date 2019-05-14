@@ -222,7 +222,10 @@ export class WebSocket
             });
 
             socket.on('questionnaireAnswered', (data) => {
-                this.odController.updateUserQuestionnaireAnswered(data);
+                this.odController.updateUserQuestionnaireAnswered(data).then((res) =>
+                {
+                    socket.emit('questionnaireAnsweredResult', res);
+                })
             });
 
             socket.on('registerLocation', (data) =>
@@ -435,6 +438,14 @@ export class WebSocket
                 {
                     socket.emit('getLookupTableResult', result);
                 });
+            });
+
+            socket.on('checkAppVersion', (data) =>
+            {
+                this.configController.checkVersion(data).then(res =>
+                {
+                    socket.emit('checkAppVersionResult', res);
+                })
             });
         });
     }

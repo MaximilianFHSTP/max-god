@@ -96,7 +96,8 @@ export class OdController {
                         message: new Message(SUCCESS_CREATED, "User created successfully")
                     };
                 });
-            }).catch(() => {
+            }).catch((err) => {
+                this._logger.error(err);
                 return {data: null, message: new Message(OD_NOT_CREATED, "Could not create user")};
             });
         });
@@ -157,9 +158,18 @@ export class OdController {
         });
     }
 
-    public updateUserQuestionnaireAnswered(userId: any): void
+    public updateUserQuestionnaireAnswered(userId: any): any
     {
-         this._database.user.update({answeredQuestionnaire: true}, {where: {id: userId}});
+         return this._database.user.update({answeredQuestionnaire: true}, {where: {id: userId}}).then(() =>
+         {
+             return this._database.user.findByPk(userId).then(user =>
+             {
+                 return {
+                     data: user,
+                     message: new Message(SUCCESS_UPDATED, "User updated successfully")
+                 };
+             });
+         })
     }
 
     public autoLoginUser(identifier: any, socketId: any): any {

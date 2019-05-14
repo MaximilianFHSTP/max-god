@@ -11,6 +11,7 @@ import {
 import * as statusTypes from '../config/statusTypes';
 import * as locationTypes from '../config/locationTypes';
 import * as contentLanguages from "../config/contentLanguages";
+import * as activityLogTypes from "../config/activityLogTypes";
 
 export class LocationController
 {
@@ -93,10 +94,16 @@ export class LocationController
                     activity.save();
                 }
 
-                this.database.activityLog.create({activityId: activity.id});
-
                 if(dismissed)
-                    return {data: {location: locationId, dismissed}, message: new Message(SUCCESS_OK, 'Location Registered successfully')};
+                {
+                    this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.REGISTER_LOCATION_DISMISSED});
+                    return {
+                        data: {location: locationId, dismissed},
+                        message: new Message(SUCCESS_OK, 'Location Registered successfully')
+                    };
+                }
+
+                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.REGISTER_LOCATION});
 
                 this.database.user.findByPk(userId).then( (user) =>
                 {
@@ -259,6 +266,13 @@ export class LocationController
                 activity.locked = false;
                 activity.save();
             }
+
+            if(wasCreated)
+                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
+
+            else
+                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
+
         }).then( () =>
         {
             // get first digit of locationId (e.g. 501 => 5
@@ -278,6 +292,13 @@ export class LocationController
                     sectAct.locked = false;
                     sectAct.save();
                 }
+
+                if(wasCreated)
+                    this.database.activityLog.create({activityId: sectAct.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
+
+                else
+                    this.database.activityLog.create({activityId: sectAct.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
+
             }).then(() => {
                 return this.database.user.findByPk(userId).then( user => {
                     return this.getLookupTable(user).then((locations) => {
@@ -302,6 +323,13 @@ export class LocationController
                 activity.locked = false;
                 activity.save();
             }
+
+            if(wasCreated)
+                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
+
+            else
+                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
+
         }).then(() => {
             return this.database.user.findByPk(userId).then( user => {
                 return this.getLookupTable(user).then((locations) => {
