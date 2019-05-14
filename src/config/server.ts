@@ -28,7 +28,7 @@ export default class Server
         else {
             this.server = http.createServer(this.app);
         }
-        
+
         this.socket = new WebSocket(this.server);
 
         this.socket.connectDatabase().then( () =>
@@ -37,10 +37,12 @@ export default class Server
                 this._logger.info('Server runs on Port ' + process.env.SERVER_PORT);
             });
 
+            /*
             this.app.get('/', function (req, res)
             {
                 res.sendFile(process.env.NODE_PATH + '/assets/localIndex.html');
             });
+            */
         });
     }
 
