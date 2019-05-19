@@ -37,10 +37,11 @@
             user = result.data.user;
             // socket.emit('getCoaParts');
             // socket.emit('getCoaColors');
-            socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
-            socket.emit('registerLocation', {user: user.id, location: 3000});
-            socket.emit('questionnaireAnswered', user.id);
-            socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
+            // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+            // socket.emit('registerLocation', {user: user.id, location: 3000});
+            // socket.emit('questionnaireAnswered', user.id);
+            // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
+            socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
 
             socket.removeAllListeners('registerODResult');
         });

@@ -23,6 +23,8 @@ export class Connection {
     private _activity: any;
     private _activityLog: any;
     private _activityLogType: any;
+    private _log: any;
+    private _logType: any;
     private _neighbor: any;
     private _settings: any;
     private _contentLanguage: any;
@@ -86,10 +88,13 @@ export class Connection {
         this._user.belongsTo(this._group);
 
         //User to Location Relation (n:m)
-        this._user.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
-        this._activity.belongsTo(this._user, {foreignKey: {allowNull: false}});
-        this._location.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
-        this._activity.belongsTo(this._location, {foreignKey: {allowNull: false}});
+        // this._user.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
+        // this._activity.belongsTo(this._user, {foreignKey: {allowNull: false}});
+        // this._location.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
+        // this._activity.belongsTo(this._location, {foreignKey: {allowNull: false}});
+
+        this._user.belongsToMany(this._location, { through: this._activity });
+        this._location.belongsToMany(this._user, { through: this._activity });
 
         //ActivityLog to Activity Relation (1:n)
         this._activity.hasMany(this._activityLog, {onDelete: 'cascade'});
@@ -98,6 +103,14 @@ export class Connection {
         //ActivityLogType to ActivityLog Relation (1:n)
         this._activityLogType.hasMany(this._activityLog, {onDelete: 'cascade'});
         this._activityLog.belongsTo(this._activityLogType);
+
+        //Log to User Relation (1:n)
+        this._user.hasMany(this._log, {onDelete: 'cascade'});
+        this._log.belongsTo(this._user);
+
+        //LogType to Log Relation (1:n)
+        this._logType.hasMany(this._log, {onDelete: 'cascade'});
+        this._log.belongsTo(this._logType);
 
         //_location to _location relation (1:n)
         this._location.hasMany(this._location, {
@@ -455,6 +468,29 @@ export class Connection {
             }
         });
 
+        this._log = this._sequelize.define('log', {
+            locationId: {
+                type: Sequelize.INTEGER,
+                allowNull: true
+            },
+            comment: {
+                type: Sequelize.STRING,
+                allowNull: true
+            }
+        });
+
+        this._logType = this._sequelize.define('logType', {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: false
+            },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
         this._coaPart = this._sequelize.define('coaPart',
         {
             name: {
@@ -516,6 +552,14 @@ export class Connection {
 
     get activityLogType(): any {
         return this._activityLogType;
+    }
+
+    get log(): any {
+        return this._log;
+    }
+
+    get logType(): any {
+        return this._logType;
     }
 
     get user(): any {

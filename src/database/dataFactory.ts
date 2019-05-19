@@ -54,6 +54,7 @@ export class DataFactory {
         await this.createCoatOfArmsColors();
 
         await this.createActivityLogTypes();
+        await this.createLogTypes();
 
         // create user for iOS submission (everything is unlocked)
         await this.createiOSSubmissionUser();
@@ -106,6 +107,16 @@ export class DataFactory {
                 this._connection.activityLogType.create({id: 2, description: 'unlockTimelineLocation'}),
                 this._connection.activityLogType.create({id: 3, description: 'receivedTimelineLocation'}),
                 this._connection.activityLogType.create({id: 4, description: 'registerLocationDismissed'})
+            ]);
+        });
+    }
+
+    private async createLogTypes() {
+        return this._connection.sequelize.transaction(t1 => {
+            return Promise.all([
+                this._connection.logType.create({id: 1, description: 'arTargetFound'}),
+                this._connection.logType.create({id: 2, description: 'quizRightAnswer'}),
+                this._connection.logType.create({id: 3, description: 'quizWrongAnswer'})
             ]);
         });
     }

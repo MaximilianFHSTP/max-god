@@ -1,5 +1,5 @@
 import {Connection} from '../database';
-import {Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_UPDATED} from "../messages";
+import {LOG_NOT_CREATED, Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_UPDATED} from "../messages";
 import {OD_NOT_CREATED, OD_NOT_FOUND, OD_NOT_UPDATED} from "../messages/odTypes";
 import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
@@ -399,6 +399,28 @@ export class OdController {
                  user.save();
               });
            });
+        });
+    }
+
+    public addUserLogEntry(data: any): any
+    {
+        const logType = data.logType;
+        const user = data.user;
+        const location = data.location;
+        const comment = data.comment;
+
+        return this._database.log.create({
+            userId: user,
+            logTypeId: logType,
+            locationId: location,
+            comment
+        }).then((logEntry) =>
+        {
+            return {data: logEntry, message: new Message(SUCCESS_CREATED, "Log entry created successfully")};
+        }).catch( err =>
+        {
+            this._logger.error(err);
+            return {data: null, message: new Message(LOG_NOT_CREATED, "Could not create log entry")};
         });
     }
 

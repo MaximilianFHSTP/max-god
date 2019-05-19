@@ -43,6 +43,8 @@ export class WebSocket
     {
         this.io.on('connection', (socket) =>
         {
+            socket.removeAllListeners();
+
             socket.on('reconnecting', (attemptNumber) => {
                 // console.log("Trying to reconnect to " + socket.id + ": " + attemptNumber);
             });
@@ -445,6 +447,14 @@ export class WebSocket
                 this.configController.checkVersion(data).then(res =>
                 {
                     socket.emit('checkAppVersionResult', res);
+                })
+            });
+
+            socket.on('addUserLogEntry', (data) =>
+            {
+                this.odController.addUserLogEntry(data).then(res =>
+                {
+                    socket.emit('addUserLogEntryResult', res);
                 })
             });
         });
