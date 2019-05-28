@@ -81,10 +81,11 @@ export class DataFactory {
                 this._connection.locationType.create({id: 5, description: 'door'}),
                 this._connection.locationType.create({id: 6, description: 'activeExhibitBehaviorAt'}),
                 this._connection.locationType.create({id: 7, description: 'activeExhibitBehaviorOn'}),
-                this._connection.locationType.create({id: 8, description: 'interactiveExhibit'}),
+                this._connection.locationType.create({id: 8, description: 'interactiveExhibitAt'}),
                 this._connection.locationType.create({id: 9, description: 'notifyActiveExhibitAt'}),
                 this._connection.locationType.create({id: 10, description: 'notifyActiveExhibitOn'}),
-                this._connection.locationType.create({id: 11, description: 'questionnaire'})
+                this._connection.locationType.create({id: 11, description: 'questionnaire'}),
+                this._connection.locationType.create({id: 12, description: 'interactiveExhibitAt'})
             ]);
         });
     }
@@ -1737,16 +1738,29 @@ export class DataFactory {
                     description: 'Explore transcription of accounting book',
                     titleGER: 'Geld und Verwaltung',
                     titleENG: 'Coins and Governance',
-                    contentURL: 'interactive',
+                    contentURL: 'interactiveAt',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_AT,
                     contentTypeId: 1,
-                    statusId: 2,
+                    statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 4,
+                    maxSeat: 999999999999,
                     showInTimeline: true,
                     startDate: 1450,
                     endDate: 1499
+                }),
+                this._connection.location.create({
+                    id: 1011,
+                    parentId: 101,
+                    description: 'Interactive on location for 101',
+                    contentURL: 'interactiveOn',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_ON,
+                    contentTypeId: 1,
+                    statusId: 3,
+                    currentSeat: 0,
+                    maxSeat: 999999999999,
+                    showInTimeline: false
                 }),
                 this._connection.location.create({
                     id: 102,
@@ -1756,14 +1770,27 @@ export class DataFactory {
                     titleENG: 'Science and University',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_AT,
                     contentTypeId: 1,
-                    statusId: 2,
+                    statusId: 3,
                     currentSeat: 0,
                     maxSeat: 4,
                     showInTimeline: true,
                     startDate: 1450,
                     endDate: 1499
+                }),
+                this._connection.location.create({
+                    id: 1021,
+                    parentId: 102,
+                    description: 'Interactive on location for 102',
+                    contentURL: 'interactiveOn',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_ON,
+                    contentTypeId: 1,
+                    statusId: 3,
+                    currentSeat: 0,
+                    maxSeat: 999999999999,
+                    showInTimeline: false
                 }),
                 this._connection.location.create({
                     id: 402,
@@ -1773,7 +1800,7 @@ export class DataFactory {
                     titleENG: 'Understanding Sunthaym',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_AT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -1784,6 +1811,19 @@ export class DataFactory {
                     unlockCoa: true
                 }),
                 this._connection.location.create({
+                    id: 4021,
+                    parentId: 402,
+                    description: 'Interactive on location for 402',
+                    contentURL: 'interactiveOn',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_ON,
+                    contentTypeId: 1,
+                    statusId: 3,
+                    currentSeat: 0,
+                    maxSeat: 999999999999,
+                    showInTimeline: false
+                }),
+                this._connection.location.create({
                     id: 501,
                     parentId: 50,
                     description: 'Observe the inside of shrine',
@@ -1791,7 +1831,7 @@ export class DataFactory {
                     titleENG: 'Final Resting Place',
                     contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
-                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT,
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_AT,
                     contentTypeId: 1,
                     statusId: 2,
                     currentSeat: 0,
@@ -1801,6 +1841,19 @@ export class DataFactory {
                     endDate: 1507,
                     unlockCoa: true
                 }),
+                this._connection.location.create({
+                    id: 5011,
+                    parentId: 501,
+                    description: 'Interactive on location for 501',
+                    contentURL: 'interactiveOn',
+                    ipAddress: '0.0.0.0',
+                    locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_ON,
+                    contentTypeId: 1,
+                    statusId: 3,
+                    currentSeat: 0,
+                    maxSeat: 999999999999,
+                    showInTimeline: false
+                })
             ]);
         });
     }
