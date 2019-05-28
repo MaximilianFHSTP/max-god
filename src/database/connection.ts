@@ -97,8 +97,11 @@ export class Connection {
         this._location.belongsToMany(this._user, { through: this._activity });
 
         //ActivityLog to Activity Relation (1:n)
-        this._activity.hasMany(this._activityLog, {onDelete: 'cascade'});
-        this._activityLog.belongsTo(this._activity);
+        this._activity.hasMany(this._activityLog,{foreignKey: 'activityLocationId'});
+        this._activityLog.belongsTo(this._activity,{foreignKey:'activityLocationId'});
+
+        this._activity.hasMany(this._activityLog,{ foreignKey : 'activityUserId'});
+        this._activityLog.belongsTo(this._activity, { foreignKey: 'activityUserId'});
 
         //ActivityLogType to ActivityLog Relation (1:n)
         this._activityLogType.hasMany(this._activityLog, {onDelete: 'cascade'});

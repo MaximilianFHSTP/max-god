@@ -12,16 +12,19 @@ import * as statusTypes from '../config/statusTypes';
 import * as locationTypes from '../config/locationTypes';
 import * as contentLanguages from "../config/contentLanguages";
 import * as activityLogTypes from "../config/activityLogTypes";
+import Logger from "../config/logger";
 
 export class LocationController
 {
     private database: Connection;
     private websocket: any;
+    private _logger: Logger;
 
     constructor(websocket)
     {
         this.database = Connection.getInstance();
         this.websocket = websocket;
+        this._logger = Logger.getInstance();
     }
 
     private getLookupTable(user): any
@@ -87,7 +90,8 @@ export class LocationController
             return this.database.activity.findOrCreate({
                 where: {userId, locationId},
                 defaults: {locked: false}
-            }).spread((activity, wasCreated) => {
+            }).spread((activity, wasCreated) =>
+            {
                 if(!wasCreated && activity.locked)
                 {
                     activity.locked = false;
@@ -96,14 +100,15 @@ export class LocationController
 
                 if(dismissed)
                 {
-                    this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.REGISTER_LOCATION_DISMISSED});
+                    this.database.activityLog.create({activityLocationId: locationId, activityUserId: userId, activityLogTypeId: activityLogTypes.REGISTER_LOCATION_DISMISSED});
                     return {
                         data: {location: locationId, dismissed},
                         message: new Message(SUCCESS_OK, 'Location Registered successfully')
                     };
                 }
 
-                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.REGISTER_LOCATION});
+                this.database.activityLog.create({activityLocationId: locationId, activityUserId: userId, activityLogTypeId: activityLogTypes.REGISTER_LOCATION});
+
 
                 this.database.user.findByPk(userId).then( (user) =>
                 {
@@ -148,6 +153,8 @@ export class LocationController
                     data: {location: locationId, dismissed},
                     message: new Message(SUCCESS_OK, 'Location Registered successfully')
                 };
+            }).catch((err) => {
+                // this._logger.error(err);
             });
         });
     }
@@ -257,56 +264,80 @@ export class LocationController
         if(!userId || !locationId)
             return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
 
-        return this.database.activity.findOrCreate({
-            where: {userId, locationId},
-            defaults: {locked: false}
-        }).spread((activity, wasCreated) => {
-            if(!wasCreated && activity.locked)
-            {
-                activity.locked = false;
-                activity.save();
-            }
-
-            if(wasCreated)
-                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
-
-            else
-                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
-
-        }).then( () =>
-        {
-            // get first digit of locationId (e.g. 501 => 5
-            let sectionIdString = String(locationId).charAt(0);
-            // multiply with 1000 to get the sectionId (e.g. 5000)
-            const sectionId = Number(sectionIdString)*1000;
-
-            if(!sectionId)
-                return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
 
             return this.database.activity.findOrCreate({
-                where: {userId, locationId: sectionId},
+                where: {userId, locationId},
                 defaults: {locked: false}
-            }).spread((sectAct, wasCreated) => {
-                if(!wasCreated && sectAct.locked)
-                {
-                    sectAct.locked = false;
-                    sectAct.save();
+            }).spread((activity, wasCreated) => {
+                if (!wasCreated && activity.locked) {
+                    activity.locked = false;
+                    activity.save();
                 }
 
-                if(wasCreated)
-                    this.database.activityLog.create({activityId: sectAct.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
+                if (wasCreated)
+                    this.database.activityLog.create({
+                        activityLocationId: locationId,
+                        activityUserId: userId,
+                        activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION
+                    });
 
                 else
-                    this.database.activityLog.create({activityId: sectAct.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
+                    this.database.activityLog.create({
+                        activityLocationId: locationId,
+                        activityUserId: userId,
+                        activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION
+                    });
 
             }).then(() => {
-                return this.database.user.findByPk(userId).then( user => {
-                    return this.getLookupTable(user).then((locations) => {
-                        return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+                // get first digit of locationId (e.g. 501 => 5
+                let sectionIdString = String(locationId).charAt(0);
+                // multiply with 1000 to get the sectionId (e.g. 5000)
+                const sectionId = Number(sectionIdString) * 1000;
+
+                if (!sectionId)
+                    return {
+                        data: null,
+                        message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")
+                    };
+
+                return this.database.activity.findOrCreate({
+                    where: {userId, locationId: sectionId},
+                    defaults: {locked: false}
+                }).spread((sectAct, wasCreated) => {
+                    if (!wasCreated && sectAct.locked) {
+                        sectAct.locked = false;
+                        sectAct.save();
+                    }
+
+                    if (wasCreated)
+                        this.database.activityLog.create({
+                            activityLocationId: locationId,
+                            activityUserId: userId,
+                            activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION
+                        });
+
+                    else
+                        this.database.activityLog.create({
+                            activityLocationId: locationId,
+                            activityUserId: userId,
+                            activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION
+                        });
+
+                }).then(() => {
+                    return this.database.user.findByPk(userId).then(user => {
+                        return this.getLookupTable(user).then((locations) => {
+                            return {
+                                data: {locations},
+                                message: new Message(SUCCESS_OK, "Activity updated successfully")
+                            };
+                        });
                     });
                 });
+            }).catch((err) => {
+                // this._logger.error(err);
+                return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
             });
-        });
+
     }
 
     private unlockTimeline(userId: string, locationId: number)
@@ -314,29 +345,41 @@ export class LocationController
         if(!userId || !locationId)
             return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
 
-        return this.database.activity.findOrCreate({
-            where: {userId, locationId},
-            defaults: {locked: false}
-        }).spread((activity, wasCreated) => {
-            if(!wasCreated && activity.locked)
-            {
-                activity.locked = false;
-                activity.save();
-            }
 
-            if(wasCreated)
-                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION});
+            return this.database.activity.findOrCreate({
+                where: {userId, locationId},
+                defaults: {locked: false}
+            }).spread((activity, wasCreated) => {
+                if (!wasCreated && activity.locked) {
+                    activity.locked = false;
+                    activity.save();
+                }
 
-            else
-                this.database.activityLog.create({activityId: activity.id, activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION});
+                if (wasCreated)
+                    this.database.activityLog.create({
+                        activityLocationId: locationId,
+                        activityUserId: userId,
+                        activityLogTypeId: activityLogTypes.UNLOCK_TIMELINE_LOACATION
+                    });
 
-        }).then(() => {
-            return this.database.user.findByPk(userId).then( user => {
-                return this.getLookupTable(user).then((locations) => {
-                    return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+                else
+                    this.database.activityLog.create({
+                        activityLocationId: locationId,
+                        activityUserId: userId,
+                        activityLogTypeId: activityLogTypes.RECEIVED_TIMELINE_LOCATION
+                    });
+
+            })
+                .then(() => {
+                return this.database.user.findByPk(userId).then(user => {
+                    return this.getLookupTable(user).then((locations) => {
+                        return {data: {locations}, message: new Message(SUCCESS_OK, "Activity updated successfully")};
+                    });
                 });
-            });
-        });
+            }).catch((err) => {
+                    // this._logger.error(err);
+                    return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. User or location id not provided!")};
+                });
     }
 
     public updateLocationLike(data: any): any

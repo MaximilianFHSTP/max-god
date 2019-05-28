@@ -5,7 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Tach</h1>
+<h1>Enter a new to register</h1>
+<input id="nameField" />
+<button onclick="registerDevice()">Register Device</button>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
@@ -13,13 +15,15 @@
     var token = undefined;
     var user = undefined;
     var parts = undefined;
-    var socket = io('http://localhost:3000/');
+    var socket = io('https://god.stift-klosterneuburg.at/');
 
-    socket.on('news', function (data) {
+    function registerDevice()
+    {
+        var name = document.getElementById("nameField").value;
 
         socket.emit('registerOD', {
-            identifier: "Raggnor",
-            email: 'schlese@fhstp.ac.at',
+            identifier: name,
+            email: name + '@fhstp.ac.at',
             password: 'pwd',
             isGuest: false,
             deviceAddress: 'deviceAddress',
@@ -29,6 +33,11 @@
             ipAddress: 'not set',
             language: 1
         });
+    }
+
+    socket.on('news', function (data) {
+
+        console.log(data);
 
         socket.on('registerODResult', function (result)
         {
@@ -37,11 +46,11 @@
             user = result.data.user;
             // socket.emit('getCoaParts');
             // socket.emit('getCoaColors');
-            // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+            socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
             // socket.emit('registerLocation', {user: user.id, location: 3000});
             // socket.emit('questionnaireAnswered', user.id);
             // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
-            socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+            // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
 
             socket.removeAllListeners('registerODResult');
         });
@@ -104,8 +113,7 @@
         socket.on('registerTimelineUpdateResult', function(result)
         {
             console.log("------------ register TimelineUpdate ------------");
-            console.log(result.data);
-            console.log(result.message.message);
+            console.log(result);
         });
 
     });

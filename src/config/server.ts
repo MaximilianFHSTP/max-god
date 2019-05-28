@@ -37,12 +37,12 @@ export default class Server
                 this._logger.info('Server runs on Port ' + process.env.SERVER_PORT);
             });
 
-            /*
+
             this.app.get('/', function (req, res)
             {
                 res.sendFile(process.env.NODE_PATH + '/assets/localIndex.html');
             });
-            */
+
         });
     }
 
