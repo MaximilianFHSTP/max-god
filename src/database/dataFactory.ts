@@ -1744,7 +1744,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 999999999999,
+                    maxSeat: 999,
                     showInTimeline: true,
                     startDate: 1450,
                     endDate: 1499
@@ -1759,7 +1759,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 999999999999,
+                    maxSeat: 999,
                     showInTimeline: false
                 }),
                 this._connection.location.create({
@@ -1789,7 +1789,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 999999999999,
+                    maxSeat: 999,
                     showInTimeline: false
                 }),
                 this._connection.location.create({
@@ -1820,7 +1820,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 999999999999,
+                    maxSeat: 999,
                     showInTimeline: false
                 }),
                 this._connection.location.create({
@@ -1851,7 +1851,7 @@ export class DataFactory {
                     contentTypeId: 1,
                     statusId: 3,
                     currentSeat: 0,
-                    maxSeat: 999999999999,
+                    maxSeat: 999,
                     showInTimeline: false
                 })
             ]);
