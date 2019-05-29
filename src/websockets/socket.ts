@@ -88,11 +88,11 @@ export class WebSocket
                 }
             });
 
-            socket.once('reconnecting', (attemptNumber) => {
+            socket.on('reconnecting', (attemptNumber) => {
                 // console.log("Trying to reconnect to " + socket.id + ": " + attemptNumber);
             });
 
-            socket.once('disconnect', (reason) =>
+            socket.on('disconnect', (reason) =>
             {
                 // if(reason === 'transport close') return;
                 if(socket.token)
@@ -113,12 +113,12 @@ export class WebSocket
 
             socket.emit('news', { hello: 'world' });
 
-            socket.once('addTokenToSocket', (token) =>
+            socket.on('addTokenToSocket', (token) =>
             {
                 socket.token = token;
             });
 
-            socket.once('registerOD', (data) =>
+            socket.on('registerOD', (data) =>
             {
                 this.odController.registerOD(data, socket.id).then( (result) =>
                 {
@@ -139,7 +139,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('autoLoginOD', (data) => {
+            socket.on('autoLoginOD', (data) => {
                 jwt.verify(data, process.env.SECRET, (err, decoded) =>
                 {
                     if(err || !decoded)
@@ -174,7 +174,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('loginOD', (data) =>
+            socket.on('loginOD', (data) =>
             {
                 this.odController.loginUser(data, socket.id).then( (result) =>
                 {
@@ -195,7 +195,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('registerODGuest', (data) =>
+            socket.on('registerODGuest', (data) =>
             {
                 this.odController.registerGuest(data, socket.id).then( (result) =>
                 {
@@ -216,19 +216,19 @@ export class WebSocket
                 });
             });
 
-            socket.once('deleteOD', (data) =>
+            socket.on('deleteOD', (data) =>
             {
                 this.odController.deleteOD(data);
             });
 
-            socket.once('questionnaireAnswered', (data) => {
+            socket.on('questionnaireAnswered', (data) => {
                 this.odController.updateUserQuestionnaireAnswered(data).then((res) =>
                 {
                     socket.emit('questionnaireAnsweredResult', res);
                 })
             });
 
-            socket.once('registerLocation', (data) =>
+            socket.on('registerLocation', (data) =>
             {
                 // console.log("register location: " + data.location + ", " + data.user);
                 this.locationController.registerLocation(data, socket.id).then( (message) =>
@@ -237,7 +237,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('registerTimelineUpdate', (data) =>
+            socket.on('registerTimelineUpdate', (data) =>
             {
                 this.locationController.registerTimelineUpdate(data).then( (result) =>
                 {
@@ -245,7 +245,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('unlockAllTimelineLocations', (data) =>
+            socket.on('unlockAllTimelineLocations', (data) =>
             {
                 this.locationController.unlockAllTimelineLocations(data).then((result) =>
                 {
@@ -253,7 +253,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('registerLocationLike', (data) =>
+            socket.on('registerLocationLike', (data) =>
             {
                 this.locationController.updateLocationLike(data).then( (message) =>
                 {
@@ -261,7 +261,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('disconnectedFromExhibit', (data) =>
+            socket.on('disconnectedFromExhibit', (data) =>
             {
                 this.locationController.disconnectedFromExhibit(data).then( (message) =>
                 {
@@ -269,7 +269,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('exhibitDisconnectedFromExhibit', (data) =>
+            socket.on('exhibitDisconnectedFromExhibit', (data) =>
             {
                 this.locationController.exhibitDisconnectedFromExhibit(data).then( (message) =>
                 {
@@ -277,12 +277,12 @@ export class WebSocket
                 });
             });
 
-            socket.once('disconnectUsers', (data) =>
+            socket.on('disconnectUsers', (data) =>
             {
                 this.locationController.tableDisconnectFromExhibit(data);
             });
 
-            socket.once('checkLocationStatus', (data) =>
+            socket.on('checkLocationStatus', (data) =>
             {
                this.locationController.checkLocationStatus(data).then( (message) =>
                {
@@ -290,7 +290,7 @@ export class WebSocket
                });
             });
 
-            socket.once('checkUsernameExists', (name) =>
+            socket.on('checkUsernameExists', (name) =>
             {
                this.odController.checkUserNameExists(name).then(exists =>
                {
@@ -298,7 +298,7 @@ export class WebSocket
                });
             });
 
-            socket.once('checkEmailExists', (mail) =>
+            socket.on('checkEmailExists', (mail) =>
             {
                 this.odController.checkEmailExists(mail).then(exists =>
                 {
@@ -306,7 +306,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('checkNameOrEmailExists', (data) =>
+            socket.on('checkNameOrEmailExists', (data) =>
             {
                 this.odController.checkNameOrEmailExists(data).then(result =>
                 {
@@ -314,7 +314,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('loginExhibit', (ipAddress) =>
+            socket.on('loginExhibit', (ipAddress) =>
             {
                 this.exhibitController.loginExhibit(ipAddress, socket.id).then( (message) =>
                 {
@@ -322,13 +322,13 @@ export class WebSocket
                 });
             });
 
-            socket.once('getWifiSSID', () =>
+            socket.on('getWifiSSID', () =>
             {
                 const result = this.configController.isWifiSSIDMatching();
                 socket.emit('getWifiSSIDResult', result);
             });
 
-            socket.once('updateUserLanguage', (data) =>
+            socket.on('updateUserLanguage', (data) =>
             {
                 this.odController.updateUserLanguage(data).then(result =>
                 {
@@ -336,7 +336,7 @@ export class WebSocket
                 })
             });
 
-            socket.once('changeODCredentials', (data) =>
+            socket.on('changeODCredentials', (data) =>
             {
                 this.odController.updateUserData(data).then(result =>
                 {
@@ -353,7 +353,7 @@ export class WebSocket
                 })
             });
 
-            socket.once('makeToRealUser', (data) =>
+            socket.on('makeToRealUser', (data) =>
             {
                 this.odController.makeToRealUser(data).then(result =>
                 {
@@ -370,7 +370,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('getUserCoaParts', (data) =>
+            socket.on('getUserCoaParts', (data) =>
             {
                 this.coaController.getUserCoaParts(data).then(result =>
                 {
@@ -378,7 +378,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('getCoaParts', () =>
+            socket.on('getCoaParts', () =>
             {
                 this.coaController.getCoaParts().then(result =>
                 {
@@ -386,7 +386,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('getCoaColors', () =>
+            socket.on('getCoaColors', () =>
             {
                 this.coaController.getCoaColors().then(result =>
                 {
@@ -394,7 +394,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('changeUserCoaColors', (data) =>
+            socket.on('changeUserCoaColors', (data) =>
             {
                 this.coaController.changeUserCoaColors(data).then(result =>
                 {
@@ -402,7 +402,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('changeUserCoaPart', (data) =>
+            socket.on('changeUserCoaPart', (data) =>
             {
                 this.coaController.changeUserCoaPart(data).then(result =>
                 {
@@ -410,7 +410,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('unlockCoaPart', (data) =>
+            socket.on('unlockCoaPart', (data) =>
             {
                 this.coaController.unlockCoaPart(data).then(result =>
                 {
@@ -418,7 +418,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('unlockCoaPartFromExhibit', (data) =>
+            socket.on('unlockCoaPartFromExhibit', (data) =>
             {
                 this._logger.info(JSON.stringify(data));
                 this.coaController.unlockCoaPart(data).then(result =>
@@ -427,12 +427,12 @@ export class WebSocket
                 });
             });
 
-            socket.once('updateSeat', (data) =>
+            socket.on('updateSeat', (data) =>
             {
                 this.locationController.updateLocationSeat(data);
             });
 
-            socket.once('getLookupTable', (data)  =>
+            socket.on('getLookupTable', (data)  =>
             {
                 this.locationController.sendLookupTable(data).then(result =>
                 {
@@ -440,7 +440,7 @@ export class WebSocket
                 });
             });
 
-            socket.once('checkAppVersion', (data) =>
+            socket.on('checkAppVersion', (data) =>
             {
                 this.configController.checkVersion(data).then(res =>
                 {
@@ -448,7 +448,7 @@ export class WebSocket
                 })
             });
 
-            socket.once('addUserLogEntry', (data) =>
+            socket.on('addUserLogEntry', (data) =>
             {
                 this.odController.addUserLogEntry(data).then(res =>
                 {
