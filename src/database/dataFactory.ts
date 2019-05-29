@@ -1738,7 +1738,7 @@ export class DataFactory {
                     description: 'Explore transcription of accounting book',
                     titleGER: 'Geld und Verwaltung',
                     titleENG: 'Coins and Governance',
-                    contentURL: 'interactiveAt',
+                    contentURL: 'interactive',
                     ipAddress: '0.0.0.0',
                     locationTypeId: locationTypes.INTERACTIVE_EXHIBIT_AT,
                     contentTypeId: 1,
