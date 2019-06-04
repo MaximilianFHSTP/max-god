@@ -43,6 +43,8 @@ export class WebSocket
     {
         this.io.on('connection', (socket) =>
         {
+            socket.removeAllListeners();
+
             socket.use((packet, next) =>
             {
                 const event: String = packet[0];
@@ -140,7 +142,7 @@ export class WebSocket
             });
 
             socket.on('autoLoginOD', (data) => {
-                jwt.verify(data, process.env.SECRET, (err, decoded) =>
+                jwt.verify(data.token, process.env.SECRET, (err, decoded) =>
                 {
                     if(err || !decoded)
                     {
@@ -153,7 +155,7 @@ export class WebSocket
 
                     if(user)
                     {
-                        this.odController.autoLoginUser(user.id, socket.id).then( (result) =>
+                        this.odController.autoLoginUser(user.id, data.device, socket.id).then( (result) =>
                         {
                             if(result.message.code <= 299)
                             {
@@ -445,6 +447,14 @@ export class WebSocket
                 this.configController.checkVersion(data).then(res =>
                 {
                     socket.emit('checkAppVersionResult', res);
+                })
+            });
+
+            socket.on('checkUserDeviceData', (data) =>
+            {
+                this.odController.checkUserDeviceData(data).then(res =>
+                {
+                    socket.emit('checkUserDeviceDataResult', res);
                 })
             });
 

@@ -8,6 +8,7 @@
 <h1>Enter a new to register</h1>
 <input id="nameField" />
 <button onclick="registerDevice()">Register Device</button>
+<button onclick="sendEvent()">Send Event</button>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
@@ -15,7 +16,8 @@
     var token = undefined;
     var user = undefined;
     var parts = undefined;
-    var socket = io('https://god.stift-klosterneuburg.at/');
+    var socket = io('http://localhost:3000/');
+    var eventButtonActive = false;
 
     function registerDevice()
     {
@@ -35,24 +37,58 @@
         });
     }
 
+    function sendEvent()
+    {
+        if(!eventButtonActive) return;
+        // socket.emit('getCoaParts');
+        // socket.emit('getCoaColors');
+        // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+        // socket.emit('registerLocation', {user: user.id, location: 3000});
+        // socket.emit('questionnaireAnswered', user.id);
+        // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
+        // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+        // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
+        // socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
+    }
+
     socket.on('news', function (data) {
 
+        socket.removeAllListeners();
         console.log(data);
+
+        socket.on('checkUserDeviceDataResult', function (result)
+        {
+            console.log("------------ Check user device data result ------------");
+            console.log(result);
+        });
+
+        socket.on('autoLoginODResult', function (result)
+        {
+            console.log("------------ Autlogin result ------------");
+            console.log(result);
+
+            socket.removeAllListeners('autoLoginODResult');
+        });
 
         socket.on('registerODResult', function (result)
         {
             console.log("------------ Registered user ------------");
             console.log(result);
             user = result.data.user;
-            // socket.emit('getCoaParts');
-            // socket.emit('getCoaColors');
-            socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
-            // socket.emit('registerLocation', {user: user.id, location: 3000});
-            // socket.emit('questionnaireAnswered', user.id);
-            // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
-            // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+
+            token = result.data.token;
+
+            eventButtonActive = true;
 
             socket.removeAllListeners('registerODResult');
+        });
+
+        socket.on('addUserLogEntryResult', function(res)
+        {
+            console.log("------------ addUserLogEntry ------------");
+            console.log(res);
+
+            socket.removeAllListeners('addUserLogEntryResult');
         });
 
         socket.on('checkAppVersionResult', function(res)
@@ -114,6 +150,8 @@
         {
             console.log("------------ register TimelineUpdate ------------");
             console.log(result);
+
+            // socket.removeAllListeners('registerTimelineUpdateResult')
         });
 
     });

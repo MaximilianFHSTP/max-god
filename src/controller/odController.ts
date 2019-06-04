@@ -1,6 +1,6 @@
 import {Connection} from '../database';
-import {LOG_NOT_CREATED, Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_UPDATED} from "../messages";
-import {OD_NOT_CREATED, OD_NOT_FOUND, OD_NOT_UPDATED} from "../messages/odTypes";
+import {LOG_NOT_CREATED, Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_OK, SUCCESS_UPDATED} from "../messages";
+import {OD_NOT_CREATED, OD_NOT_FOUND, OD_NOT_UPDATED, OD_CREDENTIALS_NOT_MATCHING} from "../messages/odTypes";
 import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
 import * as locationTypes from '../config/locationTypes';
@@ -172,19 +172,34 @@ export class OdController {
          })
     }
 
-    public autoLoginUser(identifier: any, socketId: any): any {
+    public autoLoginUser(identifier: string, device: any, socketId: any): any
+    {
+        const deviceAddress: string = device.deviceAddress;
+        const deviceOS: string = device.deviceOS;
+        const deviceVersion: string = device.deviceVersion;
+        const deviceModel: string = device.deviceModel;
+
         return this._database.user.findByPk(identifier).then(user => {
             if (!user)
                 throw new Error('User not found');
 
             user.socketId = socketId;
-            user.save();
+            if(device !== null && device !== undefined)
+            {
+                user.deviceAddress = deviceAddress;
+                user.deviceOS = deviceOS;
+                user.deviceVersion = deviceVersion;
+                user.deviceModel = deviceModel;
+            }
 
-            return this.getLookupTable(user).then((locations) => {
-                return {
-                    data: {user, locations},
-                    message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
-                };
+            return user.save().then(() =>
+            {
+                return this.getLookupTable(user).then((locations) => {
+                    return {
+                        data: {user, locations},
+                        message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
+                    };
+                });
             });
         }).catch(() => {
             return {data: null, message: new Message(LOGIN_FAILED, "User not found!")}
@@ -196,6 +211,11 @@ export class OdController {
         const email = data.email;
         const password = data.password;
 
+        const deviceAddress: string = data.deviceAddress;
+        const deviceOS: string = data.deviceOS;
+        const deviceVersion: string = data.deviceVersion;
+        const deviceModel: string = data.deviceModel;
+
         if (user)
         {
             return this._database.user.findOne({where: {name: user}}).then((user) =>
@@ -206,13 +226,19 @@ export class OdController {
                     if(!valid) return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
 
                     user.socketId = socketId;
-                    user.save();
+                    user.deviceAddress = deviceAddress;
+                    user.deviceOS = deviceOS;
+                    user.deviceVersion = deviceVersion;
+                    user.deviceModel = deviceModel;
 
-                    return this.getLookupTable(user).then((locations) => {
-                        return {
-                            data: {user, locations},
-                            message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
-                        };
+                    return user.save().then(() =>
+                    {
+                        this.getLookupTable(user).then((locations) => {
+                            return {
+                                data: {user, locations},
+                                message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
+                            };
+                        });
                     });
                 }
                 else {
@@ -421,6 +447,42 @@ export class OdController {
         {
             this._logger.error(err);
             return {data: null, message: new Message(LOG_NOT_CREATED, "Could not create log entry")};
+        });
+    }
+
+    public checkUserDeviceData(data): any
+    {
+        const userId: string = data.userId;
+        const deviceAddress: string = data.deviceAddress;
+        const deviceOS: string = data.deviceOS;
+        const deviceVersion: string = data.deviceVersion;
+        const deviceModel: string = data.deviceModel;
+        const shouldBeUpdated: string = data.shouldBeUpdated;
+
+        return this._database.user.findByPk(userId).then(user =>
+        {
+            if(user.deviceAddress !== deviceAddress || user.deviceOS !== deviceOS || user.deviceVersion !== deviceVersion || user.deviceModel !== deviceModel)
+            {
+                if(shouldBeUpdated)
+                {
+                    user.deviceAddress = deviceAddress;
+                    user.deviceOS = deviceOS;
+                    user.deviceVersion = deviceVersion;
+                    user.deviceModel = deviceModel;
+
+                    return user.save().then(() =>
+                    {
+                        return {data: user, message: new Message(SUCCESS_UPDATED, "Device data was not matching but updated successfully")};
+                    });
+                }
+
+                else
+                    return {data: user, message: new Message(OD_CREDENTIALS_NOT_MATCHING, "Device data is not matching")};
+            }
+
+            else
+                return {data: user, message: new Message(SUCCESS_OK, "Device data are matching")};
+
         });
     }
 
