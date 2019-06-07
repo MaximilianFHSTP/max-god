@@ -103,10 +103,10 @@ export class OdController {
         });
     }
 
-    public registerGuest(data: any, socketId: any): any {
+    public async registerGuest(data: any, socketId: any): Promise<any> {
         const next = this._database.getNextGuestNumber();
 
-        const identifier: string = 'Guest' + next;
+        let identifier: string = 'Guest' + next;
         const deviceAddress: string = data.deviceAddress;
         const deviceOS: string = data.deviceOS;
         const deviceVersion: string = data.deviceVersion;
@@ -114,6 +114,16 @@ export class OdController {
         const language: number = data.language;
         //const ipAddress: string = data.ipAddress;
 
+        let nameIsExisting = true;
+
+        while(nameIsExisting)
+        {
+            let count = await this._database.user.count({where: {name: identifier}});
+            nameIsExisting = count !== 0;
+
+            if(nameIsExisting)
+                identifier = 'Guest' + this._database.getNextGuestNumber();
+        }
         // console.log("id: %s language: %d", identifier, language);
 
         return this._database.sequelize.transaction((t1) => {

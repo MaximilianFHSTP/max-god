@@ -8,6 +8,7 @@
 <h1>Enter a new to register</h1>
 <input id="nameField" />
 <button onclick="registerDevice()">Register Device</button>
+<button onclick="registerGuest()">Register Guest</button>
 <button onclick="sendEvent()">Send Event</button>
 
 
@@ -33,6 +34,17 @@
             deviceVersion: 'deviceVersion',
             deviceModel: 'deviceModel',
             ipAddress: 'not set',
+            language: 1
+        });
+    }
+
+    function registerGuest()
+    {
+        socket.emit('registerODGuest', {
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel',
             language: 1
         });
     }
@@ -68,6 +80,12 @@
             console.log(result);
 
             socket.removeAllListeners('autoLoginODResult');
+        });
+
+        socket.on('registerODGuestResult', function(result)
+        {
+            console.log("------------ Registered guest user ------------");
+            console.log(result);
         });
 
         socket.on('registerODResult', function (result)
