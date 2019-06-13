@@ -69,24 +69,24 @@ export class WebSocket
                             {
                                 if(this.checkGuestAccess(event))
                                 {
-                                    next();
+                                    return next();
                                 }
                                 else
                                 {
                                     this._logger.error('Access Restricted Error');
-                                    next(new Error('Access Restricted Error'));
+                                    return next(new Error('Access Restricted Error'));
                                 }
                             }
                             else {
-                                next();
+                                return next();
                             }
                         }
 
-                        next();
+                        return next();
                     });
                 }
                 else {
-                    next();
+                    return next();
                 }
             });
 

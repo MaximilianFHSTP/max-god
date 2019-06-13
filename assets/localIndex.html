@@ -51,6 +51,8 @@
 
     function sendEvent()
     {
+        socket.emit('checkUsernameExists', 'iOSSubUser');
+        socket.emit('checkEmailExists', 'fake@mail.com');
         if(!eventButtonActive) return;
         // socket.emit('getCoaParts');
         // socket.emit('getCoaColors');
@@ -58,7 +60,7 @@
         // socket.emit('registerLocation', {user: user.id, location: 3000});
         // socket.emit('questionnaireAnswered', user.id);
         // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
-        // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+        socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
         // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
         // socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
     }
@@ -67,6 +69,18 @@
 
         socket.removeAllListeners();
         console.log(data);
+
+        socket.on('checkUsernameExistsResult', function (result)
+        {
+            console.log("------------ check Username Exists result ------------");
+            console.log(result);
+        });
+
+        socket.on('checkEmailExistsResult', function (result)
+        {
+            console.log("------------ check email Exists result ------------");
+            console.log(result);
+        });
 
         socket.on('checkUserDeviceDataResult', function (result)
         {
@@ -86,6 +100,12 @@
         {
             console.log("------------ Registered guest user ------------");
             console.log(result);
+
+            user = result.data.user;
+
+            token = result.data.token;
+
+            eventButtonActive = true;
         });
 
         socket.on('registerODResult', function (result)
@@ -98,7 +118,7 @@
 
             eventButtonActive = true;
 
-            socket.removeAllListeners('registerODResult');
+            // socket.removeAllListeners('registerODResult');
         });
 
         socket.on('addUserLogEntryResult', function(res)
@@ -106,7 +126,7 @@
             console.log("------------ addUserLogEntry ------------");
             console.log(res);
 
-            socket.removeAllListeners('addUserLogEntryResult');
+            // socket.removeAllListeners('addUserLogEntryResult');
         });
 
         socket.on('checkAppVersionResult', function(res)
