@@ -14,7 +14,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
-    var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMjdmMGU1NjAtZTg4Yy00ZDIzLWIyZGYtMmU2ZDUyNTkyNzFhIiwibmFtZSI6Ikd1ZXN0MiIsInBhc3N3b3JkIjpudWxsLCJlbWFpbCI6bnVsbCwiaXNHdWVzdCI6dHJ1ZSwiY3VycmVudExvY2F0aW9uIjpudWxsLCJhdmF0YXIiOm51bGwsImRldmljZUFkZHJlc3MiOiJkZXZpY2VBZGRyZXNzIiwic29ja2V0SWQiOiJaOGx4QjNTUE4zMzFQNFRtQUFBQiIsImlwQWRkcmVzcyI6Im5vdCBzZXQiLCJkZXZpY2VPUyI6ImlPUyIsImRldmljZVZlcnNpb24iOiIxMC45LjEiLCJkZXZpY2VNb2RlbCI6IklwaG9uZSBYUyIsImFuc3dlcmVkUXVlc3Rpb25uYWlyZSI6ZmFsc2UsImFwcFZlcnNpb24iOiIxLjAuMCIsImNyZWF0ZWRBdCI6IjIwMTktMDYtMTdUMTM6MjM6MzQuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMTktMDYtMTdUMTM6MjM6NDAuNzczWiIsImdyb3VwSWQiOm51bGwsInByaW1hcnlDb2xvciI6MSwic2Vjb25kYXJ5Q29sb3IiOjEsImNvbnRlbnRMYW5ndWFnZUlkIjoxfSwiaWF0IjoxNTYwNzc3ODIwfQ.lgk7w_-pJDwoI4MAn7eU0-EefOcs_oateeEWu2EA0_o";
+    var token = undefined;
     var user = undefined;
     var parts = undefined;
     var socket = io('http://localhost:3000/');
@@ -51,17 +51,17 @@
 
     function sendEvent()
     {
-        // socket.emit('checkUsernameExists', 'iOSSubUser');
-        // socket.emit('checkEmailExists', 'fake@mail.com');
-        // if(!eventButtonActive) return;
+        socket.emit('checkUsernameExists', 'iOSSubUser');
+        socket.emit('checkEmailExists', 'fake@mail.com');
+        if(!eventButtonActive) return;
         // socket.emit('getCoaParts');
         // socket.emit('getCoaColors');
         // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
         // socket.emit('registerLocation', {user: user.id, location: 3000});
         // socket.emit('questionnaireAnswered', user.id);
         // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
-        // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
-        socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
+        socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+        // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
         // socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
     }
 
