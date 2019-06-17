@@ -182,18 +182,21 @@ export class OdController {
          })
     }
 
-    public autoLoginUser(identifier: string, device: any, socketId: any): any
+    public autoLoginUser(identifier: string, socketId: any): any
     {
+        /*
         const deviceAddress: string = device.deviceAddress;
         const deviceOS: string = device.deviceOS;
         const deviceVersion: string = device.deviceVersion;
         const deviceModel: string = device.deviceModel;
+        */
 
         return this._database.user.findByPk(identifier).then(user => {
             if (!user)
                 throw new Error('User not found');
 
             user.socketId = socketId;
+            /*
             if(device !== null && device !== undefined)
             {
                 user.deviceAddress = deviceAddress;
@@ -201,7 +204,7 @@ export class OdController {
                 user.deviceVersion = deviceVersion;
                 user.deviceModel = deviceModel;
             }
-
+            */
             return user.save().then(() =>
             {
                 return this.getLookupTable(user).then((locations) => {

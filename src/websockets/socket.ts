@@ -52,6 +52,7 @@ export class WebSocket
 
                 if(this.checkEventsTokenNeeded(event))
                 {
+                    // console.log('JWT: ' + token);
                     // this._logger.info('JWT: ' + token);
                     jwt.verify(token, process.env.SECRET, (err, decoded) =>
                     {
@@ -141,8 +142,9 @@ export class WebSocket
                 });
             });
 
-            socket.on('autoLoginOD', (data) => {
-                jwt.verify(data.token, process.env.SECRET, (err, decoded) =>
+            socket.on('autoLoginOD', (data) =>
+            {
+                jwt.verify(data, process.env.SECRET, (err, decoded) =>
                 {
                     if(err || !decoded)
                     {
@@ -155,7 +157,7 @@ export class WebSocket
 
                     if(user)
                     {
-                        this.odController.autoLoginUser(user.id, data.device, socket.id).then( (result) =>
+                        this.odController.autoLoginUser(user.id, socket.id).then( (result) =>
                         {
                             if(result.message.code <= 299)
                             {
