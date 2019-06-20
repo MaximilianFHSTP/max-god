@@ -236,7 +236,7 @@ export class Connection {
             },
             email: {
                 type: Sequelize.STRING,
-                unique: true
+                unique: false
             },
             isGuest: {
                 type: Sequelize.BOOLEAN,
@@ -280,6 +280,11 @@ export class Connection {
             appVersion: {
                 type: Sequelize.STRING,
                 defaultValue: '1.0.0'
+            },
+            isDeleted: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
             }
         });
 

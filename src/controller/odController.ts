@@ -7,6 +7,7 @@ import * as locationTypes from '../config/locationTypes';
 import * as statusTypes from '../config/statusTypes';
 import * as bcrypt from 'bcrypt';
 import Logger from "../config/logger";
+import * as logTypes from '../config/logTypes';
 
 export class OdController {
     private _database: Connection;
@@ -202,6 +203,8 @@ export class OdController {
                 user.deviceModel = deviceModel;
             }
 
+            this._database.log.create({userId: user.id, logTypeId: logTypes.AUTO_LOGIN});
+
             return user.save().then(() =>
             {
                 return this.getLookupTable(user).then((locations) => {
@@ -216,7 +219,8 @@ export class OdController {
         });
     }
 
-    public loginUser(data: any, socketId: any): any {
+    public loginUser(data: any, socketId: any): any
+    {
         const user = data.user;
         const email = data.email;
         const password = data.password;
@@ -236,14 +240,20 @@ export class OdController {
                     if(!valid) return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
 
                     user.socketId = socketId;
-                    user.deviceAddress = deviceAddress;
-                    user.deviceOS = deviceOS;
-                    user.deviceVersion = deviceVersion;
-                    user.deviceModel = deviceModel;
+
+                    if(deviceAddress !== undefined && deviceOS !== undefined && deviceVersion !== undefined && deviceModel !== undefined)
+                    {
+                        user.deviceAddress = deviceAddress;
+                        user.deviceOS = deviceOS;
+                        user.deviceVersion = deviceVersion;
+                        user.deviceModel = deviceModel;
+                    }
+
+                    this._database.log.create({userId: user.id, logTypeId: logTypes.USER_LOGIN});
 
                     return user.save().then(() =>
                     {
-                        this.getLookupTable(user).then((locations) => {
+                        return this.getLookupTable(user).then((locations) => {
                             return {
                                 data: {user, locations},
                                 message: new Message(SUCCESS_LOGGED_IN, "User logged in successfully")
@@ -267,7 +277,7 @@ export class OdController {
                         };
                     });
                 } else {
-                    return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
+                    return {data: null, message: new Message(OD_NOT_FOUND, "Could not log in user")};
                 }
             }).catch(() => {
                 return {data: null, message: new Message(LOGIN_FAILED, "User not found!")}
@@ -367,7 +377,7 @@ export class OdController {
 
     public deleteOD(userId: number)
     {
-        this._database.user.destroy({where: {id: userId}});
+        this._database.user.update({isDeleted: true},{where: {id: userId}});
     }
 
     public async checkUserNameExists(name: String): Promise<boolean> {
@@ -377,7 +387,7 @@ export class OdController {
     }
 
     public checkEmailExists(email: String): any {
-        return this._database.user.count({where: {email}}).then(count => {
+        return this._database.user.count({where: {email, isDeleted: false}}).then(count => {
             return count != 0;
         });
     }

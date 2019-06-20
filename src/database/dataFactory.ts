@@ -117,7 +117,10 @@ export class DataFactory {
             return Promise.all([
                 this._connection.logType.create({id: 1, description: 'arTargetFound'}),
                 this._connection.logType.create({id: 2, description: 'quizRightAnswer'}),
-                this._connection.logType.create({id: 3, description: 'quizWrongAnswer'})
+                this._connection.logType.create({id: 3, description: 'quizWrongAnswer'}),
+                this._connection.logType.create({id: 4, description: 'autoLogin'}),
+                this._connection.logType.create({id: 5, description: 'userLogin'}),
+                this._connection.logType.create({id: 6, description: 'userLogout'})
             ]);
         });
     }
