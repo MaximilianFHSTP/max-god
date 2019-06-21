@@ -477,7 +477,7 @@ export class OdController {
         const deviceOS: string = data.deviceOS;
         const deviceVersion: string = data.deviceVersion;
         const deviceModel: string = data.deviceModel;
-        const shouldBeUpdated: string = data.shouldBeUpdated;
+        const shouldBeUpdated: boolean = data.shouldBeUpdated;
 
         return this._database.user.findByPk(userId).then(user =>
         {
