@@ -20,18 +20,14 @@ export class ConfigController
 
     public checkVersion(data): any
     {
-        const userId = data.user;
         const version = data.version;
         const currentVersion = this.database.currentSettings.appVersion;
 
-        return this.database.user.update({answeredQuestionnaire: true}, {where: {id: userId}}).then(() =>
-        {
-            if(version === currentVersion)
-                return { data: {versionIsCorrect: true}, message: new Message(SUCCESS_OK, 'Version is correct')};
+        if(version === currentVersion)
+            return { data: {versionIsCorrect: true}, message: new Message(SUCCESS_OK, 'Version is correct')};
 
-            else
-                return { data: {versionIsCorrect: false}, message: new Message(authTypes.INCORRECT_VERSION, 'Version is incorrect')};
+        else
+            return { data: {versionIsCorrect: false, currentVersion}, message: new Message(authTypes.INCORRECT_VERSION, 'Version is incorrect')};
 
-        });
     }
 }

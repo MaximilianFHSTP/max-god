@@ -444,10 +444,8 @@ export class WebSocket
 
             socket.on('checkAppVersion', (data) =>
             {
-                this.configController.checkVersion(data).then(res =>
-                {
-                    socket.emit('checkAppVersionResult', res);
-                })
+                const res = this.configController.checkVersion(data);
+                socket.emit('checkAppVersionResult', res);
             });
 
             socket.on('checkUserDeviceData', (data) =>
