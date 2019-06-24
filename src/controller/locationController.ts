@@ -218,11 +218,9 @@ export class LocationController
                     });
                 });
                 this.registerTimelineUpdate({user: user.id, location: 2002});
-                this.registerTimelineUpdate({user: user.id, location: 2003});
                 this.registerTimelineUpdate({user: user.id, location: 2004});
                 this.registerTimelineUpdate({user: user.id, location: 3000});
                 this.registerTimelineUpdate({user: user.id, location: 301});
-                this.registerTimelineUpdate({user: user.id, location: 4001});
                 this.registerTimelineUpdate({user: user.id, location: 402}).then(() => {
                     this.registerTimelineUpdate({user: user.id, location: 403}).then(() => {
                         this.registerTimelineUpdate({user: user.id, location: 4004}).then(() => {
@@ -250,7 +248,7 @@ export class LocationController
         {
             case 2001:
             case 301:
-            case 4001:
+            case 402:
             case 501:
             case 6001:
                 check = true;
