@@ -8,6 +8,7 @@
 <h1>Enter a new to register</h1>
 <input id="nameField" />
 <button onclick="registerDevice()">Register Device</button>
+<button onclick="loginDevice()">Login Device</button>
 <button onclick="registerGuest()">Register Guest</button>
 <button onclick="sendEvent()">Send Event</button>
 
@@ -17,7 +18,7 @@
     var token = undefined;
     var user = undefined;
     var parts = undefined;
-    var socket = io('http://localhost:3000/');
+    var socket = io('https://god.meeteux.fhstp.ac.at:3000/');
     var eventButtonActive = false;
 
     function registerDevice()
@@ -38,6 +39,18 @@
         });
     }
 
+    function loginDevice()
+    {
+        socket.emit('loginOD', {
+            user: 'Raggnor',
+            password: '25rasounar',
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel'
+        });
+    }
+
     function registerGuest()
     {
         socket.emit('registerODGuest', {
@@ -51,24 +64,30 @@
 
     function sendEvent()
     {
-        socket.emit('checkUsernameExists', 'iOSSubUser');
-        socket.emit('checkEmailExists', 'fake@mail.com');
+        // socket.emit('checkUsernameExists', 'iOSSubUser');
+        // socket.emit('checkEmailExists', 'fake@mail.com');
         if(!eventButtonActive) return;
         // socket.emit('getCoaParts');
         // socket.emit('getCoaColors');
         // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
         // socket.emit('registerLocation', {user: user.id, location: 3000});
         // socket.emit('questionnaireAnswered', user.id);
-        // socket.emit('checkAppVersion', {user: user.id, version: '1.0.0'});
-        socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+        // socket.emit('checkAppVersion', {user: user.id, version: '2.4'});
+        // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
         // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
-        // socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
+        socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
     }
 
     socket.on('news', function (data) {
 
         socket.removeAllListeners();
         console.log(data);
+
+        socket.on('loginODResult', function (result)
+        {
+            console.log("------------ login od result ------------");
+            console.log(result);
+        });
 
         socket.on('checkUsernameExistsResult', function (result)
         {

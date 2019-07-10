@@ -1,5 +1,13 @@
 import {Connection} from '../database';
-import {LOG_NOT_CREATED, Message, SUCCESS_CREATED, SUCCESS_LOGGED_IN, SUCCESS_OK, SUCCESS_UPDATED} from "../messages";
+import {
+    LOG_NOT_CREATED,
+    Message,
+    OD_NOT_DELETED,
+    SUCCESS_CREATED,
+    SUCCESS_LOGGED_IN,
+    SUCCESS_OK,
+    SUCCESS_UPDATED
+} from "../messages";
 import {OD_NOT_CREATED, OD_NOT_FOUND, OD_NOT_UPDATED, OD_CREDENTIALS_NOT_MATCHING} from "../messages/odTypes";
 import {LOGIN_FAILED} from "../messages/authenticationTypes";
 import * as contentLanguages from '../config/contentLanguages';
@@ -63,43 +71,52 @@ export class OdController {
 
         const hash = this.hashPassword(pwd);
 
-        return this._database.sequelize.transaction((t1) => {
-            return this._database.user.create({
-                name: identifier,
-                email: email,
-                password: hash,
-                isGuest: false,
-                deviceAddress: deviceAddress,
-                deviceOS: deviceOS,
-                deviceVersion: deviceVersion,
-                deviceModel: deviceModel,
-                ipAddress: 'not set',
-                contentLanguageId: language,
-                socketId
-            }).then((user) =>
-            {
-                this._database.coaPart.findAll({where: {id: {[this._database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
+        return this.checkNameOrEmailExists({name: identifier, email}).then( (result) =>
+        {
+            if(result.name)
+                return {data: null, message: new Message(OD_NOT_CREATED, "Username is already existing!")};
+
+            if(result.email)
+                return {data: null, message: new Message(OD_NOT_CREATED, "Email is already existing!")};
+
+            return this._database.sequelize.transaction((t1) => {
+                return this._database.user.create({
+                    name: identifier,
+                    email: email,
+                    password: hash,
+                    isGuest: false,
+                    deviceAddress: deviceAddress,
+                    deviceOS: deviceOS,
+                    deviceVersion: deviceVersion,
+                    deviceModel: deviceModel,
+                    ipAddress: 'not set',
+                    contentLanguageId: language,
+                    socketId
+                }).then((user) =>
                 {
-                    for (let part of parts)
+                    this._database.coaPart.findAll({where: {id: {[this._database.sequelize.Op.between]: [10, 13]}}}).then((parts) =>
                     {
-                        if(part.id === 10)
-                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
+                        for (let part of parts)
+                        {
+                            if(part.id === 10)
+                                this._database.userCoaPart.create({userId: user.id, coaPartId: part.id, isActive: true});
 
-                        else
-                            this._database.userCoaPart.create({userId: user.id, coaPartId: part.id});
-                    }
-                });
+                            else
+                                this._database.userCoaPart.create({userId: user.id, coaPartId: part.id});
+                        }
+                    });
 
-                return this.getLookupTable(user).then((locations) => {
-                    // console.log(user);
-                    return {
-                        data: {user, locations},
-                        message: new Message(SUCCESS_CREATED, "User created successfully")
-                    };
+                    return this.getLookupTable(user).then((locations) => {
+                        // console.log(user);
+                        return {
+                            data: {user, locations},
+                            message: new Message(SUCCESS_CREATED, "User created successfully")
+                        };
+                    });
+                }).catch((err) => {
+                    this._logger.error(err);
+                    return {data: null, message: new Message(OD_NOT_CREATED, "Could not create user")};
                 });
-            }).catch((err) => {
-                this._logger.error(err);
-                return {data: null, message: new Message(OD_NOT_CREATED, "Could not create user")};
             });
         });
     }
@@ -180,7 +197,12 @@ export class OdController {
                      message: new Message(SUCCESS_UPDATED, "User updated successfully")
                  };
              });
-         })
+         }).catch( err => {
+             return {
+                 data: null,
+                 message: new Message(OD_NOT_UPDATED, "Could not update user information")
+             };
+         });
     }
 
     public autoLoginUser(identifier: string, device: any, socketId: any): any
@@ -377,7 +399,13 @@ export class OdController {
 
     public deleteOD(userId: number)
     {
-        this._database.user.update({isDeleted: true},{where: {id: userId}});
+        return this._database.user.update({isDeleted: true},{where: {id: userId}}).then( () =>
+        {
+            return {data: null, message: new Message(SUCCESS_OK, "User deleted successfully")};
+        }).catch((err) =>
+        {
+            return {data: null, message: new Message(OD_NOT_DELETED, "Could not delete user")};
+        });
     }
 
     public async checkUserNameExists(name: String): Promise<boolean> {

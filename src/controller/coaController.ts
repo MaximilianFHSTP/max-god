@@ -64,19 +64,27 @@ export class CoaController
                     {
                         if(part.id === coaId)
                         {
-                            this.database.userCoaPart.update({isActive: true}, {where: {userId: user.id, coaPartId: part.id}});
+                            return this.database.userCoaPart.update({isActive: true}, {where: {userId: user.id, coaPartId: part.id}}).then(() =>
+                            {
+                                return user.getCoaParts().then(parts =>
+                                {
+                                    return {data: parts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
+                                });
+                            });
                         }
 
                         else if(part.UserCoaPart.isActive === true)
                         {
-                            this.database.userCoaPart.update({isActive: false}, {where: {userId: user.id, coaPartId: part.id}});
+                            this.database.userCoaPart.update({isActive: false}, {where: {userId: user.id, coaPartId: part.id}}).then(() =>
+                            {
+                                return user.getCoaParts().then(parts =>
+                                {
+                                    return {data: parts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
+                                });
+                            });
                         }
                     }
                 }
-                return user.getCoaParts().then(parts =>
-                {
-                    return {data: parts, message: new Message(SUCCESS_OK, "Success: created user coa part")};
-                });
             });
 
         }).catch( () =>

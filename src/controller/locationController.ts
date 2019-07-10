@@ -154,7 +154,7 @@ export class LocationController
                     message: new Message(SUCCESS_OK, 'Location Registered successfully')
                 };
             }).catch((err) => {
-                // this._logger.error(err);
+                return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could not unlock timeline. No valid user or location id was provided!")};
             });
         });
     }

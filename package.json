@@ -5,9 +5,10 @@
   "main": "dir/index",
   "types": "dir/index",
   "scripts": {
+    "test": "mocha --exit",
     "tsc": "tsc -p .",
-    "start": "npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts"
+    "start": "npm run build:dev",
+    "build:dev": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,9 @@
     "nodemon": "^1.19.1",
     "ts-node": "^3.3.0",
     "typescript": "^2.9.2",
-    "typescript-eslint-parser": "^6.0.1"
+    "typescript-eslint-parser": "^6.0.1",
+    "mocha": "^6.1.4",
+    "chai": "^4.2.0"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",

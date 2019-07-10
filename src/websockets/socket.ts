@@ -220,7 +220,9 @@ export class WebSocket
 
             socket.on('deleteOD', (data) =>
             {
-                this.odController.deleteOD(data);
+                this.odController.deleteOD(data).then(res => {
+                    socket.emit('deleteODResult', res);
+                });
             });
 
             socket.on('questionnaireAnswered', (data) => {
