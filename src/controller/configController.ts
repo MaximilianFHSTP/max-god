@@ -1,6 +1,6 @@
 import { Connection } from '../database';
 import {Message, SUCCESS_OK} from "../messages";
-import * as statusTypes from '../config/statusTypes';
+import * as authTypes from '../messages/authenticationTypes';
 
 export class ConfigController
 {
@@ -11,10 +11,23 @@ export class ConfigController
         this.database = Connection.getInstance();
     }
 
-    public isWifiSSIDMatching(ssid: string): any
+    public isWifiSSIDMatching(): any
     {
         const correctSSID = this.database.currentSettings.wifiSSID;
-        return { data: { check: correctSSID.localeCompare(ssid) === 0 }, message: new Message(SUCCESS_OK, 'SSID was checked!') };
+        const pass = this.database.currentSettings.wifiPassword;
+        return { data: { ssid: correctSSID, password:  pass}, message: new Message(SUCCESS_OK, 'SSID and Password was found!') };
     }
 
+    public checkVersion(data): any
+    {
+        const version = data.version;
+        const currentVersion = this.database.currentSettings.appVersion;
+
+        if(version === currentVersion)
+            return { data: {versionIsCorrect: true}, message: new Message(SUCCESS_OK, 'Version is correct')};
+
+        else
+            return { data: {versionIsCorrect: false, currentVersion}, message: new Message(authTypes.INCORRECT_VERSION, 'Version is incorrect')};
+
+    }
 }

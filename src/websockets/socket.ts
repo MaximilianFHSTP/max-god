@@ -3,8 +3,10 @@ import * as jwt from 'jsonwebtoken';
 import  { Connection } from '../database';
 import {OdController, LocationController, ConfigController} from "../controller";
 import {ExhibitController} from "../controller/exhibitController";
-import {LOCATION_NOT_FOUND, Message} from "../messages";
+import {Message} from "../messages";
 import {INVALID_TOKEN} from "../messages/authenticationTypes";
+import {CoaController} from "../controller/coaController";
+import Logger from "../config/logger";
 
 export class WebSocket
 {
@@ -14,23 +16,35 @@ export class WebSocket
     private locationController: LocationController;
     private exhibitController: ExhibitController;
     private configController: ConfigController;
+    private coaController: CoaController;
+    private _logger: Logger;
 
     constructor(server: any)
     {
         this.io = new IO(server);
         this.odController = new OdController();
-        this.locationController = new LocationController();
+        this.locationController = new LocationController(this.io);
         this.exhibitController = new ExhibitController();
         this.configController = new ConfigController();
+        this.coaController = new CoaController();
         this.database = Connection.getInstance();
 
+        this._logger = Logger.getInstance();
+
         this.attachListeners();
+    }
+
+    public async connectDatabase()
+    {
+        await this.database.syncDatabase();
     }
 
     private attachListeners(): void
     {
         this.io.on('connection', (socket) =>
         {
+            socket.removeAllListeners();
+
             socket.use((packet, next) =>
             {
                 const event: String = packet[0];
@@ -38,9 +52,14 @@ export class WebSocket
 
                 if(this.checkEventsTokenNeeded(event))
                 {
+                    // this._logger.info('JWT: ' + token);
                     jwt.verify(token, process.env.SECRET, (err, decoded) =>
                     {
-                        if(err) return next(new Error('Invalid token Error'));
+                        if(err)
+                        {
+                            this._logger.error('JWT Error - Event: ' + event + ' Error: ' + err);
+                            return next(new Error('Invalid token Error'));
+                        }
 
                         const user = decoded.user;
 
@@ -50,52 +69,85 @@ export class WebSocket
                             {
                                 if(this.checkGuestAccess(event))
                                 {
-                                    next();
+                                    return next();
                                 }
                                 else
                                 {
-                                    next(new Error('Access Restricted Error'));
+                                    this._logger.error('Access Restricted Error');
+                                    return next(new Error('Access Restricted Error'));
                                 }
                             }
                             else {
-                                next();
+                                return next();
                             }
                         }
 
-                        next(new Error('Access Restricted Error'));
+                        return next();
                     });
                 }
                 else {
-                    next();
+                    return next();
+                }
+            });
+
+            socket.on('reconnecting', (attemptNumber) => {
+                // console.log("Trying to reconnect to " + socket.id + ": " + attemptNumber);
+            });
+
+            socket.on('disconnect', (reason) =>
+            {
+                // if(reason === 'transport close') return;
+                if(socket.token)
+                {
+                    const token = socket.token;
+                    jwt.verify(token, process.env.SECRET, (err, decoded) =>
+                    {
+                        if (err || !decoded.user) return;
+
+                        const user = decoded.user;
+                        this.odController.resetUserLocation(user);
+                    });
+                }
+                else {
+                    this.exhibitController.shutdownExhibit(socket.id);
                 }
             });
 
             socket.emit('news', { hello: 'world' });
 
+            socket.on('addTokenToSocket', (token) =>
+            {
+                socket.token = token;
+            });
+
             socket.on('registerOD', (data) =>
             {
-                this.odController.registerOD(data).then( (result) =>
+                this.odController.registerOD(data, socket.id).then( (result) =>
                 {
-                    const user = result.data.user;
-                    const locations = result.data.locations;
+                    if(result.data)
+                    {
+                        const user = result.data.user;
+                        const locations = result.data.locations;
 
-                    // Generate token
-                    const token = jwt.sign({user}, process.env.SECRET);
+                        // Generate token
+                        const token = jwt.sign({user}, process.env.SECRET);
 
-                    // Add token to result and to the socket connection
-                    result.data = {token, user, locations};
-                    socket.token = token;
+                        // Add token to result and to the socket connection
+                        result.data = {token, user, locations};
+                        socket.token = token;
+                    }
 
                     socket.emit('registerODResult', result);
                 });
             });
 
             socket.on('autoLoginOD', (data) => {
-                jwt.verify(data, process.env.SECRET, (err, decoded) =>
+                jwt.verify(data.token, process.env.SECRET, (err, decoded) =>
                 {
                     if(err || !decoded)
                     {
                         socket.emit('autoLoginODResult', {data: null, message: new Message(INVALID_TOKEN, "Invalid token!")});
+                        this._logger.error('Autologin token error: ' + err);
                         return;
                     }
 
@@ -103,7 +155,7 @@ export class WebSocket
 
                     if(user)
                     {
-                        this.odController.autoLoginUser(user.id).then( (result) =>
+                        this.odController.autoLoginUser(user.id, data.device, socket.id).then( (result) =>
                         {
                             if(result.message.code <= 299)
                             {
@@ -126,7 +178,7 @@ export class WebSocket
 
             socket.on('loginOD', (data) =>
             {
-                this.odController.loginUser(data).then( (result) =>
+                this.odController.loginUser(data, socket.id).then( (result) =>
                 {
                     if(result.data)
                     {
@@ -147,32 +199,43 @@ export class WebSocket
 
             socket.on('registerODGuest', (data) =>
             {
-                this.odController.registerGuest(data).then( (result) =>
+                this.odController.registerGuest(data, socket.id).then( (result) =>
                 {
-                    const user = result.data.user;
-                    const locations = result.data.locations;
+                    if(result.data && result.data.user)
+                    {
+                        const user = result.data.user;
+                        const locations = result.data.locations;
 
-                    // Generate token
-                    const token = jwt.sign({user}, process.env.SECRET);
+                        // Generate token
+                        const token = jwt.sign({user}, process.env.SECRET);
 
-                    // Add token to result and to the socket connection
-                    result.data = {token, user, locations};
-                    socket.token = token;
+                        // Add token to result and to the socket connection
+                        result.data = {token, user, locations};
+                        socket.token = token;
+                    }
 
-                    socket.emit('registerODResult', result);
+                    socket.emit('registerODGuestResult', result);
                 });
             });
 
             socket.on('deleteOD', (data) =>
             {
-                console.log('deleteOD');
-                this.odController.deleteOD(data);
+                this.odController.deleteOD(data).then(res => {
+                    socket.emit('deleteODResult', res);
+                });
+            });
+
+            socket.on('questionnaireAnswered', (data) => {
+                this.odController.updateUserQuestionnaireAnswered(data).then((res) =>
+                {
+                    socket.emit('questionnaireAnsweredResult', res);
+                })
             });
 
             socket.on('registerLocation', (data) =>
             {
                 // console.log("register location: " + data.location + ", " + data.user);
-                this.locationController.registerLocation(data).then( (message) =>
+                this.locationController.registerLocation(data, socket.id).then( (message) =>
                 {
                     socket.emit('registerLocationResult', message);
                 });
@@ -180,9 +243,17 @@ export class WebSocket
 
             socket.on('registerTimelineUpdate', (data) =>
             {
-                this.locationController.registerTimelineUpdate(data).then( (message) =>
+                this.locationController.registerTimelineUpdate(data).then( (result) =>
                 {
-                    socket.emit('registerTimelineUpdateResult', message);
+                    socket.emit('registerTimelineUpdateResult', result);
+                });
+            });
+
+            socket.on('unlockAllTimelineLocations', (data) =>
+            {
+                this.locationController.unlockAllTimelineLocations(data).then((result) =>
+                {
+                    socket.emit('unlockAllTimelineLocationsResult', result);
                 });
             });
 
@@ -196,10 +267,17 @@ export class WebSocket
 
             socket.on('disconnectedFromExhibit', (data) =>
             {
-                console.log('disconnectedFromExhibit');
                 this.locationController.disconnectedFromExhibit(data).then( (message) =>
                 {
                     socket.emit('disconnectedFromExhibitResult', message);
+                });
+            });
+
+            socket.on('exhibitDisconnectedFromExhibit', (data) =>
+            {
+                this.locationController.exhibitDisconnectedFromExhibit(data).then( (message) =>
+                {
+                    socket.emit('exhibitDisconnectedFromExhibitResult', message);
                 });
             });
 
@@ -232,18 +310,26 @@ export class WebSocket
                 });
             });
 
+            socket.on('checkNameOrEmailExists', (data) =>
+            {
+                this.odController.checkNameOrEmailExists(data).then(result =>
+                {
+                    socket.emit('checkNameOrEmailExistsResult', result);
+                });
+            });
+
             socket.on('loginExhibit', (ipAddress) =>
             {
-                this.exhibitController.loginExhibit(ipAddress).then( (message) =>
+                this.exhibitController.loginExhibit(ipAddress, socket.id).then( (message) =>
                 {
                     socket.emit('loginExhibitResult', message);
                 });
             });
 
-            socket.on('checkWifiSSID', (ssid) =>
+            socket.on('getWifiSSID', () =>
             {
-                const result = this.configController.isWifiSSIDMatching(ssid);
-                socket.emit('checkWifiSSIDResult', result)
+                const result = this.configController.isWifiSSIDMatching();
+                socket.emit('getWifiSSIDResult', result);
             });
 
             socket.on('updateUserLanguage', (data) =>
@@ -258,7 +344,16 @@ export class WebSocket
             {
                 this.odController.updateUserData(data).then(result =>
                 {
-                    socket.emit('changeODCredentials',result);
+                    const user = result.data.user;
+
+                    // Generate token
+                    const token = jwt.sign({user}, process.env.SECRET);
+
+                    // Add token to result and to the socket connection
+                    result.data = {token, user};
+                    socket.token = token;
+
+                    socket.emit('changeODCredentialsResult',result);
                 })
             });
 
@@ -277,6 +372,98 @@ export class WebSocket
 
                     socket.emit('makeToRealUserResult', result);
                 });
+            });
+
+            socket.on('getUserCoaParts', (data) =>
+            {
+                this.coaController.getUserCoaParts(data).then(result =>
+                {
+                    socket.emit('getUserCoaPartsResult', result);
+                });
+            });
+
+            socket.on('getCoaParts', () =>
+            {
+                this.coaController.getCoaParts().then(result =>
+                {
+                    socket.emit('getCoaPartsResult', result);
+                });
+            });
+
+            socket.on('getCoaColors', () =>
+            {
+                this.coaController.getCoaColors().then(result =>
+                {
+                    socket.emit('getCoaColorsResult', result);
+                });
+            });
+
+            socket.on('changeUserCoaColors', (data) =>
+            {
+                this.coaController.changeUserCoaColors(data).then(result =>
+                {
+                    socket.emit('changeUserCoaColorsResult', result);
+                });
+            });
+
+            socket.on('changeUserCoaPart', (data) =>
+            {
+                this.coaController.changeUserCoaPart(data).then(result =>
+                {
+                    socket.emit('changeUserCoaPartResult', result);
+                });
+            });
+
+            socket.on('unlockCoaPart', (data) =>
+            {
+                this.coaController.unlockCoaPart(data).then(result =>
+                {
+                    socket.emit('unlockCoaPartResult', result);
+                });
+            });
+
+            socket.on('unlockCoaPartFromExhibit', (data) =>
+            {
+                this._logger.info(JSON.stringify(data));
+                this.coaController.unlockCoaPart(data).then(result =>
+                {
+                    socket.emit('unlockCoaPartFromExhibitResult', result);
+                });
+            });
+
+            socket.on('updateSeat', (data) =>
+            {
+                this.locationController.updateLocationSeat(data);
+            });
+
+            socket.on('getLookupTable', (data)  =>
+            {
+                this.locationController.sendLookupTable(data).then(result =>
+                {
+                    socket.emit('getLookupTableResult', result);
+                });
+            });
+
+            socket.on('checkAppVersion', (data) =>
+            {
+                const res = this.configController.checkVersion(data);
+                socket.emit('checkAppVersionResult', res);
+            });
+
+            socket.on('checkUserDeviceData', (data) =>
+            {
+                this.odController.checkUserDeviceData(data).then(res =>
+                {
+                    socket.emit('checkUserDeviceDataResult', res);
+                })
+            });
+
+            socket.on('addUserLogEntry', (data) =>
+            {
+                this.odController.addUserLogEntry(data).then(res =>
+                {
+                    socket.emit('addUserLogEntryResult', res);
+                })
             });
         });
     }
@@ -300,10 +487,15 @@ export class WebSocket
             case 'loginOD':
             case 'disconnectUsers':
             case 'registerODGuest':
-            case 'disconnectedFromExhibit':
+            case 'exhibitDisconnectedFromExhibit':
             case 'checkUsernameExists':
             case 'checkEmailExists':
+            case 'checkNameOrEmailExists':
             case 'loginExhibit':
+            case 'updateSeat':
+            case 'addTokenToSocket':
+            case 'unlockCoaPartFromExhibit':
+            case 'getWifiSSID':
                 needed = false;
                 break;
         }

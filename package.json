@@ -1,13 +1,14 @@
 {
   "name": "meeteux-god",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "MEETeUX",
   "main": "dir/index",
   "types": "dir/index",
   "scripts": {
-    "tsc": "tsc",
-    "start": "npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts"
+    "test": "mocha --exit",
+    "tsc": "tsc -p .",
+    "start": "npm run build:dev",
+    "build:dev": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -21,21 +22,24 @@
   },
   "homepage": "https://github.com/fhstp/meeteux-god#readme",
   "devDependencies": {
-    "@types/node": "^8.10.37",
-    "@types/sequelize": "^4.27.30",
-    "nodemon": "^1.18.5",
+    "@types/node": "^8.10.48",
+    "@types/sequelize": "^4.28.2",
+    "nodemon": "^1.19.1",
     "ts-node": "^3.3.0",
     "typescript": "^2.9.2",
-    "typescript-eslint-parser": "^6.0.1"
+    "typescript-eslint-parser": "^6.0.1",
+    "mocha": "^6.1.4",
+    "chai": "^4.2.0"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "continuation-local-storage": "^3.2.1",
     "dotenv": "^4.0.0",
-    "express": "^4.16.4",
-    "jsonwebtoken": "^8.3.0",
-    "mysql2": "^1.6.1",
-    "sequelize": "^4.41.0",
-    "socket.io": "^2.1.1",
-    "winston": "^3.1.0"
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^1.6.5",
+    "sequelize": "^4.44.0",
+    "socket.io": "^2.2.0",
+    "winston": "^3.2.1"
   }
 }

@@ -1,12 +1,15 @@
 NODE_PATH =
 SERVER_PORT =
 CERT_PATH =
+KEY_PATH =
 SECRET =
+https = 0/1
 
 # Database
 DB_USER =
 DB_PASSWORD =
 DB_NAME =
+GENERATE_DATA = true/false
 
 # Logging
 ERROR_LOGGER_FILE =

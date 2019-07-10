@@ -5,31 +5,210 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Tach</h1>
+<h1>Enter a new to register</h1>
+<input id="nameField" />
+<button onclick="registerDevice()">Register Device</button>
+<button onclick="loginDevice()">Login Device</button>
+<button onclick="registerGuest()">Register Guest</button>
+<button onclick="sendEvent()">Send Event</button>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
     var token = undefined;
-    var socket = io('https://localhost:3000/');
+    var user = undefined;
+    var parts = undefined;
+    var socket = io('https://god.meeteux.fhstp.ac.at:3000/');
+    var eventButtonActive = false;
+
+    function registerDevice()
+    {
+        var name = document.getElementById("nameField").value;
+
+        socket.emit('registerOD', {
+            identifier: name,
+            email: name + '@fhstp.ac.at',
+            password: 'pwd',
+            isGuest: false,
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel',
+            ipAddress: 'not set',
+            language: 1
+        });
+    }
+
+    function loginDevice()
+    {
+        socket.emit('loginOD', {
+            user: 'Raggnor',
+            password: '25rasounar',
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel'
+        });
+    }
+
+    function registerGuest()
+    {
+        socket.emit('registerODGuest', {
+            deviceAddress: 'deviceAddress',
+            deviceOS: 'deviceOS',
+            deviceVersion: 'deviceVersion',
+            deviceModel: 'deviceModel',
+            language: 1
+        });
+    }
+
+    function sendEvent()
+    {
+        // socket.emit('checkUsernameExists', 'iOSSubUser');
+        // socket.emit('checkEmailExists', 'fake@mail.com');
+        if(!eventButtonActive) return;
+        // socket.emit('getCoaParts');
+        // socket.emit('getCoaColors');
+        // socket.emit('registerTimelineUpdate', {user: user.id, location: 3000});
+        // socket.emit('registerLocation', {user: user.id, location: 3000});
+        // socket.emit('questionnaireAnswered', user.id);
+        // socket.emit('checkAppVersion', {user: user.id, version: '2.4'});
+        // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
+        // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
+        socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
+    }
 
     socket.on('news', function (data) {
 
-        socket.emit('registerODGuest', {
-            identifier: "Schlese",
-            deviceAddress: "hausnummer",
-            deviceOS: "iOS",
-            deviceVersion: "Iphone 6",
-            deviceModel: "Iphone"});
-        //
+        socket.removeAllListeners();
+        console.log(data);
 
-        socket.on('registerODResult', function (data) {
-            console.log(data);
-            socket.emit('registerLocation', {user: 1, location: 10});
+        socket.on('loginODResult', function (result)
+        {
+            console.log("------------ login od result ------------");
+            console.log(result);
         });
 
-        socket.on('registerLocationResult', function (data) {
-            console.log(data);
+        socket.on('checkUsernameExistsResult', function (result)
+        {
+            console.log("------------ check Username Exists result ------------");
+            console.log(result);
+        });
+
+        socket.on('checkEmailExistsResult', function (result)
+        {
+            console.log("------------ check email Exists result ------------");
+            console.log(result);
+        });
+
+        socket.on('checkUserDeviceDataResult', function (result)
+        {
+            console.log("------------ Check user device data result ------------");
+            console.log(result);
+        });
+
+        socket.on('autoLoginODResult', function (result)
+        {
+            console.log("------------ Autlogin result ------------");
+            console.log(result);
+
+            socket.removeAllListeners('autoLoginODResult');
+        });
+
+        socket.on('registerODGuestResult', function(result)
+        {
+            console.log("------------ Registered guest user ------------");
+            console.log(result);
+
+            user = result.data.user;
+
+            token = result.data.token;
+
+            eventButtonActive = true;
+        });
+
+        socket.on('registerODResult', function (result)
+        {
+            console.log("------------ Registered user ------------");
+            console.log(result);
+            user = result.data.user;
+
+            token = result.data.token;
+
+            eventButtonActive = true;
+
+            // socket.removeAllListeners('registerODResult');
+        });
+
+        socket.on('addUserLogEntryResult', function(res)
+        {
+            console.log("------------ addUserLogEntry ------------");
+            console.log(res);
+
+            // socket.removeAllListeners('addUserLogEntryResult');
+        });
+
+        socket.on('checkAppVersionResult', function(res)
+        {
+            console.log("------------ checkAppVersion ------------");
+            console.log(res);
+
+            socket.removeAllListeners('checkAppVersionResult');
+        });
+
+        socket.on('questionnaireAnsweredResult', function(result)
+        {
+            console.log("------------ questionnaireAnswered ------------");
+            console.log(result);
+
+            socket.removeAllListeners('questionnaireAnsweredResult');
+        });
+
+        socket.on('getCoaPartsResult', function (result)
+        {
+            parts = result.data;
+            console.log("------------ Get Coa Parts ------------");
+            console.log(parts);
+
+            socket.emit('unlockCoaPart', {userId: user.id, coaId: parts[0].id});
+        });
+
+        socket.on('unlockCoaPartResult', function (result)
+        {
+            var userParts = result.data;
+            console.log("------------ Unlock Coa Part ------------");
+            console.log(userParts);
+
+            socket.emit('getUserCoaParts', {userId: user.id, coaId: parts[0].id});
+        });
+
+        socket.on('getUserCoaPartsResult', function(result)
+        {
+           var userParts = result.data;
+           console.log("------------ Get User Coa Parts ------------");
+           console.log(userParts);
+        });
+
+        socket.on('getCoaColorsResult', function(result)
+        {
+            var colors = result.data;
+            console.log("------------ Get Coa Colors ------------");
+            console.log(colors);
+            socket.emit('changeUserCoaColors', {userId: user.id, primary: 1, secondary: 3});
+        });
+
+        socket.on('changeUserCoaColorsResult', function(result)
+        {
+            console.log("------------ change user coa colors ------------");
+            console.log(result.data);
+        });
+
+        socket.on('registerTimelineUpdateResult', function(result)
+        {
+            console.log("------------ register TimelineUpdate ------------");
+            console.log(result);
+
+            // socket.removeAllListeners('registerTimelineUpdateResult')
         });
 
     });

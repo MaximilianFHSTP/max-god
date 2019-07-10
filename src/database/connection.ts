@@ -1,15 +1,18 @@
 import * as Sequelize from 'sequelize';
 import * as CLS from 'continuation-local-storage';
 import {DataFactory} from "./dataFactory";
-import * as Winston from 'winston';
 import Logger from "../config/logger";
+
 require('dotenv').config();
 
-export class Connection
-{
+export class Connection {
     private static _instance: Connection;
     private readonly _sequelize: any;
     private readonly _namespace: any;
+
+    private _logger: Logger;
+
+    // database tables
     private _user: any;
     private _group: any;
     private _location: any;
@@ -19,103 +22,150 @@ export class Connection
     private _position: any;
     private _activity: any;
     private _activityLog: any;
-    private _neighbor:any;
+    private _activityLogType: any;
+    private _log: any;
+    private _logType: any;
+    private _neighbor: any;
     private _settings: any;
     private _contentLanguage: any;
     private _content: any;
-
+    private _coaPart: any;
+    private _coaType: any;
+    private _coaColor: any;
+    private _userCoaPart: any;
+    private _storyTeller: any;
     private _currentSettings: any;
 
-    private constructor()
-    {
+    private constructor() {
         this._namespace = CLS.createNamespace('MEETeUX');
         Sequelize.useCLS(this._namespace);
         this._sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
             host: 'localhost',
             dialect: 'mysql',
-            operatorsAliases: { $and: Sequelize.Op.and },
+            operatorsAliases: {$and: Sequelize.Op.and},
             logging: false
         });
 
         this.initDatabaseTables();
         this.initDatabaseRelations();
 
+        this._logger = Logger.getInstance();
+    }
+
+    public async syncDatabase()
+    {
         const dataFactory = new DataFactory();
         dataFactory.connection = this;
 
-        this._sequelize.sync({force: true}).then(() =>
+        this._logger.info('Syncing to database!');
+
+        if(process.env.GENERATE_DATA === 'true')
         {
-            dataFactory.createData().catch(err =>
-            {
-                console.log("Could not create data!");
+            await this._sequelize.sync({force: true});
+            this._logger.info('Creating data (this may take a while)!');
+            await dataFactory.createData().catch(err => {
+                this._logger.error(err);
+                this._logger.error("Could not create data!");
             });
-        }).then( this._settings.findByPk(1).then(result => this._currentSettings = result));
+        }
+        else
+            await this._sequelize.sync();
 
-
-        // this._sequelize.sync().then( this._settings.findById(1).then(result => this._currentSettings = result));
-
+        await this._settings.findByPk(1).then(result => this._currentSettings = result);
     }
 
-    public static getInstance(): Connection
-    {
-        if(Connection._instance === null || Connection._instance === undefined)
-        {
+    public static getInstance(): Connection {
+        if (Connection._instance === null || Connection._instance === undefined) {
             Connection._instance = new Connection();
         }
 
         return Connection._instance;
     }
 
-    private initDatabaseRelations(): void
-    {
+    private initDatabaseRelations(): void {
         //User to Group Relation (1:n)
         this._group.hasMany(this._user, {onDelete: 'cascade'});
         this._user.belongsTo(this._group);
 
         //User to Location Relation (n:m)
-        this._user.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
-        this._activity.belongsTo(this._user, {foreignKey: {allowNull: false}});
-        this._location.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
-        this._activity.belongsTo(this._location, {foreignKey: {allowNull: false}});
+        // this._user.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
+        // this._activity.belongsTo(this._user, {foreignKey: {allowNull: false}});
+        // this._location.hasMany(this._activity, {onDelete: 'cascade', foreignKey: {allowNull: false}});
+        // this._activity.belongsTo(this._location, {foreignKey: {allowNull: false}});
+
+        this._user.belongsToMany(this._location, { through: this._activity });
+        this._location.belongsToMany(this._user, { through: this._activity });
 
         //ActivityLog to Activity Relation (1:n)
-        this._activity.hasMany(this._activityLog, {onDelete: 'cascade'});
-        this._activityLog.belongsTo(this._activity);
+        this._activity.hasMany(this._activityLog,{foreignKey: 'activityLocationId'});
+        this._activityLog.belongsTo(this._activity,{foreignKey:'activityLocationId'});
+
+        this._activity.hasMany(this._activityLog,{ foreignKey : 'activityUserId'});
+        this._activityLog.belongsTo(this._activity, { foreignKey: 'activityUserId'});
+
+        //ActivityLogType to ActivityLog Relation (1:n)
+        this._activityLogType.hasMany(this._activityLog, {onDelete: 'cascade'});
+        this._activityLog.belongsTo(this._activityLogType);
+
+        //Log to User Relation (1:n)
+        this._user.hasMany(this._log, {onDelete: 'cascade'});
+        this._log.belongsTo(this._user);
+
+        //LogType to Log Relation (1:n)
+        this._logType.hasMany(this._log, {onDelete: 'cascade'});
+        this._log.belongsTo(this._logType);
 
         //_location to _location relation (1:n)
-        this._location.hasMany(this._location, {onDelete: 'cascade', foreignKey: {
-            name: 'parentId',
-            allowNull: true
+        this._location.hasMany(this._location, {
+            onDelete: 'cascade', foreignKey: {
+                name: 'parentId',
+                allowNull: true
             }
         });
-        this._location.belongsTo(this._location, {foreignKey: {
-            name: 'parentId',
-            allowNull: true
-         }
+        this._location.belongsTo(this._location, {
+            foreignKey: {
+                name: 'parentId',
+                allowNull: true
+            }
         });
 
         //_user to _location relation (1:n)
         this._location.hasMany(this._user, {foreignKey: 'currentLocation'});
         this._user.belongsTo(this._location, {foreignKey: 'currentLocation'});
 
+        // user to code of arms part (n:m)
+        this._user.belongsToMany(this._coaPart, { through: this._userCoaPart });
+        this._coaPart.belongsToMany(this._user, { through: this._userCoaPart });
+
+        // coaPart to coaType (1:n)
+        this._coaType.hasMany(this._coaPart, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+        this._coaPart.belongsTo(this._coaType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_coaColor to _user relation (1:n)
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'primaryColor', defaultValue: 1}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'primaryColor', defaultValue: 1}, onDelete: 'cascade'});
+
+        this._coaColor.hasMany(this._user, {foreignKey: {name: 'secondaryColor', defaultValue: 1}, onDelete: 'cascade'});
+        this._user.belongsTo(this._coaColor, {foreignKey: {name: 'secondaryColor', defaultValue: 1}, onDelete: 'cascade'});
+
         //_location to _location relation (n:m)
         this._location.belongsToMany(this._location, {
-            as: 'location1',
+            as: 'previousLocation',
             through: {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'locationOne',
+                name: 'prevLocation',
                 primaryKey: true
             }
         });
         this._location.belongsToMany(this._location, {
-            as: 'location2',
+            as: 'nextLocation',
             through: {
                 model: this._neighbor
             },
             foreignKey: {
-                name: 'locationTwo',
+                name: 'nextLocation',
                 primaryKey: true
             }
         });
@@ -131,6 +181,10 @@ export class Connection
         //_content to _contentType relation (1:n)
         this._content.belongsTo(this._contentType, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
         this._contentType.hasMany(this._content, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
+
+        //_content to _storyTeller relation (1:n)
+        this._content.belongsTo(this._storyTeller, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
+        this._storyTeller.hasMany(this._content, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
 
         //_content to _contentLanguage relation (1:n)
         this._content.belongsTo(this._contentLanguage, {foreignKey: {allowNull: false}, onDelete: 'cascade'});
@@ -149,13 +203,18 @@ export class Connection
         this._location.belongsTo(this._position, {foreignKey: {allowNull: true}, onDelete: 'cascade'});
     }
 
-    private initDatabaseTables():void
-    {
+    private initDatabaseTables(): void {
         this._settings = this._sequelize.define('setting', {
             guestNumber: {
                 type: Sequelize.INTEGER
             },
             wifiSSID: {
+                type: Sequelize.STRING
+            },
+            wifiPassword: {
+                type: Sequelize.STRING
+            },
+            appVersion: {
                 type: Sequelize.STRING
             }
         });
@@ -177,7 +236,7 @@ export class Connection
             },
             email: {
                 type: Sequelize.STRING,
-                unique: true
+                unique: false
             },
             isGuest: {
                 type: Sequelize.BOOLEAN,
@@ -195,6 +254,9 @@ export class Connection
                 type: Sequelize.STRING,
                 allowNull: false
             },
+            socketId: {
+                type: Sequelize.STRING
+            },
             ipAddress: {
                 type: Sequelize.STRING,
                 allowNull: false
@@ -210,6 +272,19 @@ export class Connection
             deviceModel: {
                 type: Sequelize.STRING,
                 allowNull: true
+            },
+            answeredQuestionnaire: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
+            appVersion: {
+                type: Sequelize.STRING,
+                defaultValue: '1.0.0'
+            },
+            isDeleted: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
             }
         });
 
@@ -227,15 +302,21 @@ export class Connection
                 autoIncrement: false
             },
             contentURL: {
-               type: Sequelize.STRING
+                type: Sequelize.STRING
             },
             ipAddress: {
-               type: Sequelize.STRING,
+                type: Sequelize.STRING,
                 allowNull: false
             },
             description: {
                 type: Sequelize.STRING,
                 allowNull: false
+            },
+            titleGER: {
+                type: Sequelize.STRING
+            },
+            titleENG: {
+                type: Sequelize.STRING
             },
             currentSeat: {
                 type: Sequelize.INTEGER,
@@ -254,15 +335,32 @@ export class Connection
             showInTimeline: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
+            },
+            unlockCoa: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            startDate: {
+                type: Sequelize.INTEGER
+            },
+            endDate: {
+                type: Sequelize.INTEGER
+            },
+            socketId: {
+                type: Sequelize.STRING
+            },
+            locationTag: {
+                type: Sequelize.STRING
             }
         });
 
         this._neighbor = this._sequelize.define('neighbor', {
-            locationOne: {
+            previous: {
                 type: Sequelize.INTEGER,
                 unique: 'compositeIndex'
             },
-            locationTwo: {
+            next: {
                 type: Sequelize.INTEGER,
                 unique: 'compositeIndex'
             }
@@ -282,13 +380,24 @@ export class Connection
 
         this._content = this._sequelize.define('content', {
             content: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT,
                 allowNull: false
             },
             order: {
                 type: Sequelize.INTEGER,
                 allowNull: false
+            },
+            year: {
+                type: Sequelize.INTEGER
             }
+        });
+
+        this._storyTeller = this._sequelize.define('storyTeller',
+        {
+             name: {
+                 type: Sequelize.STRING,
+                 allowNull: false
+             }
         });
 
         this._contentLanguage = this._sequelize.define('contentLanguage', {
@@ -354,12 +463,88 @@ export class Connection
                 defaultValue: Sequelize.NOW
             }
         });
+
+        this._activityLogType = this._sequelize.define('activityLogType', {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: false
+            },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
+        this._log = this._sequelize.define('log', {
+            locationId: {
+                type: Sequelize.INTEGER,
+                allowNull: true
+            },
+            comment: {
+                type: Sequelize.STRING,
+                allowNull: true
+            }
+        });
+
+        this._logType = this._sequelize.define('logType', {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: false
+            },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
+        this._coaPart = this._sequelize.define('coaPart',
+        {
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            image: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            taskENG: {
+                type: Sequelize.STRING
+            },
+            taskGER: {
+                type: Sequelize.STRING
+            }
+        });
+
+        this._coaType = this._sequelize.define('coaType',
+        {
+            description: {
+                type: Sequelize.STRING,
+                allowNull: false
+            }
+        });
+
+        this._coaColor = this._sequelize.define('coaColor',
+            {
+                name: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                }
+            });
+
+        this._userCoaPart = this._sequelize.define('UserCoaPart',
+            {
+                isActive: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
+                }
+            });
     }
 
-    public getNextGuestNumber(): Number
-    {
+    public getNextGuestNumber(): Number {
         const numb = this._currentSettings.guestNumber;
-        this._currentSettings.guestNumber = numb+1;
+        this._currentSettings.guestNumber = numb + 1;
         this._currentSettings.save();
 
         return numb;
@@ -371,6 +556,18 @@ export class Connection
 
     get activityLog(): any {
         return this._activityLog;
+    }
+
+    get activityLogType(): any {
+        return this._activityLogType;
+    }
+
+    get log(): any {
+        return this._log;
+    }
+
+    get logType(): any {
+        return this._logType;
     }
 
     get user(): any {
@@ -409,6 +606,10 @@ export class Connection
         return this._content;
     }
 
+    get storyTeller(): any {
+        return this._storyTeller;
+    }
+
     get contentLanguage(): any {
         return this._contentLanguage;
     }
@@ -423,5 +624,21 @@ export class Connection
 
     get settings(): any {
         return this._settings;
+    }
+
+    get coaPart(): any {
+        return this._coaPart;
+    }
+
+    get userCoaPart(): any {
+        return this._userCoaPart;
+    }
+
+    get coaColor(): any {
+        return this._coaColor;
+    }
+
+    get coaType(): any {
+        return this._coaType;
     }
 }
