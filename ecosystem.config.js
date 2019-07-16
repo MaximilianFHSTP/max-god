@@ -12,10 +12,11 @@ module.exports = {
         production: {
             user: 'prod',
             host: 'god.meeteux.fhstp.ac.at',
-            ref: 'origin/develop',
+            ref: 'origin/master',
             repo: "https://github.com/MaximilianFHSTP/max-god.git",
             path: '/srv/production',
-            'post-deploy': 'cp ../.env ./ && npm install && npm run tsc && pm2 startOrRestart ecosystem.config.js --env production'
+            'post-deploy': 'cp ../.env ./ && npm install && npm run tsc && pm2 startOrRestart ecosystem.config.js --env production',
+            'pre-deploy': 'git reset --hard'
         },
         develop: {
             user: 'node',
@@ -23,7 +24,8 @@ module.exports = {
             ref: 'origin/develop',
             repo: "https://github.com/MaximilianFHSTP/max-god.git",
             path: '/srv/develop',
-            'post-deploy': 'cp ../.env ./ && npm install && npm run tsc && pm2 startOrRestart ecosystem.config.js --env production'
+            'post-deploy': 'cp ../.env ./ && npm install && npm run tsc && pm2 startOrRestart ecosystem.config.js --env production',
+            'pre-deploy': 'git reset --hard'
         }
     }
 };
