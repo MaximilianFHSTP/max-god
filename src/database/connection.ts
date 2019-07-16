@@ -43,7 +43,8 @@ export class Connection {
             host: 'localhost',
             dialect: 'mysql',
             operatorsAliases: {$and: Sequelize.Op.and},
-            logging: false
+            logging: false,
+            timezone: '+02:00'
         });
 
         this.initDatabaseTables();

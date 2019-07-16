@@ -259,7 +259,7 @@ export class OdController {
                 if (user)
                 {
                     const valid = bcrypt.compareSync(password, user.password);
-                    if(!valid) return {data: undefined, message: new Message(OD_NOT_FOUND, "Could not log in user")};
+                    if(!valid) return {data: null, message: new Message(OD_NOT_FOUND, "Could not log in user")};
 
                     user.socketId = socketId;
 
