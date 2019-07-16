@@ -50,13 +50,24 @@ export default class Server
     {
         const cert = fs.readFileSync(process.env.CERT_PATH);
         const key = fs.readFileSync(process.env.KEY_PATH);
-        const ca = fs.readFileSync(process.env.CA_PATH);
 
-        return {
-            key: key,
-            cert: cert,
-            ca: ca
-        };
+        if(process.env.CA_PATH)
+        {
+            const ca = fs.readFileSync(process.env.CA_PATH);
+
+            return {
+                key: key,
+                cert: cert,
+                ca: ca
+            };
+        }
+
+        else {
+            return {
+                key: key,
+                cert: cert
+            };
+        }
     }
 }
 
