@@ -120,7 +120,11 @@ export class DataFactory {
                 this._connection.logType.create({id: 3, description: 'quizWrongAnswer'}),
                 this._connection.logType.create({id: 4, description: 'autoLogin'}),
                 this._connection.logType.create({id: 5, description: 'userLogin'}),
-                this._connection.logType.create({id: 6, description: 'userLogout'})
+                this._connection.logType.create({id: 6, description: 'userLogout'}),
+                this._connection.logType.create({id: 7, description: 'exhibitLocalUserJoined'}),
+                this._connection.logType.create({id: 8, description: 'exhibitLocalUserLeft'}),
+                this._connection.logType.create({id: 9, description: 'exhibitGodUserJoined'}),
+                this._connection.logType.create({id: 10, description: 'exhibitGodUserLeft'})
             ]);
         });
     }

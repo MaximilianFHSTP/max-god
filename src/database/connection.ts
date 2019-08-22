@@ -62,6 +62,7 @@ export class Connection {
 
         if(process.env.GENERATE_DATA === 'true')
         {
+            // force means the database is cleared and then generated again (including the default data)
             await this._sequelize.sync({force: true});
             this._logger.info('Creating data (this may take a while)!');
             await dataFactory.createData().catch(err => {

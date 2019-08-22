@@ -18,7 +18,7 @@
     var token = undefined;
     var user = undefined;
     var parts = undefined;
-    var socket = io('https://god.meeteux.fhstp.ac.at:3000/');
+    var socket = io('http://localhost:3000/');
     var eventButtonActive = false;
 
     function registerDevice()
@@ -76,6 +76,7 @@
         // socket.emit('addUserLogEntry', {user: user.id, logType: 1, location: 301});
         // socket.emit('autoLoginOD', {token, device: {deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"}});
         socket.emit('checkUserDeviceData', {userId: user.id, shouldBeUpdated: true,  deviceAddress: "deviceAddress", deviceOS: "iOS", deviceVersion: "10.9.1", deviceModel: "Iphone XS"});
+        socket.emit('addExhibitLogEntry', {userId: user.id, locationId: 5021, comment: 'GoD user left', type: 10});
     }
 
     socket.on('news', function (data) {
