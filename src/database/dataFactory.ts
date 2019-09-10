@@ -61,7 +61,7 @@ export class DataFactory {
     }
 
     private initSettings(): void {
-        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'DesKaisersNeuerHeiliger', wifiPassword: 'maximilian', appVersion: '2.4'}}).spread((user, created) =>
+        this._connection.settings.findOrCreate({where: {id: 1}, defaults: {guestNumber: 1, wifiSSID: 'DesKaisersNeuerHeiliger', wifiPassword: 'maximilian', appVersion: '2.6'}}).spread((user, created) =>
         {
             if(!created)
             {
