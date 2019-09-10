@@ -82,11 +82,11 @@ export class LocationController
         const locationId: number = data.location;
         const dismissed: boolean = data.dismissed;
 
-        if(!userId || !locationId)
-            return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could register location. User or location id not provided!")};
+        return this.database.sequelize.transaction( (t1) =>
+        {
+            if(!userId || !locationId)
+                return {data: null, message: new Message(LOCATION_NOT_FOUND, "Could register location. User or location id not provided!")};
 
-
-        return this.database.sequelize.transaction( (t1) => {
             return this.database.activity.findOrCreate({
                 where: {userId, locationId},
                 defaults: {locked: false}

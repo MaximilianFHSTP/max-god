@@ -465,6 +465,11 @@ export class WebSocket
                     socket.emit('addUserLogEntryResult', res);
                 })
             });
+
+            socket.on('addExhibitLogEntry', (data) =>
+            {
+                this.exhibitController.addExhibitLogEntry(data.locationId, data.comment, data.userId, data.type);
+            });
         });
     }
 
@@ -488,6 +493,7 @@ export class WebSocket
             case 'disconnectUsers':
             case 'registerODGuest':
             case 'exhibitDisconnectedFromExhibit':
+            case 'addExhibitLogEntry':
             case 'checkUsernameExists':
             case 'checkEmailExists':
             case 'checkNameOrEmailExists':

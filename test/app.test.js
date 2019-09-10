@@ -684,7 +684,7 @@ describe('User socket events', function()
         {
             it('checkAppVersion', function (done)
             {
-                socket.emit('checkAppVersion', { version: '2.4' });
+                socket.emit('checkAppVersion', { version: '2.6' });
 
                 socket.on('checkAppVersionResult', function (result)
                 {

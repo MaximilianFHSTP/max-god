@@ -44,4 +44,9 @@ export class ExhibitController
             this.database.location.update({statusId: statusTypes.OFFLINE}, {where: {[this.database.sequelize.Op.or]: [{id: exhibit.id}, {parentId: exhibit.id}]}})
         });
     }
+
+    public addExhibitLogEntry(locationId: number, comment: string, userId: string, type: number): void
+    {
+        this.database.log.create({locationId, comment, userId, logTypeId: type});
+    }
 }
