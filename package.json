@@ -8,7 +8,9 @@
     "test": "mocha --exit",
     "tsc": "tsc -p .",
     "start": "npm run build:dev",
-    "build:dev": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts"
+    "build:dev": "nodemon --exec ./node_modules/.bin/ts-node -- src/index.ts",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,8 @@
     "mysql2": "^1.6.5",
     "sequelize": "^4.44.0",
     "socket.io": "^2.2.0",
-    "winston": "^3.2.1"
-  }
+    "winston": "^3.2.1",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
